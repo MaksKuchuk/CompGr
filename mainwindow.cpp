@@ -17,7 +17,12 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionNew_file_triggered()
 {
     QString str;
-    str = QFileDialog::getOpenFileName();
+    str = QFileDialog::getOpenFileName(
+        this,
+        "Select file",
+        "",
+        "All files (*.*);; Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);"
+        );
 
     ui->statusbar->showMessage(str);
 }
