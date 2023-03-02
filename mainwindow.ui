@@ -27,6 +27,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew_file"/>
    </widget>
    <widget class="QMenu" name="menuModeling">
     <property name="title">
@@ -61,6 +62,14 @@
    <addaction name="menuInfo"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNew_file">
+   <property name="text">
+    <string>New file</string>
+   </property>
+   <property name="toolTip">
+    <string>New file</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
