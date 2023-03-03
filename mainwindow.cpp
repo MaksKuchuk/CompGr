@@ -11,21 +11,24 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("DSP-Kuchuk");
 
     setCentralWidget(ui->mdiArea);
+
+    on_actionNew_file_triggered();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 void MainWindow::on_actionNew_file_triggered()
 {
-    QString str;
-    str = QFileDialog::getOpenFileName(
-        this,
-        "Select file",
-        "",
-        "Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);; All files (*.*);"
-        );
+//    QString str;
+//    str = QFileDialog::getOpenFileName(
+//        this,
+//        "Select file",
+//        "",
+//        "Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);; All files (*.*);"
+//        );
 
 
     QWidget *widget = new GraphWidget(ui->mdiArea);

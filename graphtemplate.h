@@ -12,7 +12,7 @@ class GraphTemplate : public QWidget
     Q_OBJECT
 
 public:
-    explicit GraphTemplate(QWidget *parent = nullptr);
+    explicit GraphTemplate(QString name ,QWidget *parent = nullptr);
     ~GraphTemplate();
 
 private:

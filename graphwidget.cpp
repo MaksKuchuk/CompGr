@@ -1,6 +1,6 @@
 #include "graphwidget.h"
 #include "ui_graphwidget.h"
-#include "glview.h"
+#include "graphtemplate.h"
 
 #include <QVBoxLayout>
 
@@ -9,15 +9,19 @@ GraphWidget::GraphWidget(QWidget *parent) :
     ui(new Ui::GraphWidget)
 {
     ui->setupUi(this);
-    glView *gView = new glView(this);
-    glView *gView2 = new glView(this);
-    glView *gView3 = new glView(this);
+    GraphTemplate *gTemp = new GraphTemplate("name1", this);
+    GraphTemplate *gTemp1 = new GraphTemplate("name2", this);
+    GraphTemplate *gTemp2 = new GraphTemplate("name3", this);
 
     QVBoxLayout *layout = new QVBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
-    layout->addWidget(gView);
-    layout->addWidget(gView2);
-    layout->addWidget(gView3);
+    layout->addWidget(gTemp);
+    layout->setSpacing(20);
+    layout->addWidget(gTemp1);
+    layout->setSpacing(20);
+    layout->addWidget(gTemp2);
 
     this->setLayout(layout);
 

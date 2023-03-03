@@ -28,11 +28,11 @@ set(PROJECT_SOURCES
         graphwidget.cpp
         graphwidget.h
         graphwidget.ui
-        glview.h
-        glview.cpp
         graphtemplate.cpp
         graphtemplate.h
         graphtemplate.ui
+        glview.cpp
+        glview.h
         ${TS_FILES}
 )
 
