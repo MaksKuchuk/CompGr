@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include <iostream>
+
+#include "graphwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle("DSP-Kuchuk");
+
+    setCentralWidget(ui->mdiArea);
 }
 
 MainWindow::~MainWindow()
@@ -21,9 +24,14 @@ void MainWindow::on_actionNew_file_triggered()
         this,
         "Select file",
         "",
-        "All files (*.*);; Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);"
+        "Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);; All files (*.*);"
         );
 
-    ui->statusbar->showMessage(str);
+
+    QWidget *widget = new GraphWidget(ui->mdiArea);
+
+    ui->mdiArea->addSubWindow(widget);
+    widget->setWindowTitle("Sub Window");
+    widget->show();
 }
 
