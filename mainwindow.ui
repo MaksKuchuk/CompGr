@@ -76,6 +76,7 @@
     <property name="title">
      <string>Info</string>
     </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuModeling"/>
@@ -91,6 +92,11 @@
    </property>
    <property name="toolTip">
     <string>New file</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

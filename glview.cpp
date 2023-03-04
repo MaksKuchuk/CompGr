@@ -16,7 +16,7 @@ void glView::paintGL() {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glLineWidth(1.0);
+    glLineWidth(1);
     glColor3f(1, 1, 1);
     glBegin(GL_LINE_STRIP);
         glVertex2f(-1, 0);

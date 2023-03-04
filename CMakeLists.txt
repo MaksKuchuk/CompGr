@@ -31,6 +31,9 @@ set(PROJECT_SOURCES
         graphtemplate.cpp
         graphtemplate.h
         graphtemplate.ui
+        aboutwidget.cpp
+        aboutwidget.h
+        aboutwidget.ui
         glview.cpp
         glview.h
         ${TS_FILES}
