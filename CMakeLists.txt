@@ -36,6 +36,11 @@ set(PROJECT_SOURCES
         aboutwidget.ui
         glview.cpp
         glview.h
+
+        Parser/Parser.hpp
+        Parser/ParseDataTxt.hpp
+        Parser/ParseData.hpp
+
         ${TS_FILES}
 )
 

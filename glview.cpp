@@ -1,6 +1,11 @@
 #include "glview.h"
 
-glView::glView(QWidget *parent) : QOpenGLWidget(parent) { }
+glView::glView(QWidget *parent, long long parNum, double* data, double maxMod) :
+    QOpenGLWidget(parent),
+    parNum(parNum),
+    data(data),
+    maxMod(maxMod)
+{ }
 
 void glView::initializeGL() {
     glMatrixMode(GL_PROJECTION);
@@ -18,27 +23,15 @@ void glView::paintGL() {
 
     glLineWidth(1);
     glColor3f(1, 1, 1);
+    drawGraph();
+}
+
+void glView::drawGraph() {
     glBegin(GL_LINE_STRIP);
-        glVertex2f(-1, 0);
-        glVertex2f(-0.9, 0.2);
-        glVertex2f(-0.8, -0.4);
-        glVertex2f(-0.7, 0.3);
-        glVertex2f(-0.6, -0.8);
-        glVertex2f(-0.5, 0.7);
-        glVertex2f(-0.4, 0);
-        glVertex2f(-0.3, 0.2);
-        glVertex2f(-0.2, -0.4);
-        glVertex2f(-0.1, 0.3);
-        glVertex2f(0, -0.8);
-        glVertex2f(0.1, 0.3);
-        glVertex2f(0.2, 1);
-        glVertex2f(0.3, -0.7);
-        glVertex2f(0.4, 0.7);
-        glVertex2f(0.5, 0.2);
-        glVertex2f(0.6, -0.1);
-        glVertex2f(0.7, 0.2);
-        glVertex2f(0.8, -0.7);
-        glVertex2f(0.9, -0.3);
-        glVertex2f(1, 0);
+        for (long long i = 0; i < parNum; i++) {
+            double x = (2 * (double)(i) / (parNum - 1)) - 1;
+            double y = (data[i] / maxMod);
+            glVertex2d(x, y);
+        }
     glEnd();
 }

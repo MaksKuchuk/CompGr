@@ -2,6 +2,7 @@
 #define GRAPHWIDGET_H
 
 #include <QWidget>
+#include "Parser/ParseData.hpp"
 
 namespace Ui {
 class GraphWidget;
@@ -12,7 +13,7 @@ class GraphWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit GraphWidget(QWidget *parent = nullptr);
+    explicit GraphWidget(QWidget *parent = nullptr, ParseData* pData = nullptr);
     ~GraphWidget();
 
 private:

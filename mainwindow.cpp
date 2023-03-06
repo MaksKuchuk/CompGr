@@ -4,6 +4,9 @@
 #include "graphwidget.h"
 #include "aboutwidget.h"
 
+#include "Parser/Parser.hpp"
+#include "Parser/ParseData.hpp"
+
 #include <QMdiSubWindow>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -33,9 +36,16 @@ void MainWindow::on_actionNew_file_triggered()
         "Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);; All files (*.*);"
         );
 
-    QWidget *widget = new GraphWidget(ui->mdiArea);
+    if (str == nullptr || str == "") return;
+
+    ParseData *pData = Parser::parse(str.toStdString());
+
+    QWidget *widget = new GraphWidget(ui->mdiArea, pData);
 
     ui->mdiArea->addSubWindow(widget);
+
+    ui->mdiArea->subWindowList().last()->setFixedSize(200, 100 * pData->getAmountOfChannels());
+
     widget->setWindowTitle("Sub Window");
     widget->show();
 }
@@ -46,7 +56,6 @@ void MainWindow::on_actionAbout_triggered()
     QWidget *widget = new AboutWidget(ui->mdiArea);
     ui->mdiArea->addSubWindow(widget);
     ui->mdiArea->subWindowList().last()->setFixedSize(350, 100);
-    ui->mdiArea->subWindowList().last()->setContentsMargins(0, 0, 0, 0);
 
     widget->setWindowTitle("About");
     widget->show();
