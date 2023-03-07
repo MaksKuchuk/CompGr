@@ -45,7 +45,7 @@ void MainWindow::on_actionNew_file_triggered()
 
     ui->mdiArea->addSubWindow(widget);
 
-    ui->mdiArea->subWindowList().last()->setFixedSize(300, 100 * pData->getAmountOfChannels());
+    //ui->mdiArea->subWindowList().last()->setFixedSize(300, 100 * pData->getAmountOfChannels());
 
     widget->setWindowTitle("Sub Window");
     widget->show();

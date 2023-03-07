@@ -36,7 +36,7 @@ void ParseDataWav::parse(std::ifstream& wav_file) {
                     extremums[j].first = std::min(extremums[j].first, static_cast<double>(sampleValue));
                     extremums[j].second = std::max(extremums[j].second, static_cast<double>(sampleValue));
                 }
-                channels[j][i] = static_cast<double>(sampleValue) / static_cast<double>(INT16_MAX);
+                channels[j][i] = static_cast<double>(sampleValue);
             }
             else if (header.bitsPerSample == 24) {
                 int32_t sampleValue = (*reinterpret_cast<int32_t*>(&audioData[offset])) >> 8;
@@ -47,7 +47,7 @@ void ParseDataWav::parse(std::ifstream& wav_file) {
                     extremums[j].first = std::min(extremums[j].first, static_cast<double>(sampleValue));
                     extremums[j].second = std::max(extremums[j].second, static_cast<double>(sampleValue));
                 }
-                channels[j][i] = static_cast<double>(sampleValue) / static_cast<double>(INT32_MAX);
+                channels[j][i] = static_cast<double>(sampleValue);
             }
         }
     }

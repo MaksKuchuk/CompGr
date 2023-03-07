@@ -18,8 +18,8 @@ GraphTemplate::GraphTemplate(QWidget *parent,
     ui->setupUi(this);
 
     glView *gView = new glView(this, parNum, data, maxVal, minVal);
-    gView->setFixedHeight(60);
-    gView->setFixedWidth(300);
+    //gView->setFixedHeight(60);
+    //gView->setFixedWidth(300);
 
     QLabel *label = new QLabel(this);
     label->setText(QString::fromUtf8(name.c_str()));
@@ -36,6 +36,7 @@ GraphTemplate::GraphTemplate(QWidget *parent,
     layout->setSpacing(0);
 
     layout->addWidget(gView);
+    layout->setSpacing(5);
     layout->addWidget(label);
     this->setLayout(layout);
 }
