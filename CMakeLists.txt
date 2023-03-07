@@ -47,9 +47,15 @@ set(PROJECT_SOURCES
         graphshow.cpp
         graphshow.h
         graphshow.ui
+        
+        Parser/ParseDataWav.cpp
+        Parser/ParseDataWav.hpp
 
         ${TS_FILES}
-)
+        )
+        
+        
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(untitled
