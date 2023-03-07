@@ -40,9 +40,8 @@ set(PROJECT_SOURCES
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
-
-        ${TS_FILES}
-)
+        Parser/ParseDataWav.cpp
+        Parser/ParseDataWav.hpp
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(untitled
