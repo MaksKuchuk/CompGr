@@ -62,3 +62,11 @@ void MainWindow::on_actionAbout_triggered()
     widget->show();
 }
 
+void MainWindow::on_actionGet_info_triggered() {
+    return;
+}
+
+void MainWindow::on_actionInformation_triggered() {
+    return;
+}
+
