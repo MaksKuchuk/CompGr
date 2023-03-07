@@ -62,11 +62,6 @@
      <string>Filtration</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menuAnalysis">
-    <property name="title">
-     <string>Analysis</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
      <string>Settings</string>
@@ -78,14 +73,20 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionGet_info"/>
+    <addaction name="actionInformation"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
    <addaction name="menuModeling"/>
    <addaction name="menuFiltration"/>
-   <addaction name="menuAnalysis"/>
    <addaction name="menuSettings"/>
    <addaction name="menuInfo"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew_file">
    <property name="text">
     <string>New file</string>
@@ -97,6 +98,16 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionGet_info">
+   <property name="text">
+    <string>Analysis</string>
+   </property>
+  </action>
+  <action name="actionInformation">
+   <property name="text">
+    <string>Information</string>
    </property>
   </action>
  </widget>

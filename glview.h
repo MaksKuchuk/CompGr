@@ -8,10 +8,16 @@ class glView : public QOpenGLWidget
     Q_OBJECT
     double* data;
     long long parNum;
-    double maxMod;
+    double maxVal;
+    double minVal;
 
 public:
-    glView(QWidget *parent = nullptr, long long parNum = 0, double* data = nullptr, double maxMod = 0);
+    glView(QWidget *parent = nullptr,
+           long long parNum = 0,
+           double* data = nullptr,
+           double maxVal = 0,
+           double minVal = 0
+            );
 
 protected:
     void drawGraph();

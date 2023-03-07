@@ -13,14 +13,16 @@ class GraphTemplate : public QWidget
     std::string name;
     long long parNum;
     double* data;
-    long long maxMod;
+    double maxVal;
+    double minVal;
 
 public:
     explicit GraphTemplate(QWidget *parent = nullptr,
                            std::string name = "",
                            long long parNum = 0,
                            double* data = nullptr,
-                           long long maxMod = 0
+                           double maxVal = 0,
+                           double minVal = 0
                            );
     ~GraphTemplate();
 

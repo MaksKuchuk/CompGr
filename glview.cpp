@@ -1,10 +1,12 @@
 #include "glview.h"
+#include <iostream>
 
-glView::glView(QWidget *parent, long long parNum, double* data, double maxMod) :
+glView::glView(QWidget *parent, long long parNum, double* data, double maxVal, double minVal) :
     QOpenGLWidget(parent),
     parNum(parNum),
     data(data),
-    maxMod(maxMod)
+    maxVal(maxVal),
+    minVal(minVal)
 { }
 
 void glView::initializeGL() {
@@ -27,11 +29,17 @@ void glView::paintGL() {
 }
 
 void glView::drawGraph() {
+    double diff = maxVal - minVal;
     glBegin(GL_LINE_STRIP);
         for (long long i = 0; i < parNum; i++) {
             double x = (2 * (double)(i) / (parNum - 1)) - 1;
-            double y = (data[i] / maxMod);
+            double y = (2 * (data[i] - minVal) / diff) - 1;
             glVertex2d(x, y);
         }
     glEnd();
 }
+
+
+
+
+
