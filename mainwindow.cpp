@@ -41,10 +41,11 @@ void MainWindow::on_actionNew_file_triggered()
     ParseData *pData = Parser::parse(str.toStdString());
 
     QWidget *widget = new GraphWidget(ui->mdiArea, pData);
+    //QWidget *widget = new GraphWidget(ui->mdiArea, nullptr);
 
     ui->mdiArea->addSubWindow(widget);
 
-    ui->mdiArea->subWindowList().last()->setFixedSize(200, 100 * pData->getAmountOfChannels());
+    ui->mdiArea->subWindowList().last()->setFixedSize(300, 100 * pData->getAmountOfChannels());
 
     widget->setWindowTitle("Sub Window");
     widget->show();
@@ -59,5 +60,13 @@ void MainWindow::on_actionAbout_triggered()
 
     widget->setWindowTitle("About");
     widget->show();
+}
+
+void MainWindow::on_actionGet_info_triggered() {
+    return;
+}
+
+void MainWindow::on_actionInformation_triggered() {
+    return;
 }
 

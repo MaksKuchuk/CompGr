@@ -22,7 +22,8 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
                     pData->getChannelName(i),
                     pData->getAmountOfSamples(),
                     pData->getChannel(i),
-                    std::max(std::fabs(pData->maxVal(i)), std::fabs(pData->minVal(i)))
+                    pData->maxVal(i),
+                    pData->minVal(i)
                     );
 
         layout->addWidget(gTemp);

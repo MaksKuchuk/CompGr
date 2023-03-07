@@ -22,6 +22,10 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_actionGet_info_triggered();
+
+    void on_actionInformation_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

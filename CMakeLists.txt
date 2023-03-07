@@ -17,7 +17,6 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 find_package(Qt6 REQUIRED COMPONENTS Gui)
 
-
 set(TS_FILES untitled_en_US.ts)
 
 set(PROJECT_SOURCES
@@ -40,8 +39,23 @@ set(PROJECT_SOURCES
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
+
+        graphinfo.cpp
+        graphinfo.h
+        graphinfo.ui
+
+        graphshow.cpp
+        graphshow.h
+        graphshow.ui
+        
         Parser/ParseDataWav.cpp
         Parser/ParseDataWav.hpp
+
+        ${TS_FILES}
+        )
+        
+        
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(untitled
