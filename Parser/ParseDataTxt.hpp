@@ -75,7 +75,7 @@ class ParseDataTxt : public ParseData {
     }
 
     void threadsHandle(const char* buf, size_t buf_length) {
-        int number_of_threads = 8;
+        int number_of_threads = 24;
 
         auto *position_end_line = new size_t[number_of_threads];
         auto *position_end_buf = new size_t[number_of_threads];

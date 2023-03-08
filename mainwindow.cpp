@@ -18,8 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("DSP-Kuchuk");
 
     setCentralWidget(ui->mdiArea);
-
-//    on_actionNew_file_triggered();
 }
 
 MainWindow::~MainWindow()
@@ -80,7 +78,7 @@ void MainWindow::on_actionInformation_triggered() {
     QWidget *widget = new GraphInfo(ui->mdiArea, grWi->pData);
 
     ui->mdiArea->addSubWindow(widget);
-    ui->mdiArea->subWindowList().last()->setFixedSize(400, 400);
+    ui->mdiArea->subWindowList().last()->setFixedSize(400, 150 + 25 * grWi->pData->getAmountOfChannels());
 
     widget->setWindowTitle("Graph information");
     widget->show();

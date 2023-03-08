@@ -86,7 +86,24 @@ GraphInfo::GraphInfo(QWidget *parent, ParseData *pData) :
     layout->addWidget(startTime);
     layout->addWidget(stopTime);
     layout->addWidget(duration);
-    layout->addStretch();
+
+    for (int i = 0; i < pData->getAmountOfChannels(); i++) {
+        QLabel *cName = new QLabel(this);
+        cName->setText(
+                        "    " +
+                        QString::fromUtf8(pData->getChannelName(i)) +
+                        ": from file"
+                    );
+        cName->setFont(font);
+        cName->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        cName->setFixedHeight(22);
+
+
+        layout->addWidget(cName);
+    }
+
+    layout->addSpacing(5);
+    //layout->addStretch();
 
 
     this->setLayout(layout);
