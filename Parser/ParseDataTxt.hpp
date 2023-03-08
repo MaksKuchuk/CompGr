@@ -5,6 +5,7 @@
 #include <cmath>
 #include <ctime>
 #include <iomanip>
+#include <thread>
 
 #ifndef PARSEDATATXT_H
 #define PARSEDATATXT_H
