@@ -3,6 +3,7 @@
 
 #include "graphwidget.h"
 #include "aboutwidget.h"
+#include "graphinfo.h"
 
 #include "Parser/Parser.hpp"
 #include "Parser/ParseData.hpp"
@@ -45,9 +46,9 @@ void MainWindow::on_actionNew_file_triggered()
 
     ui->mdiArea->addSubWindow(widget);
 
-    //ui->mdiArea->subWindowList().last()->setFixedSize(300, 100 * pData->getAmountOfChannels());
+    ui->mdiArea->subWindowList().last()->setFixedSize(300, 105 * pData->getAmountOfChannels());
 
-    widget->setWindowTitle("Sub Window");
+    widget->setWindowTitle("Channels");
     widget->show();
 }
 
@@ -62,11 +63,33 @@ void MainWindow::on_actionAbout_triggered()
     widget->show();
 }
 
-void MainWindow::on_actionGet_info_triggered() {
-    return;
+void MainWindow::on_actionAnalysis_triggered() {
+    ui->mdiArea->activateNextSubWindow();
 }
 
 void MainWindow::on_actionInformation_triggered() {
-    return;
+
+    QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
+
+//    QString str;
+//    str = QFileDialog::getOpenFileName(
+//        this,
+//        "Select file",
+//        "",
+//        "Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);; All files (*.*);"
+//        );
+
+//    if (str == nullptr || str == "") return;
+
+//    ParseData *pData = Parser::parse(str.toStdString());
+
+    QWidget *widget = new GraphInfo(ui->mdiArea, static_cast<GraphWidget*>(activeWidget->widget())->pData);
+
+    ui->mdiArea->addSubWindow(widget);
+    ui->mdiArea->subWindowList().last()->setFixedSize(400, 400);
+
+    widget->setWindowTitle("Graph information");
+    widget->show();
+
 }
 

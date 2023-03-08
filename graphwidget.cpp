@@ -7,7 +7,8 @@
 
 GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
     QWidget(parent),
-    ui(new Ui::GraphWidget)
+    ui(new Ui::GraphWidget),
+    pData(pData)
 {
     ui->setupUi(this);
     if (pData == nullptr) return;
@@ -28,7 +29,7 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
 
         layout->addWidget(gTemp);
 
-        if (i != pData->getAmountOfChannels() - 1) layout->setSpacing(20);
+        if (i != pData->getAmountOfChannels() - 1) layout->setSpacing(5);
     }
 
     this->setLayout(layout);

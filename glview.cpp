@@ -1,5 +1,4 @@
 #include "glview.h"
-#include <iostream>
 
 glView::glView(QWidget *parent, long long parNum, double* data, double maxVal, double minVal) :
     QOpenGLWidget(parent),
@@ -29,11 +28,12 @@ void glView::paintGL() {
 }
 
 void glView::drawGraph() {
+    double dotsNumber = parNum > 15000 ? 15000 : parNum;
     double diff = maxVal - minVal;
     glBegin(GL_LINE_STRIP);
-        for (long long i = 0; i < parNum; i++) {
-            double x = (2 * (double)(i) / (parNum - 1)) - 1;
-            double y = (2 * (data[i] - minVal) / diff) - 1;
+        for (long long i = 0; i < dotsNumber; i++) {
+            double x = (2 * (double)(i) / (dotsNumber - 1)) - 1;
+            double y = (2 * (data[static_cast<long long>(i * (parNum / dotsNumber))] - minVal) / diff) - 1;
             glVertex2d(x, y);
         }
     glEnd();

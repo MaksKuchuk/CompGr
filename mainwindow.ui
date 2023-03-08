@@ -77,7 +77,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionGet_info"/>
+    <addaction name="actionAnalysis"/>
     <addaction name="actionInformation"/>
    </widget>
    <addaction name="menuFile"/>
@@ -100,7 +100,7 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionGet_info">
+  <action name="actionAnalysis">
    <property name="text">
     <string>Analysis</string>
    </property>

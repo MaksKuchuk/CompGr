@@ -16,6 +16,8 @@ public:
     explicit GraphWidget(QWidget *parent = nullptr, ParseData* pData = nullptr);
     ~GraphWidget();
 
+    ParseData *pData = nullptr;
+
 private:
     Ui::GraphWidget *ui;
 };
