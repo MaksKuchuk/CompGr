@@ -13,6 +13,8 @@ class GraphWidget : public QWidget
     Q_OBJECT
 
 public:
+    std::string nm = "GraphWidget";
+
     explicit GraphWidget(QWidget *parent = nullptr, ParseData* pData = nullptr);
     ~GraphWidget();
 

@@ -6,7 +6,6 @@ AboutWidget::AboutWidget(QWidget *parent) :
     ui(new Ui::AboutWidget)
 {
     ui->setupUi(this);
-    ui->textBrowser->setGeometry(0, 0, 350, 100);
 }
 
 AboutWidget::~AboutWidget()

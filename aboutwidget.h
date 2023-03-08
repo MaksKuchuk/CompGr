@@ -12,6 +12,8 @@ class AboutWidget : public QWidget
     Q_OBJECT
 
 public:
+    std::string nm = "AboutWidget";
+
     explicit AboutWidget(QWidget *parent = nullptr);
     ~AboutWidget();
 

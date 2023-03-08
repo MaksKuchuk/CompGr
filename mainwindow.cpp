@@ -57,7 +57,7 @@ void MainWindow::on_actionAbout_triggered()
 {
     QWidget *widget = new AboutWidget(ui->mdiArea);
     ui->mdiArea->addSubWindow(widget);
-    ui->mdiArea->subWindowList().last()->setFixedSize(350, 100);
+    ui->mdiArea->subWindowList().last()->setFixedSize(350, 110);
 
     widget->setWindowTitle("About");
     widget->show();
@@ -71,19 +71,13 @@ void MainWindow::on_actionInformation_triggered() {
 
     QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
 
-//    QString str;
-//    str = QFileDialog::getOpenFileName(
-//        this,
-//        "Select file",
-//        "",
-//        "Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);; All files (*.*);"
-//        );
+    if (activeWidget == nullptr) return;
 
-//    if (str == nullptr || str == "") return;
+    GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
 
-//    ParseData *pData = Parser::parse(str.toStdString());
+    if (grWi->nm != "GraphWidget") return;
 
-    QWidget *widget = new GraphInfo(ui->mdiArea, static_cast<GraphWidget*>(activeWidget->widget())->pData);
+    QWidget *widget = new GraphInfo(ui->mdiArea, grWi->pData);
 
     ui->mdiArea->addSubWindow(widget);
     ui->mdiArea->subWindowList().last()->setFixedSize(400, 400);
