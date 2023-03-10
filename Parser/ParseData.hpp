@@ -8,6 +8,8 @@
 
 class ParseData {
 protected:
+    // where is it from
+    std::string source;
     // number of channels
     unsigned long long amountOfChannels;
     // number of samples

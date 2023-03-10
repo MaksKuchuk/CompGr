@@ -51,6 +51,11 @@ set(PROJECT_SOURCES
         Parser/ParseDataWav.cpp
         Parser/ParseDataWav.hpp
 
+        GraphGlData/Graph2DData.hpp
+        GraphGlData/Graph2DData.cpp
+        GraphGlData/Graph3DData.hpp
+        GraphGlData/Graph3DData.cpp
+
         ${TS_FILES}
         )
         
