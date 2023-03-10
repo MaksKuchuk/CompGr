@@ -85,6 +85,10 @@ public:
     std::tuple<unsigned long long, unsigned long long, unsigned long long, double> getDuration() const {
         return {days, hours, minutes, seconds};
     }
+
+    std::string getSource() const {
+        return source;
+    }
  
     // return n-th channel
     double *getChannel(long long n) const {

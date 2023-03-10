@@ -77,6 +77,11 @@ class ParseDataTxt : public ParseData {
     void threadsHandle(const char* buf, size_t buf_length) {
         int number_of_threads = 24;
 
+        if (number_of_threads * 4 > amountOfSamples) {
+            setChannels(this, 0, buf, 0, buf_length);
+            return;
+        }
+
         auto *position_end_line = new size_t[number_of_threads];
         auto *position_end_buf = new size_t[number_of_threads];
 
@@ -125,7 +130,6 @@ class ParseDataTxt : public ParseData {
             delete threads[y];
         }
 
-        delete[] buf;
         delete[] position_end_buf;
         delete[] position_end_line;
         delete[] threads;
@@ -187,6 +191,7 @@ public:
         file_to_parse.read(buf, buf_length);
         buf[buf_length] = '\n';
         threadsHandle(buf, buf_length);
+        delete[] buf;
 
         extremums = new std::pair<double, double>[amountOfChannels];
         for (int i = 0; i < amountOfChannels; ++i) {
