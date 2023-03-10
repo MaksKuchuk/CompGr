@@ -6,7 +6,7 @@
 
 class TransformToFourierSpectrum {
 
-    static Graph3DData* transform(ParseData data, long long n);
+    static Graph3DData* transform(ParseData* data, long long n);
 
 };
 
