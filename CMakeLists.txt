@@ -56,6 +56,15 @@ set(PROJECT_SOURCES
         GraphGlData/Graph3DData.hpp
         GraphGlData/Graph3DData.cpp
 
+        Transformation/TransformToFourierSpectrum.hpp
+        Transformation/TransformToFourierSpectrum.cpp
+        Transformation/TransformToOscillogram.hpp
+        Transformation/TransformToOscillogram.cpp
+        Transformation/TransformToSpectrogram.hpp
+        Transformation/TransformToSpectrogram.cpp
+        Transformation/TransformToWaveletogram.hpp
+        Transformation/TransformToWaveletogram.cpp
+
         ${TS_FILES}
         )
         
