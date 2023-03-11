@@ -92,7 +92,8 @@ GraphInfo::GraphInfo(QWidget *parent, ParseData *pData) :
         cName->setText(
                         "    " +
                         QString::fromUtf8(pData->getChannelName(i)) +
-                        ": from file"
+                        ": from " +
+                        QString::fromUtf8(pData->getFileName())
                     );
         cName->setFont(font);
         cName->setAlignment(Qt::AlignLeft | Qt::AlignTop);

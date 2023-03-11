@@ -117,6 +117,14 @@ public:
             return extremums[n].second;
         throw std::runtime_error("Extremums nullptr");
     }
+
+    void setName(std::string fName) {
+        source = fName;
+    }
+
+    std::string getFileName() {
+        return source;
+    }
 };
 
 #endif
