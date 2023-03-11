@@ -60,7 +60,7 @@ class ParseDataTxt : public ParseData {
         std::string cur_num{};
         size_t i{}, j = start_line;
         for (size_t p = start_buf; p <= end; ++p) {
-            if (buf[p] == ' ' || buf[p] == '\n') {
+            if ((buf[p] == ' ' || buf[p] == '\n') && !cur_num.empty()) {
                 data->channels[i][j] = std::stod(cur_num);
                 cur_num.clear();
                 ++i;
@@ -69,7 +69,8 @@ class ParseDataTxt : public ParseData {
                     ++j;
                 }
             } else {
-                cur_num += buf[p];
+                if (buf[p] != ' ' && buf[p] != '\n' && buf[p] != '\r')
+                    cur_num += buf[p];
             }
         }
     }
