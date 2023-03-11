@@ -86,16 +86,8 @@ class ParseDataTxt : public ParseData {
         auto *position_end_line = new size_t[number_of_threads];
         auto *position_end_buf = new size_t[number_of_threads];
 
-        size_t end{};
         for (size_t y = 0; y < number_of_threads; ++y) {
-            if (y + 1 != number_of_threads) {
-                end = amountOfSamples / number_of_threads * (y + 1);
-                while (buf[end] != '\n')
-                    end++;
-            } else {
-                end = amountOfSamples;
-            }
-            position_end_line[y] = end;
+            position_end_line[y] = amountOfSamples * (y + 1) / number_of_threads;
         }
 
         size_t ii{}, z{}, count{};
