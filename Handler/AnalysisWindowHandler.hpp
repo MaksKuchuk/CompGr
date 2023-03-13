@@ -2,17 +2,30 @@
 #define ANALYSISWINDOWHANDLER_H
 
 #include "../GraphGlData/Graph2DData.hpp"
+#include "../analyzewidget.h"
+#include "../Parser/ParseData.hpp"
 
-class AnalysisWindwoHandler {
-    static AnalysisWindwoHandler* instance;
+class AnalysisWindowHandler {
+    static inline AnalysisWindowHandler* instance;
 
-    AnalysisWindwoHandler();
+    static inline AnalyzeWidget* analyzeWidget;
+
 public:
-    static AnalysisWindwoHandler* getInstance();
+    AnalysisWindowHandler();
+
+    static AnalysisWindowHandler* getInstance();
 
     void analyze2DBy(Graph2DData *data);
 
     void analyze3DBy(Graph2DData *data);
+
+    void addWidget(ParseData* pData);
+
+    AnalyzeWidget* getAnalyzeWidget();
+
+    void destroyWidget();
+
+    ~AnalysisWindowHandler();
 };
 
 #endif

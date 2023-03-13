@@ -4,6 +4,7 @@
 #include "graphwidget.h"
 #include "aboutwidget.h"
 #include "graphinfo.h"
+#include "Handler/AnalysisWindowHandler.hpp"
 
 #include "Parser/Parser.hpp"
 #include "Parser/ParseData.hpp"
@@ -62,7 +63,21 @@ void MainWindow::on_actionAbout_triggered()
 }
 
 void MainWindow::on_actionAnalysis_triggered() {
-    ui->mdiArea->activateNextSubWindow();
+    QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
+    AnalysisWindowHandler *instance = AnalysisWindowHandler::getInstance();
+
+    if (activeWidget != nullptr) {
+        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
+        if (grWi->nm != "GraphWidget") return;
+        instance->addWidget(grWi->pData);
+    }
+
+    AnalyzeWidget* w = instance->getAnalyzeWidget();
+
+    ui->mdiArea->addSubWindow(w);
+    instance->getAnalyzeWidget()->setWindowTitle("Analyze");
+
+    instance->getAnalyzeWidget()->show();
 }
 
 void MainWindow::on_actionInformation_triggered() {

@@ -15,6 +15,11 @@ public:
     explicit AnalyzeWidget(QWidget *parent = nullptr);
     ~AnalyzeWidget();
 
+    void closeEvent(QCloseEvent *event) override;
+
+private slots:
+
+
 private:
     Ui::AnalyzeWidget *ui;
 };
