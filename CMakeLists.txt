@@ -65,6 +65,13 @@ set(PROJECT_SOURCES
         Transformation/TransformToWaveletogram.hpp
         Transformation/TransformToWaveletogram.cpp
 
+        Handler/AnalysisWindowHandler.hpp
+        Handler/AnalysisWindowHandler.cpp
+
+        analyzewidget.h
+        analyzewidget.cpp
+        analyzewidget.ui
+
         ${TS_FILES}
         )
         

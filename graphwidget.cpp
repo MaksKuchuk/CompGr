@@ -18,14 +18,7 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
     layout->setSpacing(0);
 
     for (int i = 0; i < pData->getAmountOfChannels(); i++) {
-        GraphTemplate *gTemp = new GraphTemplate(
-                    this,
-                    pData->getChannelName(i),
-                    pData->getAmountOfSamples(),
-                    pData->getChannel(i),
-                    pData->maxVal(i),
-                    pData->minVal(i)
-                    );
+        GraphTemplate *gTemp = new GraphTemplate(this, pData, i);
 
         layout->addWidget(gTemp);
 

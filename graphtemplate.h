@@ -2,6 +2,7 @@
 #define GRAPHTEMPLATE_H
 
 #include <QWidget>
+#include "Parser/Parser.hpp"
 
 namespace Ui {
 class GraphTemplate;
@@ -10,21 +11,15 @@ class GraphTemplate;
 class GraphTemplate : public QWidget
 {
     Q_OBJECT
-    std::string name;
-    long long parNum;
-    double* data;
-    double maxVal;
-    double minVal;
+    ParseData* pData;
+    long long ind;
 
 public:
-    explicit GraphTemplate(QWidget *parent = nullptr,
-                           std::string name = "",
-                           long long parNum = 0,
-                           double* data = nullptr,
-                           double maxVal = 0,
-                           double minVal = 0
-                           );
+    explicit GraphTemplate(QWidget *parent = nullptr, ParseData* pData = nullptr, long long ind = -1);
     ~GraphTemplate();
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     Ui::GraphTemplate *ui;

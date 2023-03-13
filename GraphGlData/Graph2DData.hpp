@@ -4,6 +4,7 @@
 #include <string>
 
 class Graph2DData {
+public:
     std::string name;
     std::string source;
 
