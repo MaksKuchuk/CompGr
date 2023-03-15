@@ -72,6 +72,15 @@ set(PROJECT_SOURCES
         analyzewidget.cpp
         analyzewidget.ui
 
+        glViewType/glOscillogram.hpp
+        glViewType/glOscillogram.cpp
+
+        glViewType/glType.hpp
+
+        glViewTemplate/gltemplateoscillogram.h
+        glViewTemplate/gltemplateoscillogram.cpp
+        gltemplateoscillogram.ui
+
         ${TS_FILES}
         )
         

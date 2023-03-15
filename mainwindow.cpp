@@ -77,6 +77,8 @@ void MainWindow::on_actionAnalysis_triggered() {
     ui->mdiArea->addSubWindow(w);
     instance->getAnalyzeWidget()->setWindowTitle("Analyze");
 
+    ui->mdiArea->subWindowList().last()->resize(400, 350);
+
     instance->getAnalyzeWidget()->show();
 }
 

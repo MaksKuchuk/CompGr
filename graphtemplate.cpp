@@ -2,6 +2,8 @@
 #include "ui_graphtemplate.h"
 #include "glview.h"
 #include "Parser/ParseData.hpp"
+#include "Handler/AnalysisWindowHandler.hpp"
+#include "Transformation/TransformToOscillogram.hpp"
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -43,6 +45,8 @@ GraphTemplate::GraphTemplate(QWidget *parent, ParseData* pData, long long ind) :
 }
 
 void GraphTemplate::mousePressEvent(QMouseEvent *event) {
+    AnalysisWindowHandler::getInstance()->analyze2DBy(
+                TransformToOscillogram::transform(pData, ind), glType::Oscillogram);
 
 }
 

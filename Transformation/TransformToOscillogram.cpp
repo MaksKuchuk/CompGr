@@ -1,7 +1,8 @@
 #include "../GraphGlData/Graph2DData.hpp"
 #include "../Parser/ParseData.hpp"
+#include "TransformToOscillogram.hpp"
 
-static Graph2DData* transform(ParseData* data, long long n) {
+Graph2DData* TransformToOscillogram::transform(ParseData* data, long long n) {
     Graph2DData* gr = new Graph2DData;
 
     gr->name = data->getChannelName(n);
