@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
+if (WIN32)
+    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:\\Windows\\System32")
+endif()
+
 
 project(untitled VERSION 0.1 LANGUAGES CXX)
 
@@ -50,7 +54,7 @@ set(PROJECT_SOURCES
         
         Parser/ParseDataWav.cpp
         Parser/ParseDataWav.hpp
-untitled
+
         GraphGlData/Graph2DData.hpp
         GraphGlData/Graph2DData.cpp
         GraphGlData/Graph3DData.hpp
@@ -115,6 +119,9 @@ else()
 endif()
 
 target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::OpenGLWidgets Qt6::Gui)
+if (WIN32)
+    target_link_libraries(untitled PRIVATE opengl32)
+endif()
 
 set_target_properties(untitled PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
