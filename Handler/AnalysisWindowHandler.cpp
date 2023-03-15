@@ -1,5 +1,5 @@
 #include "AnalysisWindowHandler.hpp"
-#include "../glViewTemplate/glTemplateOscillogram.hpp"
+#include "../glViewTemplate/gltemplateoscillogram.h"
 #include "../Transformation/TransformToOscillogram.hpp"
 
 AnalysisWindowHandler* AnalysisWindowHandler::getInstance() {
