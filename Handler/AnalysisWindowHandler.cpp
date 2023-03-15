@@ -36,9 +36,7 @@ void AnalysisWindowHandler::addWidget(ParseData* pData) {
     }
 }
 
-AnalysisWindowHandler::AnalysisWindowHandler() {
-    analyzeWidget = new AnalyzeWidget();
-}
+AnalysisWindowHandler::AnalysisWindowHandler() = default;
 
 AnalyzeWidget* AnalysisWindowHandler::getAnalyzeWidget() {
     if (analyzeWidget == nullptr) {
@@ -49,4 +47,8 @@ AnalyzeWidget* AnalysisWindowHandler::getAnalyzeWidget() {
 
 void AnalysisWindowHandler::destroyWidget() {
     analyzeWidget = nullptr;
+}
+
+bool AnalysisWindowHandler::isNullAnalyzeWidget() {
+    return analyzeWidget == nullptr;
 }

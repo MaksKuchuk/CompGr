@@ -63,14 +63,16 @@ void MainWindow::on_actionAbout_triggered()
 }
 
 void MainWindow::on_actionAnalysis_triggered() {
+    if (!AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
+
     QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
     AnalysisWindowHandler *instance = AnalysisWindowHandler::getInstance();
 
-    if (activeWidget != nullptr) {
-        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
-        if (grWi->nm != "GraphWidget") return;
-        instance->addWidget(grWi->pData);
-    }
+//    if (activeWidget != nullptr) {
+//        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
+//        if (grWi->nm != "GraphWidget") return;
+//        instance->addWidget(grWi->pData);
+//    }
 
     AnalyzeWidget* w = instance->getAnalyzeWidget();
 

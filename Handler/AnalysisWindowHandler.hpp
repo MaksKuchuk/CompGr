@@ -7,13 +7,13 @@
 #include "../glViewType/glType.hpp"
 
 class AnalysisWindowHandler {
-    static inline AnalysisWindowHandler* instance;
+    static inline AnalysisWindowHandler* instance = nullptr;
 
-    static inline AnalyzeWidget* analyzeWidget;
+    static inline AnalyzeWidget* analyzeWidget = nullptr;
 
-public:
     AnalysisWindowHandler();
 
+public:
     static AnalysisWindowHandler* getInstance();
 
     void analyze2DBy(Graph2DData *data, glType t);
@@ -25,6 +25,8 @@ public:
     AnalyzeWidget* getAnalyzeWidget();
 
     void destroyWidget();
+
+    bool isNullAnalyzeWidget();
 
     ~AnalysisWindowHandler();
 };
