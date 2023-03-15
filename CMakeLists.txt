@@ -114,9 +114,6 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-find_package(Qt6 COMPONENTS Widgets OpenGL OpenGLWidgets REQUIRED)
-target_link_libraries(untitled PRIVATE Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets)
-
 target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::OpenGLWidgets Qt6::Gui)
 
 set_target_properties(untitled PROPERTIES
