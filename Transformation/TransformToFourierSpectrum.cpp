@@ -1,5 +1,9 @@
 #include "TransformToFourierSpectrum.hpp"
 
+#include <fftw3.h>
+#include <cmath>
+#include <limits>
+
 Graph2DData* TransformToFourierSpectrum::transform(ParseData* data, long long n) {
     long long size = data->getAmountOfSamples();
     double* in = (double*)fftw_malloc(sizeof(double) * size);
@@ -24,12 +28,12 @@ Graph2DData* TransformToFourierSpectrum::transform(ParseData* data, long long n)
     fftw_free(out);
 
     Graph2DData* data2d = new Graph2DData();
-    data2d->Hz = 1 / size;
+    data2d->Hz = 1 / (size/2+1);
     data2d->totalSeconds = 1;
-    data2d->amountOfSamples = size;
+    data2d->amountOfSamples = size/2+1;
     data2d->samples = amplitudes;
     data2d->lcur = 0;
-    data2d->rcur = size - 1;
+    data2d->rcur = (size/2+1) - 1;
     data2d->source = data->getFileName() + " Fourier transform";
     data2d->minVal = min;
     data2d->maxVal = max;

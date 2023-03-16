@@ -1,6 +1,7 @@
 #include "AnalysisWindowHandler.hpp"
 #include "../glViewTemplate/gltemplateoscillogram.h"
 #include "../Transformation/TransformToOscillogram.hpp"
+#include "../Transformation/TransformToFourierSpectrum.hpp"
 #include <QWheelEvent>
 
 #include <iostream>
@@ -36,6 +37,7 @@ void AnalysisWindowHandler::addWidget(ParseData* pData) {
 
     for (long long i = 0; i < pData->getAmountOfChannels(); i++) {
         analyze2DBy(TransformToOscillogram::transform(pData, i), glType::Oscillogram);
+        //analyze2DBy(TransformToFourierSpectrum::transform(pData, i), glType::Oscillogram);
     }
 }
 
