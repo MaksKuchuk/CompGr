@@ -2,8 +2,13 @@
 
 glOscillogram::glOscillogram(QWidget *parent, Graph2DData *data) :
     QOpenGLWidget(parent),
-    data(data)
-{ }
+    data(data) {
+
+}
+
+void glOscillogram::updateGraph() {
+    repaint();
+}
 
 void glOscillogram::initializeGL() {
     glMatrixMode(GL_PROJECTION);
@@ -27,8 +32,32 @@ void glOscillogram::drawGraph() {
     glColor3f(1, 1, 1);
 
     double x, y;
+    long long lcur = data->lcur;
+    long long rcur = data->rcur;
 
+    double parNum = rcur - lcur + 1;
+
+    double dotsNumber = parNum > 2000 ? 2000 : parNum;
+    double diff = data->maxVal - data->minVal;
+
+    glBegin(GL_LINE_STRIP);
+        for (long long i = 0; i < dotsNumber; i++) {
+            x = (2 * (double)(i) / (dotsNumber - 1)) - 1;
+            y = (2 * (data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minVal) / diff) - 1;
+            glVertex2d(x, y);
+        }
+    glEnd();
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

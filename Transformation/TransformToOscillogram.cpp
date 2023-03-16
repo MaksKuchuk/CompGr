@@ -16,5 +16,8 @@ Graph2DData* TransformToOscillogram::transform(ParseData* data, long long n) {
     gr->totalSeconds = data->getTotalDuration();
     gr->samples = data->getChannel(n);
 
+    gr->lcur = 0;
+    gr->rcur = gr->amountOfSamples - 1;
+
     return gr;
 }

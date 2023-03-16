@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QWheelEvent>
 
 namespace Ui {
 class AnalyzeWidget;
@@ -19,8 +20,8 @@ public:
 
     void closeEvent(QCloseEvent *event) override;
 
-private slots:
-
+protected:
+    void wheelEvent(QWheelEvent *event) override;
 
 private:
     Ui::AnalyzeWidget *ui;

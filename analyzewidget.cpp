@@ -22,9 +22,12 @@ AnalyzeWidget::~AnalyzeWidget()
     delete layout;
 }
 
+void AnalyzeWidget::wheelEvent(QWheelEvent *event) {
+    AnalysisWindowHandler::getInstance()->scrollGraph(event->angleDelta().y());
+}
+
 void AnalyzeWidget::closeEvent(QCloseEvent *event)
 {
     AnalysisWindowHandler::getInstance()->destroyWidget();
-
 }
 

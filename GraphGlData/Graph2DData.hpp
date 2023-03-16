@@ -12,6 +12,8 @@ public:
     double minVal;
     unsigned long long amountOfSamples;
 
+    long long lcur, rcur;
+
     double Hz;
 
     double totalSeconds;

@@ -68,18 +68,20 @@ void MainWindow::on_actionAnalysis_triggered() {
     QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
     AnalysisWindowHandler *instance = AnalysisWindowHandler::getInstance();
 
-//    if (activeWidget != nullptr) {
-//        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
-//        if (grWi->nm != "GraphWidget") return;
-//        instance->addWidget(grWi->pData);
-//    }
-
     AnalyzeWidget* w = instance->getAnalyzeWidget();
+
+    if (activeWidget != nullptr) {
+        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
+
+        if (grWi->nm == "GraphWidget") {
+            instance->addWidget(grWi->pData);
+        }
+    }
 
     ui->mdiArea->addSubWindow(w);
     instance->getAnalyzeWidget()->setWindowTitle("Analyze");
 
-    ui->mdiArea->subWindowList().last()->resize(400, 350);
+    ui->mdiArea->subWindowList().last()->resize(600, 450);
 
     instance->getAnalyzeWidget()->show();
 }
