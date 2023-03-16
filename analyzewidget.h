@@ -1,0 +1,32 @@
+#ifndef ANALYZEWIDGET_H
+#define ANALYZEWIDGET_H
+
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QWheelEvent>
+
+namespace Ui {
+class AnalyzeWidget;
+}
+
+class AnalyzeWidget : public QWidget
+{
+    Q_OBJECT
+    QVBoxLayout *layout;
+
+public:
+    explicit AnalyzeWidget(QWidget *parent = nullptr);
+    ~AnalyzeWidget();
+
+    void closeEvent(QCloseEvent *event) override;
+
+protected:
+    void wheelEvent(QWheelEvent *event) override;
+
+private:
+    Ui::AnalyzeWidget *ui;
+
+    friend class AnalysisWindowHandler;
+};
+
+#endif // ANALYZEWIDGET_H

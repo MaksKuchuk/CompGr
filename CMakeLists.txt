@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
+if (WIN32)
+    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:\\Windows\\System32")
+endif()
+
 
 project(untitled VERSION 0.1 LANGUAGES CXX)
 
@@ -65,6 +69,22 @@ set(PROJECT_SOURCES
         Transformation/TransformToWaveletogram.hpp
         Transformation/TransformToWaveletogram.cpp
 
+        Handler/AnalysisWindowHandler.hpp
+        Handler/AnalysisWindowHandler.cpp
+
+        analyzewidget.h
+        analyzewidget.cpp
+        analyzewidget.ui
+
+        glViewType/glOscillogram.hpp
+        glViewType/glOscillogram.cpp
+
+        glViewType/glType.hpp
+
+        glViewTemplate/gltemplateoscillogram.h
+        glViewTemplate/gltemplateoscillogram.cpp
+        gltemplateoscillogram.ui
+
         ${TS_FILES}
         )
         
@@ -98,8 +118,10 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-
 target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::OpenGLWidgets Qt6::Gui)
+if (WIN32)
+    target_link_libraries(untitled PRIVATE opengl32)
+endif()
 
 set_target_properties(untitled PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

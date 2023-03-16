@@ -4,7 +4,8 @@
 #include "../Parser/ParseData.hpp"
 #include "../GraphGlData/Graph2DData.hpp"
 
-class TransformToFourierSpectrum {
+class TransformToOscillogram {
+public:
 
     static Graph2DData* transform(ParseData* data, long long n);
 

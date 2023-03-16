@@ -4,7 +4,8 @@
 #include "../Parser/ParseData.hpp"
 #include "../GraphGlData/Graph3DData.hpp"
 
-class TransformToFourierSpectrum {
+class TransformToSpectrogram {
+public:
 
     static Graph3DData* transform(ParseData* data, long long n);
 
