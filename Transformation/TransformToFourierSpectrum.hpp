@@ -3,6 +3,8 @@
 
 #include "../Parser/ParseData.hpp"
 #include "../GraphGlData/Graph2DData.hpp"
+#include <fftw3.h>
+#include <complex.h>
 
 class TransformToFourierSpectrum {
 public:

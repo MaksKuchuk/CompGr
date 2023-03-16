@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.5)
 if (WIN32)
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:\\Windows\\System32")
 endif()
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "fftw")
+set(FFTW_INCLUDE_DIRS "fftw")
+set(FFTW_LIBRARIES "fftw")
+set(FFTW_LIBRARY_DIRS "fftw")
+
+include_directories(${FFTW_INCLUDE_DIRS})
+link_directories(${FFTW_LIBRARY_DIRS})
 
 
 project(untitled VERSION 0.1 LANGUAGES CXX)
