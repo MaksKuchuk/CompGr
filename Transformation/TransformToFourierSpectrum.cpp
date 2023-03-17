@@ -75,31 +75,38 @@ Graph2DData* TransformToFourierSpectrum::transform(ParseData* data, long long n)
     FFTAnalysis(AVal, FTvl, new_size, new_size);
     delete[]AVal;
 
-    double min = std::numeric_limits<double>::max();
-    double max = 0;
+    double min = FTvl[0];
+    double max = FTvl[0];
     for (long long i = 0; i < new_size; ++i) {
         if (FTvl[i] < min) {
             min = FTvl[i];
-            std::cout << "min: " << min << std::endl;
         }
         if (FTvl[i] > max) {
             max = FTvl[i];
-            std::cout << "max: " << max << std::endl;
         }
     }
+
+    new_size = new_size / 2;
+    if (new_size == 0) new_size = 1;
+    double* _FTvl = new double[new_size];
+    for (int i = 0; i < new_size; ++i) {
+        _FTvl[i] = FTvl[i];
+    }
+    delete[] FTvl;
 
     Graph2DData* data2d = new Graph2DData();
 
     data2d->Hz = 1 / (new_size);
     data2d->totalSeconds = 1;
     data2d->amountOfSamples = new_size;
-    data2d->samples = FTvl;
+    data2d->samples = _FTvl;
     data2d->lcur = 0;
     data2d->rcur = (new_size) - 1;
-
     data2d->source = data->getFileName() + " Fourier transform";
     data2d->minVal = min;
-    data2d->maxVal = max;
+    data2d->maxVal = max / 10;
+    data2d->minLoc = min;
+    data2d->maxLoc = max / 10;
 
     return data2d;
 }
