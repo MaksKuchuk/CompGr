@@ -13,9 +13,10 @@ class AnalyzeWidget;
 class AnalyzeWidget : public QWidget
 {
     Q_OBJECT
-    QVBoxLayout *layout;
 
 public:
+    QVBoxLayout *layout;
+
     explicit AnalyzeWidget(QWidget *parent = nullptr);
     ~AnalyzeWidget();
 

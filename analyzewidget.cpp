@@ -38,22 +38,6 @@ void AnalyzeWidget::keyPressEvent(QKeyEvent* event) {
 
         AnalysisWindowHandler::getInstance()->moveGraph(x);
     }
-
-    if (event->key() == Qt::Key_Z ||
-        event->key() == Qt::Key_X ||
-        event->key() == Qt::Key_C ||
-        event->key() == Qt::Key_V) {
-        double lmin = 0, lmax = 0;
-
-        if (event->key() == Qt::Key_Z || event->key() == Qt::Key_X) {
-            lmin = (event->key() == Qt::Key_Z) ? -1 : 1;
-        }
-        if (event->key() == Qt::Key_C || event->key() == Qt::Key_V) {
-            lmax = (event->key() == Qt::Key_C) ? -1 : 1;
-        }
-
-        AnalysisWindowHandler::getInstance()->changeLocalScale(lmin, lmax);
-    }
 }
 
 bool AnalyzeWidget::eventFilter(QObject *obj, QEvent *event) {

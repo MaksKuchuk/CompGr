@@ -21,6 +21,12 @@ public:
                                    Graph2DData *data = nullptr);
     ~glTemplateOscillogram();
 
+    void drawMenu(QPoint globalPos);
+
+    void setLocalScale();
+
+    void setGlobalScale();
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
 
