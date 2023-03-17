@@ -3,11 +3,9 @@
 
 #include "../Parser/ParseData.hpp"
 #include "../GraphGlData/Graph2DData.hpp"
-#include <fftw3.h>
-#include <cmath>
-#include <limits>
 
 class TransformToFourierSpectrum {
+    static void FFTAnalysis(double *AVal, double *FTvl, int Nvl, int Nft);
 public:
 
     static Graph2DData* transform(ParseData* data, long long n);
