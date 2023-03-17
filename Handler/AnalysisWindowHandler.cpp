@@ -108,9 +108,6 @@ void AnalysisWindowHandler::scrollGraph(long long y) {
 void AnalysisWindowHandler::moveGraph(long long y) {
     if (ref == nullptr) return;
 
-//    if ((y > 0) && ref->data->rcur >= ref->data->amountOfSamples) return;
-//    if ((y < 0) && ref->data->lcur < 0) return;
-
     long long ch = y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
 
     if (ref->data->lcur + ch < 0) return;
@@ -119,6 +116,19 @@ void AnalysisWindowHandler::moveGraph(long long y) {
     ref->data->lcur += ch;
     ref->data->rcur += ch;
 
+
+    ref->gView->updateGraph();
+}
+
+void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
+    if (ref == nullptr) return;
+
+    double ch = 5 * scrollF(static_cast<double>(ref->data->maxLoc - ref->data->minLoc));
+
+    if (ref->data->minLoc + lmin * ch >= ref->data->maxLoc + lmax * ch) return;
+
+    ref->data->minLoc += lmin * ch;
+    ref->data->maxLoc += lmax * ch;
 
     ref->gView->updateGraph();
 }

@@ -33,15 +33,27 @@ void AnalyzeWidget::wheelEvent(QWheelEvent *event) {
 void AnalyzeWidget::keyPressEvent(QKeyEvent* event) {
     if (AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
 
-    long long x = 0;
-    if (event->key() == Qt::Key_A) {
-        x = -1;
-    } else if (event->key() == Qt::Key_D) {
-        x = 1;
-    }
-    if (x == 0) return;
+    if (event->key() == Qt::Key_A || event->key() == Qt::Key_D) {
+        long long x = (event->key() == Qt::Key_A) ? -1 : 1;
 
-    AnalysisWindowHandler::getInstance()->moveGraph(x);
+        AnalysisWindowHandler::getInstance()->moveGraph(x);
+    }
+
+    if (event->key() == Qt::Key_Z ||
+        event->key() == Qt::Key_X ||
+        event->key() == Qt::Key_C ||
+        event->key() == Qt::Key_V) {
+        double lmin = 0, lmax = 0;
+
+        if (event->key() == Qt::Key_Z || event->key() == Qt::Key_X) {
+            lmin = (event->key() == Qt::Key_Z) ? -1 : 1;
+        }
+        if (event->key() == Qt::Key_C || event->key() == Qt::Key_V) {
+            lmax = (event->key() == Qt::Key_C) ? -1 : 1;
+        }
+
+        AnalysisWindowHandler::getInstance()->changeLocalScale(lmin, lmax);
+    }
 }
 
 bool AnalyzeWidget::eventFilter(QObject *obj, QEvent *event) {

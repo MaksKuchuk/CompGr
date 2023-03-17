@@ -38,12 +38,12 @@ void glOscillogram::drawGraph() {
     double parNum = rcur - lcur + 1;
 
     double dotsNumber = parNum > 2000 ? 2000 : parNum;
-    double diff = data->maxVal - data->minVal;
+    double diff = data->maxLoc - data->minLoc;
 
     glBegin(GL_LINE_STRIP);
         for (long long i = 0; i < dotsNumber; i++) {
             x = (2 * (double)(i) / (dotsNumber - 1)) - 1;
-            y = (2 * (data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minVal) / diff) - 1;
+            y = (2 * (data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc) / diff) - 1;
             glVertex2d(x, y);
         }
     glEnd();

@@ -42,6 +42,8 @@ public:
 
     void moveGraph(long long x);
 
+    void changeLocalScale(double lmin, double lmax);
+
     ~AnalysisWindowHandler();
 
 protected:
