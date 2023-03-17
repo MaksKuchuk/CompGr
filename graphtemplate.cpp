@@ -68,6 +68,9 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
 
     QAction* selectedItem = menu->exec(globalPos);
 
+    delete menu;
+
+    if (selectedItem == nullptr) return;
     if (selectedItem->text() == "Oscillogram") {
         MainWindow::openAnalysisWindow();
 
