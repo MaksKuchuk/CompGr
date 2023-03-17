@@ -71,13 +71,13 @@ glTemplateOscillogram* AnalysisWindowHandler::getLocalRef() {
 double AnalysisWindowHandler::scrollF(long long x) {
     const double e = 2.718281828459045;
     //return pow(log(x + 3) / log(2), 2) + 1;
-    return x / 5;
+    return x / 16 + 1;
 }
 
 void AnalysisWindowHandler::scrollGraph(long long y) {
     if (ref == nullptr) return;
 
-    //if ((y > 0) && (ref->data->rcur - ref->data->lcur < 10)) return;
+    if ((y > 0) && (ref->data->rcur - ref->data->lcur < 10)) return;
 
     ref->data->lcur += 0.01 * y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
     ref->data->rcur -= 0.01 * y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
@@ -100,8 +100,25 @@ void AnalysisWindowHandler::scrollGraph(long long y) {
         }
     }
 
-    std::cout << ref->data->lcur << " " << ref->data->rcur << " " << y << std::endl;
-    std::cout << ref->gView->data->lcur << " " << ref->gView->data->rcur << " " << y << std::endl;
+    //std::cout << ref->data->lcur << " " << ref->data->rcur << " " << y << std::endl;
+
+    ref->gView->updateGraph();
+}
+
+void AnalysisWindowHandler::moveGraph(long long y) {
+    if (ref == nullptr) return;
+
+//    if ((y > 0) && ref->data->rcur >= ref->data->amountOfSamples) return;
+//    if ((y < 0) && ref->data->lcur < 0) return;
+
+    long long ch = y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
+
+    if (ref->data->lcur + ch < 0) return;
+    if (ref->data->rcur + ch >= ref->data->amountOfSamples) return;
+
+    ref->data->lcur += ch;
+    ref->data->rcur += ch;
+
 
     ref->gView->updateGraph();
 }

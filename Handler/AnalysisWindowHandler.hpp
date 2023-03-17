@@ -40,9 +40,13 @@ public:
 
     void scrollGraph(long long x);
 
+    void moveGraph(long long x);
+
     ~AnalysisWindowHandler();
 
 protected:
+
+
 
 };
 

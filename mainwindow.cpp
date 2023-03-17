@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("DSP-Kuchuk");
 
     setCentralWidget(ui->mdiArea);
+
+    instance = this;
 }
 
 MainWindow::~MainWindow()
@@ -103,6 +105,5 @@ void MainWindow::on_actionInformation_triggered() {
 
     widget->setWindowTitle("Graph information");
     widget->show();
-
 }
 
