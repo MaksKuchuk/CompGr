@@ -23,7 +23,14 @@ void AnalysisWindowHandler::analyze2DBy(Graph2DData *data, glType t) {
         AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
         gView->show();
         return;
-    } else if (t == glType::FourierSpectrum) {return;}
+    } else if (t == glType::FourierSpectrum) {
+        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data);
+        gView->resize(300, 60);
+
+        AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
+        gView->show();
+        return;
+    }
 
     //analyzeWidget->layout->addWidget();
 }

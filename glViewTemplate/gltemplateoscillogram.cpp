@@ -5,6 +5,8 @@
 #include <QVBoxLayout>
 #include "../Handler/AnalysisWindowHandler.hpp"
 
+#include <QMenu>
+
 glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, Graph2DData *data) :
     QWidget(parent),
     ui(new Ui::glTemplateOscillogram),
