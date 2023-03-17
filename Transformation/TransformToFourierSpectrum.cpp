@@ -89,12 +89,14 @@ Graph2DData* TransformToFourierSpectrum::transform(ParseData* data, long long n)
     }
 
     Graph2DData* data2d = new Graph2DData();
+
     data2d->Hz = 1 / (new_size);
     data2d->totalSeconds = 1;
     data2d->amountOfSamples = new_size;
     data2d->samples = FTvl;
     data2d->lcur = 0;
     data2d->rcur = (new_size) - 1;
+
     data2d->source = data->getFileName() + " Fourier transform";
     data2d->minVal = min;
     data2d->maxVal = max;

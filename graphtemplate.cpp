@@ -4,9 +4,13 @@
 #include "Parser/ParseData.hpp"
 #include "Handler/AnalysisWindowHandler.hpp"
 #include "Transformation/TransformToOscillogram.hpp"
+#include "Transformation/TransformToFourierSpectrum.hpp"
 
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QMenu>
+
+#include "mainwindow.h"
 
 GraphTemplate::GraphTemplate(QWidget *parent, ParseData* pData, long long ind) :
     QWidget(parent),
@@ -45,9 +49,38 @@ GraphTemplate::GraphTemplate(QWidget *parent, ParseData* pData, long long ind) :
 }
 
 void GraphTemplate::mousePressEvent(QMouseEvent *event) {
-    AnalysisWindowHandler::getInstance()->analyze2DBy(
-                TransformToOscillogram::transform(pData, ind), glType::Oscillogram);
+    if (event->button() == Qt::RightButton) {
+        drawMenu(QCursor::pos());
+    }
+}
 
+void GraphTemplate::drawMenu(QPoint globalPos) {
+    QMenu *menu = new QMenu();
+
+    QAction* action1 = new QAction(QString::fromUtf8("Oscillogram"), this);
+    menu->addAction(action1);
+    menu->addSeparator();
+    QAction* action2 = new QAction(QString::fromUtf8("Fourier spectrum"), this);
+    menu->addAction(action2);
+    menu->addSeparator();
+    QAction* action3 = new QAction(QString::fromUtf8("Waveletogram"), this);
+    menu->addAction(action3);
+
+    QAction* selectedItem = menu->exec(globalPos);
+
+    if (selectedItem->text() == "Oscillogram") {
+        MainWindow::openAnalysisWindow();
+
+        AnalysisWindowHandler::getInstance()->analyze2DBy(
+            TransformToOscillogram::transform(pData, ind), glType::Oscillogram);
+    } else if (selectedItem->text() == "Fourier spectrum") {
+        MainWindow::openAnalysisWindow();
+
+        AnalysisWindowHandler::getInstance()->analyze2DBy(
+            TransformToFourierSpectrum::transform(pData, ind), glType::FourierSpectrum);
+    } else if (selectedItem->text() == "Waveletogram") {
+        MainWindow::openAnalysisWindow();
+    }
 }
 
 GraphTemplate::~GraphTemplate()

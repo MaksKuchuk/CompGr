@@ -7,17 +7,19 @@
 class glOscillogram : public QOpenGLWidget
 {
     Q_OBJECT
-    Graph2DData* data;
 
 public:
+    Graph2DData* data;
+
     glOscillogram(QWidget *parent = nullptr, Graph2DData *data = nullptr);
 
+    void updateGraph();
 protected:
-    void drawGraph();
-
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
+
+    void drawGraph();
 };
 
 #endif

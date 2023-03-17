@@ -17,6 +17,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    static inline MainWindow* instance = nullptr;
+
+    static inline void openAnalysisWindow();
+
 private slots:
     void on_actionNew_file_triggered();
 
@@ -25,6 +29,8 @@ private slots:
     void on_actionAnalysis_triggered();
 
     void on_actionInformation_triggered();
+
+protected:
 
 private:
     Ui::MainWindow *ui;

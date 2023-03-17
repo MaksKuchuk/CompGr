@@ -5,15 +5,21 @@
 #include "../analyzewidget.h"
 #include "../Parser/ParseData.hpp"
 #include "../glViewType/glType.hpp"
+#include <cmath>
+#include "../glViewTemplate/gltemplateoscillogram.h"
 
-class AnalysisWindowHandler {
+class AnalysisWindowHandler: public QWidget {
     static inline AnalysisWindowHandler* instance = nullptr;
 
     static inline AnalyzeWidget* analyzeWidget = nullptr;
 
     AnalysisWindowHandler();
 
+    double scrollF(long long x);
+
 public:
+    glTemplateOscillogram* ref = nullptr;
+
     static AnalysisWindowHandler* getInstance();
 
     void analyze2DBy(Graph2DData *data, glType t);
@@ -28,7 +34,22 @@ public:
 
     bool isNullAnalyzeWidget();
 
+    void setLocalRef(glTemplateOscillogram* ref);
+
+    glTemplateOscillogram* getLocalRef();
+
+    void scrollGraph(long long x);
+
+    void moveGraph(long long x);
+
+    void changeLocalScale(double lmin, double lmax);
+
     ~AnalysisWindowHandler();
+
+protected:
+
+
+
 };
 
 #endif

@@ -10,7 +10,12 @@ public:
 
     double maxVal;
     double minVal;
+
+    double minLoc;
+    double maxLoc;
     unsigned long long amountOfSamples;
+
+    long long lcur, rcur;
 
     double Hz;
 

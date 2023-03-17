@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("DSP-Kuchuk");
 
     setCentralWidget(ui->mdiArea);
+    instance = this;
 }
 
 MainWindow::~MainWindow()
@@ -66,22 +67,32 @@ void MainWindow::on_actionAnalysis_triggered() {
     if (!AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
 
     QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
-    AnalysisWindowHandler *instance = AnalysisWindowHandler::getInstance();
 
-//    if (activeWidget != nullptr) {
-//        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
-//        if (grWi->nm != "GraphWidget") return;
-//        instance->addWidget(grWi->pData);
-//    }
+    openAnalysisWindow();
 
-    AnalyzeWidget* w = instance->getAnalyzeWidget();
+    AnalysisWindowHandler *instanceAn = AnalysisWindowHandler::getInstance();
 
-    ui->mdiArea->addSubWindow(w);
-    instance->getAnalyzeWidget()->setWindowTitle("Analyze");
+    if (activeWidget != nullptr) {
+        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
 
-    ui->mdiArea->subWindowList().last()->resize(400, 350);
+        if (grWi->nm == "GraphWidget") {
+            instanceAn->addWidget(grWi->pData);
+        }
+    }
+}
 
-    instance->getAnalyzeWidget()->show();
+void MainWindow::openAnalysisWindow() {
+    if (!AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
+
+    AnalysisWindowHandler *instanceAn = AnalysisWindowHandler::getInstance();
+    AnalyzeWidget* w = instanceAn->getAnalyzeWidget();
+
+    instance->ui->mdiArea->addSubWindow(w);
+    instanceAn->getAnalyzeWidget()->setWindowTitle("Analyze");
+
+    instance->ui->mdiArea->subWindowList().last()->resize(600, 450);
+
+    instanceAn->getAnalyzeWidget()->show();
 }
 
 void MainWindow::on_actionInformation_triggered() {
@@ -101,6 +112,5 @@ void MainWindow::on_actionInformation_triggered() {
 
     widget->setWindowTitle("Graph information");
     widget->show();
-
 }
 

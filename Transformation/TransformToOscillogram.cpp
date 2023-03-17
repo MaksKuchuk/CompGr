@@ -11,10 +11,16 @@ Graph2DData* TransformToOscillogram::transform(ParseData* data, long long n) {
     gr->maxVal = data->maxVal(n);
     gr->minVal = data->minVal(n);
 
+    gr->maxLoc = gr->maxVal;
+    gr->minLoc = gr->minVal;
+
     gr->amountOfSamples = data->getAmountOfSamples();
     gr->Hz = data->getHz();
     gr->totalSeconds = data->getTotalDuration();
     gr->samples = data->getChannel(n);
+
+    gr->lcur = 0;
+    gr->rcur = gr->amountOfSamples - 1;
 
     return gr;
 }

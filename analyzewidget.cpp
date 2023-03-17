@@ -2,6 +2,8 @@
 #include "ui_analyzewidget.h"
 #include "Handler/AnalysisWindowHandler.hpp"
 #include <QVBoxLayout>
+#include <QEvent>
+#include "mainwindow.h"
 
 AnalyzeWidget::AnalyzeWidget(QWidget *parent) :
     QWidget(parent),
@@ -14,6 +16,8 @@ AnalyzeWidget::AnalyzeWidget(QWidget *parent) :
     layout->setSpacing(0);
 
     this->setLayout(layout);
+
+    MainWindow::instance->installEventFilter(this);
 }
 
 AnalyzeWidget::~AnalyzeWidget()
@@ -22,9 +26,56 @@ AnalyzeWidget::~AnalyzeWidget()
     delete layout;
 }
 
+void AnalyzeWidget::wheelEvent(QWheelEvent *event) {
+    AnalysisWindowHandler::getInstance()->scrollGraph(event->angleDelta().y());
+}
+
+void AnalyzeWidget::keyPressEvent(QKeyEvent* event) {
+    if (AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
+
+    if (event->key() == Qt::Key_A || event->key() == Qt::Key_D) {
+        long long x = (event->key() == Qt::Key_A) ? -1 : 1;
+
+        AnalysisWindowHandler::getInstance()->moveGraph(x);
+    }
+
+    if (event->key() == Qt::Key_Z ||
+        event->key() == Qt::Key_X ||
+        event->key() == Qt::Key_C ||
+        event->key() == Qt::Key_V) {
+        double lmin = 0, lmax = 0;
+
+        if (event->key() == Qt::Key_Z || event->key() == Qt::Key_X) {
+            lmin = (event->key() == Qt::Key_Z) ? -1 : 1;
+        }
+        if (event->key() == Qt::Key_C || event->key() == Qt::Key_V) {
+            lmax = (event->key() == Qt::Key_C) ? -1 : 1;
+        }
+
+        AnalysisWindowHandler::getInstance()->changeLocalScale(lmin, lmax);
+    }
+}
+
+bool AnalyzeWidget::eventFilter(QObject *obj, QEvent *event) {
+    QKeyEvent *keyEvent = NULL;//event data, if this is a keystroke event
+    bool result = false;//return true to consume the keystroke
+
+    if (event->type() == QEvent::KeyPress)
+    {
+         keyEvent = dynamic_cast<QKeyEvent*>(event);
+         this->keyPressEvent(keyEvent);
+         result = true;
+    }//if type()
+
+    //### Standard event processing ###
+    else
+        result = QObject::eventFilter(obj, event);
+
+    return result;
+}
+
 void AnalyzeWidget::closeEvent(QCloseEvent *event)
 {
     AnalysisWindowHandler::getInstance()->destroyWidget();
-
 }
 

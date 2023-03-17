@@ -14,6 +14,8 @@ class GraphTemplate : public QWidget
     ParseData* pData;
     long long ind;
 
+    void drawMenu(QPoint globalPos);
+
 public:
     explicit GraphTemplate(QWidget *parent = nullptr, ParseData* pData = nullptr, long long ind = -1);
     ~GraphTemplate();
