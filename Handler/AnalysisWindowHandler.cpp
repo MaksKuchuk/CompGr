@@ -61,6 +61,7 @@ AnalyzeWidget* AnalysisWindowHandler::getAnalyzeWidget() {
 
 void AnalysisWindowHandler::destroyWidget() {
     analyzeWidget = nullptr;
+    ref = nullptr;
 }
 
 bool AnalysisWindowHandler::isNullAnalyzeWidget() {
@@ -82,6 +83,7 @@ double AnalysisWindowHandler::scrollF(long long x) {
 }
 
 void AnalysisWindowHandler::scrollGraph(long long y) {
+    if (analyzeWidget == nullptr) return;
     if (ref == nullptr) return;
 
     if ((y > 0) && (ref->data->rcur - ref->data->lcur < 10)) return;
@@ -107,12 +109,11 @@ void AnalysisWindowHandler::scrollGraph(long long y) {
         }
     }
 
-    //std::cout << ref->data->lcur << " " << ref->data->rcur << " " << y << std::endl;
-
     ref->gView->updateGraph();
 }
 
 void AnalysisWindowHandler::moveGraph(long long y) {
+    if (analyzeWidget == nullptr) return;
     if (ref == nullptr) return;
 
     long long ch = y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
@@ -128,6 +129,7 @@ void AnalysisWindowHandler::moveGraph(long long y) {
 }
 
 void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
+    if (analyzeWidget == nullptr) return;
     if (ref == nullptr) return;
 
     double ch = 5 * scrollF(static_cast<double>(ref->data->maxLoc - ref->data->minLoc));
