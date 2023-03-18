@@ -66,6 +66,7 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="actionTheme"/>
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="title">
@@ -108,6 +109,11 @@
   <action name="actionInformation">
    <property name="text">
     <string>Information</string>
+   </property>
+  </action>
+  <action name="actionTheme">
+   <property name="text">
+    <string>Theme</string>
    </property>
   </action>
  </widget>

@@ -114,3 +114,9 @@ void MainWindow::on_actionInformation_triggered() {
     widget->show();
 }
 
+
+void MainWindow::on_actionTheme_triggered()
+{
+    isDarkTheme = !isDarkTheme;
+}
+

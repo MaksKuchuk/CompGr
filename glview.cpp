@@ -1,4 +1,5 @@
 #include "glview.h"
+#include "mainwindow.h"
 
 glView::glView(QWidget *parent, long long parNum, double* data, double maxVal, double minVal) :
     QOpenGLWidget(parent),
@@ -19,11 +20,16 @@ void glView::resizeGL(int w, int h) {
 }
 
 void glView::paintGL() {
-    glClearColor(0, 0, 0, 1);
+    if (MainWindow::isDarkTheme) {
+        glClearColor(0, 0, 0, 1);
+        glColor3f(1, 1, 1);
+    } else {
+        glClearColor(1, 1, 1, 1);
+        glColor3f(0, 0, 0);
+    }
     glClear(GL_COLOR_BUFFER_BIT);
 
     glLineWidth(1);
-    glColor3f(1, 1, 1);
     drawGraph();
 }
 

@@ -21,6 +21,8 @@ public:
 
     static inline void openAnalysisWindow();
 
+    static inline bool isDarkTheme = true;
+
 private slots:
     void on_actionNew_file_triggered();
 
@@ -29,6 +31,8 @@ private slots:
     void on_actionAnalysis_triggered();
 
     void on_actionInformation_triggered();
+
+    void on_actionTheme_triggered();
 
 protected:
 

@@ -1,4 +1,5 @@
 #include "glOscillogram.hpp"
+#include "../mainwindow.h"
 
 glOscillogram::glOscillogram(QWidget *parent, Graph2DData *data) :
     QOpenGLWidget(parent),
@@ -22,14 +23,19 @@ void glOscillogram::resizeGL(int w, int h) {
 }
 
 void glOscillogram::paintGL() {
-    glClearColor(0, 0, 0, 1);
+    if (MainWindow::isDarkTheme) {
+        glClearColor(0, 0, 0, 1);
+        glColor3f(1, 1, 1);
+    } else {
+        glClearColor(1, 1, 1, 1);
+        glColor3f(0, 0, 0);
+    }
     drawGraph();
 }
 
 void glOscillogram::drawGraph() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLineWidth(1);
-    glColor3f(1, 1, 1);
 
     double x, y;
     long long lcur = data->lcur;
