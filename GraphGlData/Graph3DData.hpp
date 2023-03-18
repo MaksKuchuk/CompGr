@@ -4,6 +4,7 @@
 #include <string>
 
 class Graph3DData {
+public:
     std::string name;
     std::string source;
 
@@ -20,8 +21,8 @@ class Graph3DData {
 
     double totalSeconds;
 
-    double* samples;
-    double* depth;
+    double* samples = nullptr;
+    double* depth = nullptr;
 };
 
 #endif
