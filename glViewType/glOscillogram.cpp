@@ -8,7 +8,7 @@ glOscillogram::glOscillogram(QWidget *parent, Graph2DData *data) :
 }
 
 void glOscillogram::updateGraph() {
-    repaint();
+    repaint();    
 }
 
 void glOscillogram::initializeGL() {

@@ -3,6 +3,7 @@
 #include "../glViewType/glOscillogram.hpp"
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QPainter>
 #include "../Handler/AnalysisWindowHandler.hpp"
 
 #include <QMenu>
@@ -10,6 +11,48 @@
 #include <QLineEdit>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+
+void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
+    int margin = 65; // adjust as needed
+    int xAxisY = gView->height() + gView->y();
+    int yAxisX = margin;
+    QPainter painter(this);
+    painter.drawLine(yAxisX, 5, yAxisX, xAxisY); // draw the y-axis
+    painter.drawLine(yAxisX, xAxisY, gView->width() - margin, xAxisY); // draw the x-axis
+
+    int tickLength = 5; // adjust as needed
+    int numTicks = 10; // adjust as needed
+    int xTickSpacing = 100;
+    int yTickSpacing = 60;
+    int numTicksX = gView->width() / xTickSpacing + 1;
+    int numTicksY = gView->height() / yTickSpacing + 1;
+
+    for (int i = 0; i < numTicksX; i++) {
+        // draw tick on x-axis
+        int x = (yAxisX + i * gView->width() / numTicksX);
+        painter.drawLine(x, xAxisY, x, xAxisY + tickLength);
+
+        // add tick labels
+        QString xTickLabel = QString::number(
+                    (long long)(100*((data->lcur + i*(data->rcur - data->lcur) / numTicksX) / data->Hz)) / 100.0
+                    );
+        painter.drawText(x - tickLength / 2, xAxisY + tickLength + 10, xTickLabel);
+    }
+
+    for (int i = 0; i < numTicksY; i++) {
+        // draw tick on y-axis
+        int y = xAxisY - i * gView->height() / numTicksY;
+        painter.drawLine(yAxisX - tickLength, y, yAxisX, y);
+
+        // add tick labels
+        QString yTickLabel = QString::number(
+                    (long long)(100*(data->minLoc + i * (data->maxLoc - data->minLoc) / numTicksY)) / 100.0
+                    );
+        painter.drawText(yAxisX - tickLength - 5 - painter.fontMetrics()
+                         .horizontalAdvance(yTickLabel),
+                         y + painter.fontMetrics().height() / 2, yTickLabel);
+    }
+}
 
 glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, Graph2DData *data) :
     QWidget(parent),
@@ -31,11 +74,12 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, Graph2DData *data)
     label->setFixedHeight(22);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(0, 5, 0, 5);
+    layout->setContentsMargins(65, 5, 35, 5);
 
     layout->addWidget(gView);
-    layout->setSpacing(3);
+    layout->setSpacing(15);
     layout->addWidget(label);
+
     this->setLayout(layout);
 }
 
@@ -115,6 +159,7 @@ void glTemplateOscillogram::setLocalScale() {
     data->maxLoc = lma;
 
     gView->updateGraph();
+    this->repaint();
 }
 
 void glTemplateOscillogram::setGlobalScale() {
@@ -124,6 +169,7 @@ void glTemplateOscillogram::setGlobalScale() {
     data->minLoc = data->minVal;
 
     gView->updateGraph();
+    this->repaint();
 }
 
 void glTemplateOscillogram::mousePressEvent(QMouseEvent *event) {

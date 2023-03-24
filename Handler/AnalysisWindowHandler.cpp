@@ -121,6 +121,7 @@ void AnalysisWindowHandler::scrollGraph(long long y) {
         glTemp->data->lcur = ref->data->lcur;
         glTemp->data->rcur = ref->data->rcur;
         glTemp->gView->updateGraph();
+        glTemp->repaint();
     }
 
     if (MainWindow::grWid == nullptr) return;
@@ -156,6 +157,7 @@ void AnalysisWindowHandler::moveGraph(long long y) {
         glTemp->data->lcur = ref->data->lcur;
         glTemp->data->rcur = ref->data->rcur;
         glTemp->gView->updateGraph();
+        glTemp->repaint();
     }
 
     if (MainWindow::grWid == nullptr) return;
@@ -181,7 +183,7 @@ void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
     ref->data->minLoc += lmin * ch;
     ref->data->maxLoc += lmax * ch;
 
-    ref->gView->updateGraph();
+    ref->gView->updateGraph(); 
 }
 
 //void AnalysisWindowHandler::addWidInArr(glTemplateOscillogram* r) {
