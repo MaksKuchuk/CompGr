@@ -76,7 +76,7 @@ class ParseDataTxt : public ParseData {
     }
 
     void threadsHandle(const char* buf, size_t buf_length) {
-        int number_of_threads = 24;
+        size_t number_of_threads = std::thread::hardware_concurrency();
 
         if (number_of_threads * 4 > amountOfSamples) {
             setChannels(this, 0, buf, 0, buf_length);
