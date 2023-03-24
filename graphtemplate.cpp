@@ -40,8 +40,6 @@ GraphTemplate::GraphTemplate(QWidget *parent, ParseData* pData, long long ind) :
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-
     layout->addWidget(gView);
     layout->setSpacing(3);
     layout->addWidget(label);

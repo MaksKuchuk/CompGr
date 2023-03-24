@@ -1,12 +1,15 @@
 #include "glview.h"
 #include "mainwindow.h"
+#include <iostream>
 
 glView::glView(QWidget *parent, long long parNum, double* data, double maxVal, double minVal) :
     QOpenGLWidget(parent),
     parNum(parNum),
     data(data),
     maxVal(maxVal),
-    minVal(minVal)
+    minVal(minVal),
+    lcur(0),
+    rcur(parNum - 1)
 { }
 
 void glView::initializeGL() {
@@ -43,6 +46,23 @@ void glView::drawGraph() {
             glVertex2d(x, y);
         }
     glEnd();
+
+    if (lcur <= 0 && rcur >= parNum - 1) return;
+    glColor3f(1, 0, 0);
+    glLineWidth(1);
+
+    glBegin(GL_LINES);
+        glVertex2f(((double)lcur / parNum) * 2 - 1, -1);
+        glVertex2f(((double)lcur / parNum) * 2 - 1, 1);
+        glVertex2f(((double)rcur / parNum) * 2 - 1, -1);
+        glVertex2f(((double)rcur / parNum) * 2 - 1, 1);
+    glEnd();
+}
+
+void glView::setCurs(long long lcur, long long rcur) {
+    this->lcur = lcur;
+    this->rcur = rcur;
+    update();
 }
 
 

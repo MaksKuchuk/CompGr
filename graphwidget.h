@@ -20,8 +20,10 @@ public:
 
     ParseData *pData = nullptr;
 
+
 private:
     Ui::GraphWidget *ui;
+
 };
 
 #endif // GRAPHWIDGET_H

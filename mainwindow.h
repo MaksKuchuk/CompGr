@@ -5,6 +5,8 @@
 #include <QFileDialog>
 #include <QMdiArea>
 
+#include "graphwidget.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -22,6 +24,8 @@ public:
     static inline void openAnalysisWindow();
 
     static inline bool isDarkTheme = true;
+
+    static inline GraphWidget* grWid = nullptr;
 
 private slots:
     void on_actionNew_file_triggered();

@@ -15,7 +15,7 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
+//    layout->setSpacing(0);
 
     for (int i = 0; i < pData->getAmountOfChannels(); i++) {
         GraphTemplate *gTemp = new GraphTemplate(this, pData, i);

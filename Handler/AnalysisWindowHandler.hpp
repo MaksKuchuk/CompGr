@@ -9,15 +9,22 @@
 #include "../glViewTemplate/gltemplateoscillogram.h"
 
 class AnalysisWindowHandler: public QWidget {
-    static inline AnalysisWindowHandler* instance = nullptr;
-
-    static inline AnalyzeWidget* analyzeWidget = nullptr;
-
     AnalysisWindowHandler();
 
     double scrollF(long long x);
 
+    glTemplateOscillogram* glTemplateOscillogramArr[16]{};
+    long long glTemplateOscillogramArrSize = 0;
+
+    void addWidInArr(glTemplateOscillogram* r);
+
+    void removeWdFromArr(glTemplateOscillogram* r);
+
 public:
+    static inline AnalysisWindowHandler* instance = nullptr;
+
+    static inline AnalyzeWidget* analyzeWidget = nullptr;
+
     glTemplateOscillogram* ref = nullptr;
 
     static AnalysisWindowHandler* getInstance();

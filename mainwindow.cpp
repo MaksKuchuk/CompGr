@@ -41,7 +41,9 @@ void MainWindow::on_actionNew_file_triggered()
 
     ParseData *pData = Parser::parse(str.toStdString());
 
-    QWidget *widget = new GraphWidget(ui->mdiArea, pData);
+    grWid = new GraphWidget(ui->mdiArea, pData);
+
+    QWidget *widget = grWid;
     //QWidget *widget = new GraphWidget(ui->mdiArea, nullptr);
 
     ui->mdiArea->addSubWindow(widget);

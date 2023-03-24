@@ -10,8 +10,11 @@ class glView : public QOpenGLWidget
     long long parNum;
     double maxVal;
     double minVal;
+    long long lcur, rcur;
 
 public:
+    void setCurs(long long lcur, long long rcur);
+
     glView(QWidget *parent = nullptr,
            long long parNum = 0,
            double* data = nullptr,

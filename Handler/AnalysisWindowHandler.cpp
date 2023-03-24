@@ -2,6 +2,9 @@
 #include "../glViewTemplate/gltemplateoscillogram.h"
 #include "../Transformation/TransformToOscillogram.hpp"
 #include "../Transformation/TransformToFourierSpectrum.hpp"
+#include "../mainwindow.h"
+#include "../glview.h"
+#include "../graphtemplate.h"
 #include <QWheelEvent>
 
 #include <iostream>
@@ -110,6 +113,26 @@ void AnalysisWindowHandler::scrollGraph(long long y) {
     }
 
     ref->gView->updateGraph();
+
+    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->data->lcur = ref->data->lcur;
+        glTemp->data->rcur = ref->data->rcur;
+        glTemp->gView->updateGraph();
+    }
+
+    if (MainWindow::grWid == nullptr) return;
+
+    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
+        GraphTemplate* grTemp =
+                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
+
+        static_cast<glView*>
+                (grTemp->layout()->itemAt(0)->widget())->
+                setCurs(ref->data->lcur, ref->data->rcur);
+    }
 }
 
 void AnalysisWindowHandler::moveGraph(long long y) {
@@ -124,8 +147,27 @@ void AnalysisWindowHandler::moveGraph(long long y) {
     ref->data->lcur += ch;
     ref->data->rcur += ch;
 
-
     ref->gView->updateGraph();
+
+    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->data->lcur = ref->data->lcur;
+        glTemp->data->rcur = ref->data->rcur;
+        glTemp->gView->updateGraph();
+    }
+
+    if (MainWindow::grWid == nullptr) return;
+
+    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
+        GraphTemplate* grTemp =
+                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
+
+        static_cast<glView*>
+                (grTemp->layout()->itemAt(0)->widget())->
+                setCurs(ref->data->lcur, ref->data->rcur);
+    }
 }
 
 void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
@@ -141,6 +183,28 @@ void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
 
     ref->gView->updateGraph();
 }
+
+//void AnalysisWindowHandler::addWidInArr(glTemplateOscillogram* r) {
+//    if (glTemplateOscillogramArrSize >= 16) return;
+//    glTemplateOscillogramArr[glTemplateOscillogramArrSize] = r;
+//    glTemplateOscillogramArrSize++;
+//}
+
+//void AnalysisWindowHandler::removeWdFromArr(glTemplateOscillogram* r) {
+//    long long pos = 0;
+//    for (long long i = 0; i < glTemplateOscillogramArrSize; i++) {
+//        if (glTemplateOscillogramArr[i] == r) {
+//            pos = i;
+//            break;
+//        }
+//    }
+
+//    for (long long i = pos; i < glTemplateOscillogramArrSize - 1; i++) {
+//        glTemplateOscillogramArr[i] = glTemplateOscillogramArr[i + 1];
+//    }
+
+//    glTemplateOscillogramArrSize--;
+//}
 
 
 
