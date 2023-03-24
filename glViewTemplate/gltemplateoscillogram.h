@@ -27,7 +27,11 @@ public:
 
     void setGlobalScale();
 
-    void selectScale(QPoint globalPos);
+    void selectScale();
+
+    void selectBias();
+
+    void setGlobalBias();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

@@ -5,6 +5,9 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include "../Handler/AnalysisWindowHandler.hpp"
+#include "../mainwindow.h"
+#include "../graphtemplate.h"
+#include "../glview.h"
 
 #include <QMenu>
 #include <QDialog>
@@ -95,6 +98,12 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     menu->addAction(action3);
     QAction* action4 = new QAction(QString::fromUtf8("Set scale"), this);
     menu->addAction(action4);
+    menu->addSeparator();
+    QAction* action5 = new QAction(QString::fromUtf8("Global bias"), this);
+    menu->addAction(action5);
+    QAction* action6 = new QAction(QString::fromUtf8("Set bias"), this);
+    menu->addAction(action6);
+
 
     QAction* selectedItem = menu->exec(globalPos);
 
@@ -109,13 +118,17 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     } else if (selectedItem->text() == "Global scale") {
         setGlobalScale();
     } else if (selectedItem->text() == "Set scale") {
-        selectScale(globalPos);
+        selectScale();
+    } else if (selectedItem->text() == "Global bias") {
+        setGlobalBias();
+    } else if (selectedItem->text() == "Set bias") {
+        selectBias();
     }
 }
 
-void glTemplateOscillogram::selectScale(QPoint globalPos) {
+void glTemplateOscillogram::selectScale() {
     QDialog dlg(this);
-    dlg.setWindowTitle(tr("My dialog"));
+    dlg.setWindowTitle(tr("Y scale"));
 
     QLineEdit *ledit1 = new QLineEdit(&dlg);
     QLineEdit *ledit2 = new QLineEdit(&dlg);
@@ -140,7 +153,98 @@ void glTemplateOscillogram::selectScale(QPoint globalPos) {
         data->minLoc = ledit2->text().toDouble();
 
         gView->updateGraph();
+        this->repaint();
     }
+}
+
+void glTemplateOscillogram::selectBias() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("X bias"));
+
+    QLineEdit *ledit1 = new QLineEdit(&dlg);
+    QLineEdit *ledit2 = new QLineEdit(&dlg);
+
+    QDialogButtonBox *btn_box = new QDialogButtonBox(&dlg);
+    btn_box->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(btn_box, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(btn_box, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    QFormLayout *layout = new QFormLayout();
+    layout->addRow(tr("X left border"), ledit1);
+    layout->addRow(tr("X right border"), ledit2);
+    layout->addWidget(btn_box);
+
+    dlg.setLayout(layout);
+
+    if(dlg.exec() == QDialog::Accepted) {
+        if (data == nullptr ||
+                ledit1->text().toLongLong() < 0 ||
+                ledit2->text().toLongLong() >= data->amountOfSamples ||
+                ledit1->text().toLongLong() >= ledit2->text().toLongLong()) return;
+
+        data->lcur = ledit1->text().toLongLong();
+        data->rcur = ledit2->text().toLongLong();
+
+        for (long long i = 0;
+             i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count(); i++) {
+            glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                    (AnalysisWindowHandler::getInstance()->
+                     analyzeWidget->layout->itemAt(i)->widget());
+
+            glTemp->data->lcur = data->lcur;
+            glTemp->data->rcur = data->rcur;
+            glTemp->gView->updateGraph();
+            glTemp->repaint();
+        }
+
+        if (MainWindow::grWid == nullptr) return;
+
+        for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
+            GraphTemplate* grTemp =
+                    static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
+
+            static_cast<glView*>
+                    (grTemp->layout()->itemAt(0)->widget())->
+                    setCurs(data->lcur, data->rcur);
+        }
+
+        gView->updateGraph();
+        this->repaint();
+    }
+}
+
+void glTemplateOscillogram::setGlobalBias() {
+    if (data == nullptr) return;
+
+    data->lcur = 0;
+    data->rcur = data->amountOfSamples - 1;
+
+    for (long long i = 0;
+         i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count(); i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (AnalysisWindowHandler::getInstance()->
+                 analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->data->lcur = 0;
+        glTemp->data->rcur = data->amountOfSamples - 1;
+        glTemp->gView->updateGraph();
+        glTemp->repaint();
+    }
+
+    if (MainWindow::grWid == nullptr) return;
+
+    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
+        GraphTemplate* grTemp =
+                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
+
+        static_cast<glView*>
+                (grTemp->layout()->itemAt(0)->widget())->
+                setCurs(data->lcur, data->rcur);
+    }
+
+    gView->updateGraph();
+    this->repaint();
 }
 
 void glTemplateOscillogram::setLocalScale() {
