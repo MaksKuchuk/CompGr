@@ -27,6 +27,8 @@ public:
 
     void setGlobalScale();
 
+    void selectScale(QPoint globalPos);
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
 

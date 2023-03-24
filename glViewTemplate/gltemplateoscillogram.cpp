@@ -6,6 +6,10 @@
 #include "../Handler/AnalysisWindowHandler.hpp"
 
 #include <QMenu>
+#include <QDialog>
+#include <QLineEdit>
+#include <QDialogButtonBox>
+#include <QFormLayout>
 
 glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, Graph2DData *data) :
     QWidget(parent),
@@ -43,9 +47,10 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     menu->addSeparator();
     QAction* action2 = new QAction(QString::fromUtf8("Local scale"), this);
     menu->addAction(action2);
-    menu->addSeparator();
     QAction* action3 = new QAction(QString::fromUtf8("Global scale"), this);
     menu->addAction(action3);
+    QAction* action4 = new QAction(QString::fromUtf8("Set scale"), this);
+    menu->addAction(action4);
 
     QAction* selectedItem = menu->exec(globalPos);
 
@@ -59,6 +64,38 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
         setLocalScale();
     } else if (selectedItem->text() == "Global scale") {
         setGlobalScale();
+    } else if (selectedItem->text() == "Set scale") {
+        selectScale(globalPos);
+    }
+}
+
+void glTemplateOscillogram::selectScale(QPoint globalPos) {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("My dialog"));
+
+    QLineEdit *ledit1 = new QLineEdit(&dlg);
+    QLineEdit *ledit2 = new QLineEdit(&dlg);
+
+    QDialogButtonBox *btn_box = new QDialogButtonBox(&dlg);
+    btn_box->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(btn_box, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(btn_box, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    QFormLayout *layout = new QFormLayout();
+    layout->addRow(tr("Y maximum"), ledit1);
+    layout->addRow(tr("Y minimum:"), ledit2);
+    layout->addWidget(btn_box);
+
+    dlg.setLayout(layout);
+
+    if(dlg.exec() == QDialog::Accepted) {
+        if (data == nullptr) return;
+
+        data->maxLoc = ledit1->text().toDouble();
+        data->minLoc = ledit2->text().toDouble();
+
+        gView->updateGraph();
     }
 }
 
