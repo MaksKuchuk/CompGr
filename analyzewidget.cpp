@@ -4,6 +4,9 @@
 #include <QVBoxLayout>
 #include <QEvent>
 #include "mainwindow.h"
+#include <QScrollBar>
+
+#include <iostream>
 
 AnalyzeWidget::AnalyzeWidget(QWidget *parent) :
     QWidget(parent),
@@ -16,6 +19,10 @@ AnalyzeWidget::AnalyzeWidget(QWidget *parent) :
     layout->setSpacing(0);
 
     this->setLayout(layout);
+
+    QScrollBar* scr = new QScrollBar(Qt::Horizontal, this);
+
+    layout->addWidget(scr);
 
     MainWindow::instance->installEventFilter(this);
 }

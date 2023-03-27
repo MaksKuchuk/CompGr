@@ -217,7 +217,7 @@ void glTemplateOscillogram::selectBias() {
         data->rcur = rx;
 
         for (long long i = 0;
-             i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count(); i++) {
+             i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count() - 1; i++) {
             glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
                     (AnalysisWindowHandler::getInstance()->
                      analyzeWidget->layout->itemAt(i)->widget());
@@ -251,7 +251,7 @@ void glTemplateOscillogram::setGlobalBias() {
     data->rcur = data->amountOfSamples - 1;
 
     for (long long i = 0;
-         i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count(); i++) {
+         i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count() - 1; i++) {
         glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
                 (AnalysisWindowHandler::getInstance()->
                  analyzeWidget->layout->itemAt(i)->widget());

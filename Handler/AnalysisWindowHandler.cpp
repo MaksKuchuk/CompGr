@@ -6,6 +6,7 @@
 #include "../glview.h"
 #include "../graphtemplate.h"
 #include <QWheelEvent>
+#include <QScrollBar>
 
 #include <iostream>
 
@@ -19,23 +20,31 @@ AnalysisWindowHandler* AnalysisWindowHandler::getInstance() {
 void AnalysisWindowHandler::analyze2DBy(Graph2DData *data, glType t) {
     if (analyzeWidget == nullptr) return;
 
+    long long layoutSize = AnalysisWindowHandler::getAnalyzeWidget()->layout->count();
+
     if (t == glType::Oscillogram) {
         glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data);
         gView->resize(300, 60);
 
-        AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
+        AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
+        //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
         gView->show();
         return;
     } else if (t == glType::FourierSpectrum) {
         glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data);
         gView->resize(300, 60);
 
-        AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
+        AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
+        //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
         gView->show();
         return;
     }
 
-    //analyzeWidget->layout->addWidget();
+    QScrollBar* scr = static_cast<QScrollBar*>(AnalysisWindowHandler::getAnalyzeWidget()
+                            ->layout->itemAt(layoutSize - 1)->widget());
+
+    scr->setMaximum(data->amountOfSamples - (data->rcur - data->lcur));
+    // TODO: set length scr->setLength()
 }
 
 void AnalysisWindowHandler::analyze3DBy(Graph2DData *data) {
@@ -114,7 +123,7 @@ void AnalysisWindowHandler::scrollGraph(long long y) {
 
     ref->gView->updateGraph();
 
-    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
         glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
                 (analyzeWidget->layout->itemAt(i)->widget());
 
@@ -150,7 +159,7 @@ void AnalysisWindowHandler::moveGraph(long long y) {
 
     ref->gView->updateGraph();
 
-    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+    for (long long i = 0; i < analyzeWidget->layout->count()  - 1; i++) {
         glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
                 (analyzeWidget->layout->itemAt(i)->widget());
 
@@ -187,7 +196,7 @@ void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
 }
 
 void AnalysisWindowHandler::changeSingleLocalScale(double lmin, double lmax) {
-    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
         glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
                 (analyzeWidget->layout->itemAt(i)->widget());
 
@@ -200,7 +209,7 @@ void AnalysisWindowHandler::changeSingleLocalScale(double lmin, double lmax) {
 
 void AnalysisWindowHandler::setSingleGlobalScale() {
     double lmi = 0, lma = 0;
-    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
         glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
                 (analyzeWidget->layout->itemAt(i)->widget());
 
