@@ -186,27 +186,41 @@ void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
     ref->gView->updateGraph(); 
 }
 
-//void AnalysisWindowHandler::addWidInArr(glTemplateOscillogram* r) {
-//    if (glTemplateOscillogramArrSize >= 16) return;
-//    glTemplateOscillogramArr[glTemplateOscillogramArrSize] = r;
-//    glTemplateOscillogramArrSize++;
-//}
+void AnalysisWindowHandler::changeSingleLocalScale(double lmin, double lmax) {
+    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
 
-//void AnalysisWindowHandler::removeWdFromArr(glTemplateOscillogram* r) {
-//    long long pos = 0;
-//    for (long long i = 0; i < glTemplateOscillogramArrSize; i++) {
-//        if (glTemplateOscillogramArr[i] == r) {
-//            pos = i;
-//            break;
-//        }
-//    }
+        glTemp->data->minLoc = lmin;
+        glTemp->data->maxLoc = lmax;
+        glTemp->gView->updateGraph();
+        glTemp->repaint();
+    }
+}
 
-//    for (long long i = pos; i < glTemplateOscillogramArrSize - 1; i++) {
-//        glTemplateOscillogramArr[i] = glTemplateOscillogramArr[i + 1];
-//    }
+void AnalysisWindowHandler::setSingleGlobalScale() {
+    double lmi = 0, lma = 0;
+    for (long long i = 0; i < analyzeWidget->layout->count(); i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
 
-//    glTemplateOscillogramArrSize--;
-//}
+        if (i == 0) {
+            lmi = glTemp->data->minVal;
+            lma = glTemp->data->maxVal;
+        }
+
+        if (lmi > glTemp->data->minVal) lmi = glTemp->data->minVal;
+        if (lma < glTemp->data->maxVal) lma = glTemp->data->maxVal;
+    }
+
+    if (lmi != 0 && lma != 0) {
+        changeSingleLocalScale(lmi, lma);
+    }
+
+}
+
+
+
 
 
 

@@ -103,6 +103,11 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     menu->addAction(action5);
     QAction* action6 = new QAction(QString::fromUtf8("Set bias"), this);
     menu->addAction(action6);
+    menu->addSeparator();
+    QAction* action7 = new QAction(QString::fromUtf8("Single local scale"), this);
+    menu->addAction(action7);
+    QAction* action8 = new QAction(QString::fromUtf8("Single global scale"), this);
+    menu->addAction(action8);
 
 
     QAction* selectedItem = menu->exec(globalPos);
@@ -123,7 +128,30 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
         setGlobalBias();
     } else if (selectedItem->text() == "Set bias") {
         selectBias();
+    } else if (selectedItem->text() == "Single local scale") {
+        selectSingleLocalScale();
+    } else if (selectedItem->text() == "Single global scale") {
+        selectSingleGlobalScale();
     }
+}
+
+void glTemplateOscillogram::selectSingleLocalScale() {
+    if (data == nullptr) return;
+
+    double lmi, lma;
+
+    lmi = data->samples[data->lcur];
+    lma = data->samples[data->lcur];
+    for (long long i = data->lcur; i <= data->rcur; i++) {
+        if (lmi > data->samples[i]) lmi = data->samples[i];
+        if (lma < data->samples[i]) lma = data->samples[i];
+    }
+
+    AnalysisWindowHandler::changeSingleLocalScale(lmi, lma);
+}
+
+void glTemplateOscillogram::selectSingleGlobalScale() {
+    AnalysisWindowHandler::setSingleGlobalScale();
 }
 
 void glTemplateOscillogram::selectScale() {
@@ -171,20 +199,22 @@ void glTemplateOscillogram::selectBias() {
     connect(btn_box, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
 
     QFormLayout *layout = new QFormLayout();
-    layout->addRow(tr("X left border"), ledit1);
-    layout->addRow(tr("X right border"), ledit2);
+    layout->addRow(tr("X left seconds"), ledit1);
+    layout->addRow(tr("X right seconds"), ledit2);
     layout->addWidget(btn_box);
 
     dlg.setLayout(layout);
 
     if(dlg.exec() == QDialog::Accepted) {
-        if (data == nullptr ||
-                ledit1->text().toLongLong() < 0 ||
-                ledit2->text().toLongLong() >= data->amountOfSamples ||
-                ledit1->text().toLongLong() >= ledit2->text().toLongLong()) return;
+        if (data == nullptr || ledit1->text().toDouble() >= ledit2->text().toDouble()) return;
 
-        data->lcur = ledit1->text().toLongLong();
-        data->rcur = ledit2->text().toLongLong();
+        long long lx = ledit1->text().toDouble() * data->Hz;
+        long long rx = ledit2->text().toDouble() * data->Hz;
+
+        if (lx < 0 || rx >= data->amountOfSamples) return;
+
+        data->lcur = lx;
+        data->rcur = rx;
 
         for (long long i = 0;
              i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count(); i++) {

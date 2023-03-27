@@ -51,6 +51,10 @@ public:
 
     void changeLocalScale(double lmin, double lmax);
 
+    static void changeSingleLocalScale(double lmin, double lmax);
+
+    static void setSingleGlobalScale();
+
     ~AnalysisWindowHandler();
 
 protected:
