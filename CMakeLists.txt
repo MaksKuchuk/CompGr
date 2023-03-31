@@ -52,6 +52,9 @@ set(PROJECT_SOURCES
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
 
+        Modeling/modeling.h
+        Modeling/modeling.cpp
+
         graphinfo.cpp
         graphinfo.h
         graphinfo.ui
