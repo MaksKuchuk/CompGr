@@ -7,7 +7,7 @@
     T - sampling step
     n - parameter
 */
-Graph2DData *Modeling::delayedSingleImpulse(const long long N, const double T, const long long n) {
+Graph2DData *Modeling::delayedSingleImpulse(const long long N, const long long n, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_1";
     data2D->source = "Delayed Single Impulse n = " + std::to_string(n);
@@ -17,14 +17,14 @@ Graph2DData *Modeling::delayedSingleImpulse(const long long N, const double T, c
 
     data2D->maxLoc = 1;
     data2D->minLoc = 0;
-    data2D->amountOfSamples = N;
+    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
-    data2D->Hz = 1 / T;
+    data2D->Hz = 1;
 
-    data2D->totalSeconds = (N - 1) * T;
+    data2D->totalSeconds = (N - 1);
 
     double *samples = new double[N]();
     samples[n] = 1;
@@ -38,7 +38,7 @@ Graph2DData *Modeling::delayedSingleImpulse(const long long N, const double T, c
     T - sampling step
     n - parameter
 */
-Graph2DData *Modeling::delayedSingleHop(const long long N, const double T, const long long n) {
+Graph2DData *Modeling::delayedSingleHop(const long long N, const long long n, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_2";
     data2D->source = "Delayed Single Hop n = " + std::to_string(n);
@@ -48,14 +48,14 @@ Graph2DData *Modeling::delayedSingleHop(const long long N, const double T, const
 
     data2D->maxLoc = 1;
     data2D->minLoc = 0;
-    data2D->amountOfSamples = N;
+    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
-    data2D->Hz = 1 / T;
+    data2D->Hz = 1;
 
-    data2D->totalSeconds = (N - 1) * T;
+    data2D->totalSeconds = (N - 1);
 
     double *samples = new double[N]();
     for (unsigned long long i = n; i < N; ++i) {
@@ -74,20 +74,20 @@ Graph2DData *Modeling::delayedSingleHop(const long long N, const double T, const
 */
 Graph2DData *Modeling::sampledDecreasingExponent
         (
-                const long long N, const double T, const int a
+                const long long N, const int a, Graph2DData* data
         ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_3";
     data2D->source = "Sampled Decreased Exponent a = " + std::to_string(a);
 
-    data2D->amountOfSamples = N;
+    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
-    data2D->Hz = 1 / T;
+    data2D->Hz = 1;
 
-    data2D->totalSeconds = (N - 1) * T;
+    data2D->totalSeconds = (N - 1);
 
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
@@ -115,8 +115,8 @@ Graph2DData *Modeling::sampledDecreasingExponent
 */
 Graph2DData *Modeling::sampledSineWave
         (
-                const long long N, const double T,
-                const int a, const double circFreq, const double initPhase
+                const long long N,
+                const int a, const double circFreq, const double initPhase, Graph2DData* data
         ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_4";
@@ -124,14 +124,14 @@ Graph2DData *Modeling::sampledSineWave
                      + " circle frequency = " + std::to_string(circFreq)
                      + " initial phase = " + std::to_string(initPhase);
 
-    data2D->amountOfSamples = N;
+    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
-    data2D->Hz = 1 / T;
+    data2D->Hz = 1;
 
-    data2D->totalSeconds = (N - 1) * T;
+    data2D->totalSeconds = (N - 1);
 
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
@@ -152,19 +152,19 @@ Graph2DData *Modeling::sampledSineWave
     return data2D;
 }
 
-Graph2DData *Modeling::meander(const long long N, const double T, const long long L) {
+Graph2DData *Modeling::meander(const long long N, const long long L, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_5";
     data2D->source = "Meander period = " + std::to_string(L);
 
-    data2D->amountOfSamples = N;
+    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
-    data2D->Hz = 1 / T;
+    data2D->Hz = 1;
 
-    data2D->totalSeconds = (N - 1) * T;
+    data2D->totalSeconds = (N - 1);
 
     double min = 1;
     double max = -1;
@@ -185,19 +185,19 @@ Graph2DData *Modeling::meander(const long long N, const double T, const long lon
     return data2D;
 }
 
-Graph2DData *Modeling::saw(const long long N, const double T, const long long L) {
+Graph2DData *Modeling::saw(const long long N, const long long L, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_6";
     data2D->source = "Saw period = " + std::to_string(L);
 
-    data2D->amountOfSamples = N;
+    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
-    data2D->Hz = 1 / T;
+    data2D->Hz = 1;
 
-    data2D->totalSeconds = (N - 1) * T;
+    data2D->totalSeconds = (N - 1);
 
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
