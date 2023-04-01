@@ -40,11 +40,7 @@ void AnalysisWindowHandler::analyze2DBy(Graph2DData *data, glType t) {
         return;
     }
 
-    QScrollBar* scr = static_cast<QScrollBar*>(AnalysisWindowHandler::getAnalyzeWidget()
-                            ->layout->itemAt(layoutSize - 1)->widget());
-
-    scr->setMaximum(data->amountOfSamples - (data->rcur - data->lcur));
-    // TODO: set length scr->setLength()
+    changeScrollBar(data->amountOfSamples, data->lcur, data->rcur);
 }
 
 void AnalysisWindowHandler::analyze3DBy(Graph2DData *data) {
@@ -123,26 +119,8 @@ void AnalysisWindowHandler::scrollGraph(long long y) {
 
     ref->gView->updateGraph();
 
-    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
-        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
-                (analyzeWidget->layout->itemAt(i)->widget());
-
-        glTemp->data->lcur = ref->data->lcur;
-        glTemp->data->rcur = ref->data->rcur;
-        glTemp->gView->updateGraph();
-        glTemp->repaint();
-    }
-
-    if (MainWindow::grWid == nullptr) return;
-
-    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
-        GraphTemplate* grTemp =
-                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
-
-        static_cast<glView*>
-                (grTemp->layout()->itemAt(0)->widget())->
-                setCurs(ref->data->lcur, ref->data->rcur);
-    }
+    updateGraphs(ref);
+    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
 }
 
 void AnalysisWindowHandler::moveGraph(long long y) {
@@ -159,26 +137,8 @@ void AnalysisWindowHandler::moveGraph(long long y) {
 
     ref->gView->updateGraph();
 
-    for (long long i = 0; i < analyzeWidget->layout->count()  - 1; i++) {
-        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
-                (analyzeWidget->layout->itemAt(i)->widget());
-
-        glTemp->data->lcur = ref->data->lcur;
-        glTemp->data->rcur = ref->data->rcur;
-        glTemp->gView->updateGraph();
-        glTemp->repaint();
-    }
-
-    if (MainWindow::grWid == nullptr) return;
-
-    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
-        GraphTemplate* grTemp =
-                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
-
-        static_cast<glView*>
-                (grTemp->layout()->itemAt(0)->widget())->
-                setCurs(ref->data->lcur, ref->data->rcur);
-    }
+    updateGraphs(ref);
+    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
 }
 
 void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
@@ -192,7 +152,7 @@ void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
     ref->data->minLoc += lmin * ch;
     ref->data->maxLoc += lmax * ch;
 
-    ref->gView->updateGraph(); 
+    ref->gView->updateGraph();
 }
 
 void AnalysisWindowHandler::changeSingleLocalScale(double lmin, double lmax) {
@@ -228,8 +188,65 @@ void AnalysisWindowHandler::setSingleGlobalScale() {
 
 }
 
+void AnalysisWindowHandler::changeScrollBar(long long amount, long long lcur, long long rcur) {
+    if (analyzeWidget == nullptr) return;
 
+    QScrollBar* scr = static_cast<QScrollBar*>(analyzeWidget
+                            ->layout->itemAt(analyzeWidget->layout->count() - 1)->widget());
 
+    scr->setRange(0, amount - (rcur - lcur));
+    scr->setValue(lcur);
+}
+
+void AnalysisWindowHandler::updateGraphs(glTemplateOscillogram* rf) {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->data->lcur = rf->data->lcur;
+        glTemp->data->rcur = rf->data->rcur;
+        glTemp->gView->updateGraph();
+        glTemp->repaint();
+    }
+
+    if (MainWindow::grWid == nullptr) return;
+
+    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
+        GraphTemplate* grTemp =
+                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
+
+        static_cast<glView*>
+                (grTemp->layout()->itemAt(0)->widget())->
+                setCurs(rf->data->lcur, rf->data->rcur);
+    }
+}
+
+void AnalysisWindowHandler::scrollBarHasChanged() {
+    if (analyzeWidget == nullptr) return;
+
+    QScrollBar* scr = static_cast<QScrollBar*>(analyzeWidget
+                                ->layout->itemAt(analyzeWidget->layout->count() - 1)->widget());
+
+    long long lc = scr->value();
+
+    long long lcurtmp = static_cast<glTemplateOscillogram*>(
+        analyzeWidget->layout->itemAt(0)->widget())->data->lcur;
+
+    long long rcurtmp = static_cast<glTemplateOscillogram*>(
+                analyzeWidget->layout->itemAt(0)->widget())->data->rcur;
+
+    long long diff = rcurtmp - lcurtmp;
+
+    long long rc = lc + diff;
+
+    glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+            (analyzeWidget->layout->itemAt(0)->widget());
+
+    glTemp->data->lcur = lc;
+    glTemp->data->rcur = rc;
+
+    updateGraphs(glTemp);
+}
 
 
 

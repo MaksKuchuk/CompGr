@@ -24,6 +24,9 @@ AnalyzeWidget::AnalyzeWidget(QWidget *parent) :
 
     layout->addWidget(scr);
 
+    connect(scr, &QScrollBar::valueChanged,
+            AnalysisWindowHandler::getInstance(), &AnalysisWindowHandler::scrollBarHasChanged);
+
     MainWindow::instance->installEventFilter(this);
 }
 

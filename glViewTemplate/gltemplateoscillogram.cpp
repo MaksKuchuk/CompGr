@@ -118,6 +118,7 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     if (selectedItem->text() == "Close") {
         if (AnalysisWindowHandler::getInstance()->getLocalRef() == nullptr) return;
         AnalysisWindowHandler::getInstance()->getLocalRef()->deleteLater();
+        AnalysisWindowHandler::getInstance()->setLocalRef(nullptr);
     } else if (selectedItem->text() == "Local scale") {
         setLocalScale();
     } else if (selectedItem->text() == "Global scale") {
@@ -216,28 +217,7 @@ void glTemplateOscillogram::selectBias() {
         data->lcur = lx;
         data->rcur = rx;
 
-        for (long long i = 0;
-             i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count() - 1; i++) {
-            glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
-                    (AnalysisWindowHandler::getInstance()->
-                     analyzeWidget->layout->itemAt(i)->widget());
-
-            glTemp->data->lcur = data->lcur;
-            glTemp->data->rcur = data->rcur;
-            glTemp->gView->updateGraph();
-            glTemp->repaint();
-        }
-
-        if (MainWindow::grWid == nullptr) return;
-
-        for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
-            GraphTemplate* grTemp =
-                    static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
-
-            static_cast<glView*>
-                    (grTemp->layout()->itemAt(0)->widget())->
-                    setCurs(data->lcur, data->rcur);
-        }
+        AnalysisWindowHandler::updateGraphs(this);
 
         gView->updateGraph();
         this->repaint();
@@ -250,28 +230,7 @@ void glTemplateOscillogram::setGlobalBias() {
     data->lcur = 0;
     data->rcur = data->amountOfSamples - 1;
 
-    for (long long i = 0;
-         i < AnalysisWindowHandler::getInstance()->analyzeWidget->layout->count() - 1; i++) {
-        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
-                (AnalysisWindowHandler::getInstance()->
-                 analyzeWidget->layout->itemAt(i)->widget());
-
-        glTemp->data->lcur = 0;
-        glTemp->data->rcur = data->amountOfSamples - 1;
-        glTemp->gView->updateGraph();
-        glTemp->repaint();
-    }
-
-    if (MainWindow::grWid == nullptr) return;
-
-    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
-        GraphTemplate* grTemp =
-                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
-
-        static_cast<glView*>
-                (grTemp->layout()->itemAt(0)->widget())->
-                setCurs(data->lcur, data->rcur);
-    }
+    AnalysisWindowHandler::updateGraphs(this);
 
     gView->updateGraph();
     this->repaint();

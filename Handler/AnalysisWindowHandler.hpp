@@ -51,16 +51,19 @@ public:
 
     void changeLocalScale(double lmin, double lmax);
 
+    static void changeScrollBar(long long amount, long long lcur, long long rcur);
+
     static void changeSingleLocalScale(double lmin, double lmax);
 
     static void setSingleGlobalScale();
 
+    static void updateGraphs(glTemplateOscillogram* rf);
+
     ~AnalysisWindowHandler();
 
-protected:
+public slots:
 
-
-
+    void scrollBarHasChanged();
 };
 
 #endif
