@@ -15,19 +15,12 @@
 
 class ParseDataTxt : public ParseData {
     void setChannelsNames(const QString &string_names) {
-        QString cur;
-        int i{};
-        for (QChar c: string_names) {
-            if (c != ';')
-                cur += c;
-            else {
-                channels_names[i] = cur;
-                i++;
-                cur.clear();
-            }
+
+        auto list_names = string_names.split(';');
+
+        for (int i = 0; i < amountOfChannels; ++i) {
+            channels_names[i] = list_names[i];
         }
-        if (!cur.toStdWString().empty())
-            channels_names[i] = cur;
     }
 
     static void getData(QTextStream &file, auto &val) {
@@ -57,66 +50,28 @@ class ParseDataTxt : public ParseData {
         val_to = str_from.toDouble();
     }
 
-    static void setChannels(ParseDataTxt *data, size_t start_line,
-                            const QString& buf, size_t start_buf, size_t end) {
-        QString cur_num{};
-        size_t i{}, j = start_line;
-        for (size_t p = start_buf; p <= end; ++p) {
-            if ((buf[p] == ' ' || buf[p] == '\n') && !cur_num.isEmpty()) {
-                data->channels[i][j] = cur_num.toDouble();
-                cur_num.clear();
-                ++i;
-                if (i >= data->amountOfChannels) {
-                    i = 0;
-                    ++j;
-                }
-            } else {
-                if (buf[p] != ' ' && buf[p] != '\n' && buf[p] != '\r')
-                    cur_num += buf[p];
+    static void setChannels(ParseDataTxt *data, const QList<QByteArray>& list,
+                            qint64 first, qint64 last) {
+        for (qint64 p = first; p < last; ++p) {
+            auto nums = list[p].split(' ');
+            for (qint64 i = 0; i < data->amountOfChannels; ++i) {
+                data->channels[i][p] = nums[i].toDouble();
             }
         }
     }
 
-    void threadsHandle(const QString& buf) {
+    void threadsHandle(const QList<QByteArray>& list) {
         size_t number_of_threads = std::thread::hardware_concurrency();
-        size_t buf_length = buf.size() - 1;
 
         if (number_of_threads * 4 > amountOfSamples) {
-            setChannels(this, 0, buf, 0, buf_length);
+            setChannels(this, list, 0, amountOfSamples);
             return;
         }
 
-        auto *position_end_line = new size_t[number_of_threads]();
-        auto *position_end_buf = new size_t[number_of_threads]();
-
-        for (size_t y = 0; y < number_of_threads; ++y) {
-            position_end_line[y] = amountOfSamples * (y + 1) / number_of_threads;
-        }
-
-        size_t ii{}, z{}, count{};
-        while (ii < buf_length && z + 1 < number_of_threads) {
-            if (buf[ii] == '\n') {
-                ++count;
-                if (count == position_end_line[z]) {
-                    position_end_buf[z] = ii;
-                    ++z;
-                }
-            }
-            ++ii;
-        }
-        position_end_buf[number_of_threads - 1] = buf_length;
-
-        size_t s{}, e{}, el{};
         auto **threads = new std::thread *[number_of_threads];
         for (size_t y = 0; y < number_of_threads; ++y) {
-            if (y == 0) {
-                s = 0;
-            } else {
-                s = position_end_buf[y - 1] + 1;
-                el = position_end_line[y - 1];
-            }
-            e = position_end_buf[y];
-            threads[y] = new std::thread(setChannels, this, el, buf, s, e);
+            threads[y] = new std::thread(setChannels, this, list,
+                                         amountOfSamples * y / number_of_threads, amountOfSamples * (y+1) / number_of_threads);
         }
 
         for (size_t y = 0; y < number_of_threads; ++y) {
@@ -125,9 +80,6 @@ class ParseDataTxt : public ParseData {
         for (size_t y = 0; y < number_of_threads; ++y) {
             delete threads[y];
         }
-
-        delete[] position_end_buf;
-        delete[] position_end_line;
         delete[] threads;
     }
 
@@ -147,13 +99,13 @@ class ParseDataTxt : public ParseData {
         setDuration(totalSeconds);
 
         std::tm t{};
-        std::istringstream ss(startDate_.toStdString() + " " + startTime_.toStdString().substr(0, 8));
+        std::istringstream ss((startDate_ + " " + startTime.sliced(0, 8)).toStdString());
         //ss.imbue(std::locale(""));
         ss >> std::get_time(&t, "%d-%m-%Y %H:%M:%S");
-        auto dotPos = startTime_.toStdString().find('.');
+        auto dotPos = startTime_.indexOf('.');
         int milliseconds = 0;
         if (dotPos != std::string::npos)
-            milliseconds = std::stoi(startTime_.toStdString().substr(dotPos + 1, startTime_.size() - 1));
+            milliseconds = startTime_.sliced(dotPos+1).toInt();
 
         t.tm_sec += totalSeconds + milliseconds / 1000.0;
         mktime(&t);
@@ -166,11 +118,10 @@ class ParseDataTxt : public ParseData {
         if (milliseconds > 0)
             oss << '.' << milliseconds;
 
-        stopTime = QString( oss.str().c_str() );
+        stopTime = QString::fromStdString( oss.str() );
 
         channels_names = new QString[amountOfChannels]();
         getData(file_to_parse, in_str);
-
         setChannelsNames(in_str);
 
         channels = new double *[amountOfChannels]();
@@ -194,25 +145,6 @@ class ParseDataTxt : public ParseData {
     }
 
 public:
-    void parse2(const QString &path_to_file)  {
-        QFile file_to_parse(path_to_file);
-
-        file_to_parse.open(QFile::Text | QFile::ReadOnly);
-
-        QTextStream stream (&file_to_parse);
-        stream.setEncoding(QStringConverter::System);
-
-        parseGeneral(stream);
-
-        for (size_t i = 0; i < amountOfSamples; ++i) {
-            for (size_t j = 0; j < amountOfChannels; ++j) {
-                stream >> channels[j][i];
-            }
-        }
-
-        findExtrs();
-    }
-
     void parse(const QString &path_to_file) override {
         QFile file_to_parse(path_to_file);
         file_to_parse.open(QFile::Text | QFile::ReadOnly);
@@ -222,9 +154,16 @@ public:
         auto pos = parseGeneral(stream);
 
         file_to_parse.seek(pos);
-        auto buf = file_to_parse.readAll();
-        buf.push_back('\n');
-        threadsHandle(buf);
+        auto list = file_to_parse.readAll().split('\n');
+
+        if (list.back().isEmpty())
+            list.pop_back();
+
+        if (list.size() != amountOfSamples)
+            throw std::runtime_error("amountOfSamples != amount of samples in file " + std::to_string(list.size()) +
+                                     " " + std::to_string(amountOfSamples));
+
+        threadsHandle(list);
 
         findExtrs();
     }

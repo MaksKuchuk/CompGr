@@ -20,11 +20,6 @@ class Parser {
             pd->parse(path_to_file);
             return static_cast<ParseData*>(pd);
         }
-        else if (path_to_file.endsWith("txt2")) {
-            auto pd = new ParseDataTxt();
-            pd->parse2(path_to_file);
-            return static_cast<ParseData*>(pd);
-        }
         else if (path_to_file.endsWith("wav")) {
             auto pd = new ParseDataWav();
             pd->parse(path_to_file);
@@ -40,10 +35,11 @@ public:
             return nullptr;
 
         auto namePos = path_to_file.lastIndexOf('/');
-        pd->setName(path_to_file.sliced(namePos+1));
+        auto name = path_to_file.sliced(namePos+1);
+        pd->setName(name);
 
         auto e = std::chrono::high_resolution_clock().now();
-        qDebug() << duration_cast<std::chrono::milliseconds>(e - s).count() << " ms";
+        qDebug() << name << duration_cast<std::chrono::milliseconds>(e - s).count() << " ms";
 
         return pd;
     }
