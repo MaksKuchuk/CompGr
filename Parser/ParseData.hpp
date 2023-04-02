@@ -1,15 +1,16 @@
+#ifndef PARSEDATA_H
+#define PARSEDATA_H
+
 #include <fstream>
 #include <string>
 #include <tuple>
 #include <cmath>
-
-#ifndef PARSEDATA_H
-#define PARSEDATA_H
+#include <QString>
 
 class ParseData {
 protected:
     // where is it from
-    std::string source;
+    QString source;
     // number of channels
     unsigned long long amountOfChannels;
     // number of samples
@@ -17,9 +18,9 @@ protected:
     // sampling frequency (Hz)
     double Hz;
     // recording start datetime (dd-mm-yyyy hh:mm:ss.sss)
-    std::string startTime;
+    QString startTime;
     // recording stop datetime (dd-mm-yyyy hh:mm:ss.sss)
-    std::string stopTime;
+    QString stopTime;
     // duration
     double totalSeconds;
     unsigned long long days;
@@ -28,7 +29,7 @@ protected:
     double seconds;
     // data
     double **channels = nullptr;
-    std::string *channels_names = nullptr;
+    QString *channels_names = nullptr;
     std::pair<double, double> *extremums = nullptr;
  
  
@@ -56,7 +57,7 @@ public:
         }
     }
  
-    virtual void parse(std::ifstream &file_to_parse) {}
+    virtual void parse(const QString &path_to_file) {}
  
     unsigned long long getAmountOfChannels() const {
         return amountOfChannels;
@@ -70,11 +71,11 @@ public:
         return Hz;
     }
  
-    std::string getStartTime() const {
+    QString getStartTime() const {
         return startTime;
     }
  
-    std::string getStopTime() const {
+    QString getStopTime() const {
         return stopTime;
     }
  
@@ -86,7 +87,7 @@ public:
         return {days, hours, minutes, seconds};
     }
 
-    std::string getSource() const {
+    QString getSource() const {
         return source;
     }
  
@@ -98,7 +99,7 @@ public:
     }
  
     // return name of n-th channel
-    std::string getChannelName(long long n) const {
+    QString getChannelName(long long n) const {
         if (channels_names != nullptr)
             return channels_names[n];
         throw std::runtime_error("Channels names nullptr");
@@ -118,11 +119,11 @@ public:
         throw std::runtime_error("Extremums nullptr");
     }
 
-    void setName(std::string fName) {
+    void setName(QString fName) {
         source = fName;
     }
 
-    std::string getFileName() {
+    QString getFileName() {
         return source;
     }
 };

@@ -1,6 +1,8 @@
 #include "ParseDataWav.hpp"
 
-void ParseDataWav::parse(std::ifstream& wav_file) {
+void ParseDataWav::parse(const QString& wav_path) {
+    std::ifstream wav_file(wav_path.toStdString());
+
     wav_file.read(reinterpret_cast<char*>(&header), sizeof(header));
     char* audioData = new char[header.subchunk2Size];
     wav_file.read(audioData, header.subchunk2Size);
@@ -13,9 +15,9 @@ void ParseDataWav::parse(std::ifstream& wav_file) {
     totalSeconds = amountOfSamples / header.sampleRate;
     setDuration(totalSeconds);
 
-    channels_names = new std::string[amountOfChannels];
+    channels_names = new QString[amountOfChannels];
     for (uint32_t i = 0; i < amountOfChannels; ++i) {
-        channels_names[i] = std::to_string(i + 1);
+        channels_names[i] = QString::number(i + 1);
     }
 
     channels = new double* [amountOfChannels];

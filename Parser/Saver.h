@@ -6,7 +6,7 @@
 
 class Saver {
 public:
-    static void TxtSaver(ParseData* data, const std::string& path_to_file);
+    static void TxtSaver(ParseData *data, const QString& path_to_file);
 };
 
 #endif //ASDASD_SAVER_H

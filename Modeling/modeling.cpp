@@ -10,7 +10,7 @@
 Graph2DData *Modeling::delayedSingleImpulse(const long long N, const long long n, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_1";
-    data2D->source = "Delayed Single Impulse n = " + std::to_string(n);
+    data2D->source = "Delayed Single Impulse n = " + QString::number(n);
 
     data2D->maxVal = 1;
     data2D->minVal = 0;
@@ -41,7 +41,7 @@ Graph2DData *Modeling::delayedSingleImpulse(const long long N, const long long n
 Graph2DData *Modeling::delayedSingleHop(const long long N, const long long n, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_2";
-    data2D->source = "Delayed Single Hop n = " + std::to_string(n);
+    data2D->source = "Delayed Single Hop n = " + QString::number(n);
 
     data2D->maxVal = 1;
     data2D->minVal = 0;
@@ -78,7 +78,7 @@ Graph2DData *Modeling::sampledDecreasingExponent
         ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_3";
-    data2D->source = "Sampled Decreased Exponent a = " + std::to_string(a);
+    data2D->source = "Sampled Decreased Exponent a = " + QString::number(a);
 
     data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
@@ -120,9 +120,9 @@ Graph2DData *Modeling::sampledSineWave
         ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_4";
-    data2D->source = "Sampled Sine Wave amplitude = " + std::to_string(a)
-                     + " circle frequency = " + std::to_string(circFreq)
-                     + " initial phase = " + std::to_string(initPhase);
+    data2D->source = "Sampled Sine Wave amplitude = " + QString::number(a)
+                     + " circle frequency = " + QString::number(circFreq)
+                     + " initial phase = " + QString::number(initPhase);
 
     data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
@@ -155,7 +155,7 @@ Graph2DData *Modeling::sampledSineWave
 Graph2DData *Modeling::meander(const long long N, const long long L, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_5";
-    data2D->source = "Meander period = " + std::to_string(L);
+    data2D->source = "Meander period = " + QString::number(L);
 
     data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
@@ -188,7 +188,7 @@ Graph2DData *Modeling::meander(const long long N, const long long L, Graph2DData
 Graph2DData *Modeling::saw(const long long N, const long long L, Graph2DData* data) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_6";
-    data2D->source = "Saw period = " + std::to_string(L);
+    data2D->source = "Saw period = " + QString::number(L);
 
     data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
 
@@ -224,10 +224,10 @@ static Graph2DData *exponentialEnvelope(
 ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_7";
-    data2D->source = "Amplitude = " + std::to_string(a)
-                     + " envelope width = " + std::to_string(tau)
-                     + " carrier freq = " + std::to_string(f)
-                     + " phase = " + std::to_string(phi);
+    data2D->source = "Amplitude = " + QString::number(a)
+                     + " envelope width = " + QString::number(tau)
+                     + " carrier freq = " + QString::number(f)
+                     + " phase = " + QString::number(phi);
 
     data2D->amountOfSamples = N;
 
@@ -264,10 +264,10 @@ static Graph2DData *balanceEnvelope(
 ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_8";
-    data2D->source = "Amplitude = " + std::to_string(a)
-                     + " envelope freq = " + std::to_string(f0)
-                     + " carrier freq = " + std::to_string(fn)
-                     + " carrier phase = " + std::to_string(phi);
+    data2D->source = "Amplitude = " + QString::number(a)
+                     + " envelope freq = " + QString::number(f0)
+                     + " carrier freq = " + QString::number(fn)
+                     + " carrier phase = " + QString::number(phi);
 
     data2D->amountOfSamples = N;
 
@@ -304,11 +304,11 @@ static Graph2DData *tonalEnvelope(
 ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_9";
-    data2D->source = "Amplitude = " + std::to_string(a)
-                     + " envelope freq = " + std::to_string(f0)
-                     + " carrier freq = " + std::to_string(fn)
-                     + " carrier phase = " + std::to_string(phi)
-                     + " modulation depth index = " + std::to_string(m);
+    data2D->source = "Amplitude = " + QString::number(a)
+                     + " envelope freq = " + QString::number(f0)
+                     + " carrier freq = " + QString::number(fn)
+                     + " carrier phase = " + QString::number(phi)
+                     + " modulation depth index = " + QString::number(m);
 
     data2D->amountOfSamples = N;
 
@@ -345,10 +345,10 @@ static Graph2DData *LFM(
 ) {
     Graph2DData *data2D = new Graph2DData();
     data2D->name = "Model_J_10";
-    data2D->source = "Amplitude = " + std::to_string(a)
-                     + " start freq = " + std::to_string(f0)
-                     + " end freq = " + std::to_string(fk)
-                     + " start phase = " + std::to_string(phi0);
+    data2D->source = "Amplitude = " + QString::number(a)
+                     + " start freq = " + QString::number(f0)
+                     + " end freq = " + QString::number(fk)
+                     + " start phase = " + QString::number(phi0);
 
     data2D->amountOfSamples = N;
 

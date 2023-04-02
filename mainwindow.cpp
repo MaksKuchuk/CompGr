@@ -39,7 +39,7 @@ void MainWindow::on_actionNew_file_triggered()
 
     if (str == nullptr || str == "") return;
 
-    ParseData *pData = Parser::parse(str.toStdString());
+    ParseData *pData = Parser::parse(str);
 
     grWid = new GraphWidget(ui->mdiArea, pData);
 

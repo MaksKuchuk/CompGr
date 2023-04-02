@@ -1,38 +1,50 @@
-#include "ParseDataTxt.hpp"
-#include "ParseDataWav.hpp"
-
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "ParseDataTxt.hpp"
+#include "ParseDataWav.hpp"
+#include <QString>
+#include <QFile>
+
+#include <chrono>
+#include <QDebug>
+
 class Parser {
-    static ParseData* parseFile(const std::string& path_to_file) {
-        std::ifstream file_to_parse(path_to_file);
+    static ParseData* parseFile(const QString& path_to_file) {
+        if (!QFile::exists(path_to_file)) {
+            throw std::runtime_error("file not opened: " + path_to_file.toStdString());
+        }
 
-        unsigned long long dotPos = path_to_file.rfind('.');
-        std::string extension = path_to_file.substr(dotPos + 1, path_to_file.size() - 1);
-
-        if (extension == "txt") {
+        if (path_to_file.endsWith("txt")) {
             auto pd = new ParseDataTxt();
-            pd->parse(file_to_parse);
+            pd->parse(path_to_file);
             return static_cast<ParseData*>(pd);
         }
-        else if (extension == "wav") {
+        else if (path_to_file.endsWith("txt2")) {
+            auto pd = new ParseDataTxt();
+            pd->parse2(path_to_file);
+            return static_cast<ParseData*>(pd);
+        }
+        else if (path_to_file.endsWith("wav")) {
             auto pd = new ParseDataWav();
-            pd->parse(file_to_parse);
+            pd->parse(path_to_file);
             return static_cast<ParseData*>(pd);
         }
         return nullptr;
     }
 public:
-    static ParseData *parse(const std::string &path_to_file) {
+    static ParseData *parse(const QString& path_to_file) {
+        auto s = std::chrono::high_resolution_clock().now();
         auto pd = parseFile(path_to_file);
         if (pd == nullptr)
             return nullptr;
 
-        unsigned long long namePos = path_to_file.rfind('/');
-        std::string fileName = path_to_file.substr(namePos + 1, path_to_file.size() - 1);
+        auto namePos = path_to_file.lastIndexOf('/');
+        pd->setName(path_to_file.sliced(namePos+1));
 
-        pd->setName(fileName);
+        auto e = std::chrono::high_resolution_clock().now();
+        qDebug() << duration_cast<std::chrono::milliseconds>(e - s).count() << " ms";
+
         return pd;
     }
 };
