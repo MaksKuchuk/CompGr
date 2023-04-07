@@ -1,12 +1,12 @@
 #ifndef GRAPH2DDATA_H
 #define GRAPH2DDATA_H
 
-#include <string>
+#include <QString>
 
 class Graph2DData {
 public:
-    std::string name;
-    std::string source;
+    QString name;
+    QString source;
 
     double maxVal;
     double minVal;
@@ -19,6 +19,7 @@ public:
 
     double Hz;
 
+    QString startDate{};
     double totalSeconds;
 
     double* samples;

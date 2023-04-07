@@ -29,7 +29,7 @@ GraphTemplate::GraphTemplate(QWidget *parent, ParseData* pData, long long ind) :
     gView->setFixedWidth(300);
 
     QLabel *label = new QLabel(this);
-    label->setText(QString::fromUtf8(pData->getChannelName(ind).c_str()));
+    label->setText(pData->getChannelName(ind));
 
     QFont font = label->font();
     font.setPixelSize(24);

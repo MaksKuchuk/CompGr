@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 if (WIN32)
+    set(GLUT_INCLUDE_DIR ${GLUT_ROOT_PATH}/include)
+
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:\\Windows\\System32")
 
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "fftw")
@@ -10,7 +12,6 @@ if (WIN32)
     include_directories(${FFTW_INCLUDE_DIRS})
     link_directories(${FFTW_LIBRARY_DIRS})
 endif()
-
 
 project(untitled VERSION 0.1 LANGUAGES CXX)
 
@@ -51,6 +52,11 @@ set(PROJECT_SOURCES
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
+
+        Saver/Saver.hpp
+        Saver/Saver.cpp
+        Saver/SaveHandler.hpp
+        Saver/SaveHandler.cpp
 
         Modeling/modeling.h
         Modeling/modeling.cpp

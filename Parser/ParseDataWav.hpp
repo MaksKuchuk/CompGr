@@ -1,11 +1,7 @@
-#include <algorithm>
-#include <fstream>
-#include <string>
-
-#include "ParseData.hpp"
-
 #ifndef PARSERWAV
 #define PARSERWAV
+
+#include "ParseData.hpp"
 
 class ParseDataWav : public ParseData {
     typedef struct WavHeader {
@@ -27,7 +23,7 @@ class ParseDataWav : public ParseData {
     WavHeader header;
 
 public:
-    void parse(std::ifstream& wav_file) override;
+    void parse(const QString &wav_file) override;
 };
 
 #endif // !PARSERWAV

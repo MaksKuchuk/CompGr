@@ -67,7 +67,7 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, Graph2DData *data)
     gView = new glOscillogram(this, data);
 
     QLabel *label = new QLabel(this);
-    label->setText(QString::fromUtf8(data->name));
+    label->setText(data->name);
 
     QFont font = label->font();
     font.setPixelSize(24);

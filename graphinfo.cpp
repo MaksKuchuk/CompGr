@@ -48,7 +48,7 @@ GraphInfo::GraphInfo(QWidget *parent, ParseData *pData) :
     QLabel *startTime = new QLabel(this);
     startTime->setText(
                 "Start time: " +
-                QString::fromUtf8(pData->getStartTime())
+                pData->getStartTime()
                 );
     startTime->setFont(font);
     startTime->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -58,7 +58,7 @@ GraphInfo::GraphInfo(QWidget *parent, ParseData *pData) :
     QLabel *stopTime = new QLabel(this);
     stopTime->setText(
                 "Stop time: " +
-                QString::fromUtf8(pData->getStopTime())
+                pData->getStopTime()
                 );
     stopTime->setFont(font);
     stopTime->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -91,9 +91,9 @@ GraphInfo::GraphInfo(QWidget *parent, ParseData *pData) :
         QLabel *cName = new QLabel(this);
         cName->setText(
                         "    " +
-                        QString::fromUtf8(pData->getChannelName(i)) +
+                        pData->getChannelName(i) +
                         ": from " +
-                        QString::fromUtf8(pData->getFileName())
+                        pData->getFileName()
                     );
         cName->setFont(font);
         cName->setAlignment(Qt::AlignLeft | Qt::AlignTop);
