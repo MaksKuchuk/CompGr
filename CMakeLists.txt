@@ -53,8 +53,10 @@ set(PROJECT_SOURCES
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
 
-        Parser/Saver.h
-        Parser/Saver.cpp
+        Saver/Saver.hpp
+        Saver/Saver.cpp
+        Saver/SaveHandler.hpp
+        Saver/SaveHandler.cpp
 
         Modeling/modeling.h
         Modeling/modeling.cpp

@@ -1,10 +1,7 @@
 #ifndef PARSEDATA_H
 #define PARSEDATA_H
 
-#include <fstream>
-#include <string>
 #include <tuple>
-#include <cmath>
 #include <QString>
 
 class ParseData {

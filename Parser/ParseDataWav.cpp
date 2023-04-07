@@ -1,7 +1,11 @@
 #include "ParseDataWav.hpp"
 
+#include <algorithm>
+#include <fstream>
+#include <string>
+
 void ParseDataWav::parse(const QString& wav_path) {
-    std::ifstream wav_file(wav_path.toStdString());
+    std::ifstream wav_file(wav_path.toStdWString().c_str());
 
     wav_file.read(reinterpret_cast<char*>(&header), sizeof(header));
     char* audioData = new char[header.subchunk2Size];

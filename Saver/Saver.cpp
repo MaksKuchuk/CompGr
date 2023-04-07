@@ -1,4 +1,4 @@
-#include "Saver.h"
+#include "Saver.hpp"
 #include <string>
 #include <fstream>
 #include <QString>
@@ -25,6 +25,31 @@ void Saver::TxtSaver(ParseData *data, const QString& path_to_file) {
     for (size_t i = 0; i < data->getAmountOfSamples(); ++i) {
         for (size_t j = 0; j < data->getAmountOfChannels(); ++j) {
             stream << data->getChannel(j)[i] << ' ';
+        }
+        stream << '\n';
+    }
+}
+
+
+void Saver::TxtSaver(SaveHandler *data, const QString& path_to_file) {
+    QFile file_out(path_to_file);
+    file_out.open(QFile::Text | QFile::WriteOnly);
+    QTextStream stream (&file_out);
+
+    stream << data->amountOfChannels << '\n'
+        << data->amountOfSamples << '\n'
+        << data->Hz << '\n'
+        << data->startDate << '\n'
+        << data->startTime << '\n';
+
+    for (size_t i = 0; i < data->amountOfChannels; ++i) {
+        stream << data->channels_name[i] << ";";
+    }
+    stream << '\n';
+
+    for (size_t i = 0; i < data->amountOfChannels; ++i) {
+        for (size_t j = 0; j < data->amountOfChannels; ++j) {
+            stream << data->channels[j][i] << ' ';
         }
         stream << '\n';
     }

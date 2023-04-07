@@ -19,6 +19,7 @@ public:
 
     double Hz;
 
+    QString startDate{};
     double totalSeconds;
 
     double* samples;

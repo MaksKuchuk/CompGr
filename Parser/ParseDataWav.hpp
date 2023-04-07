@@ -1,11 +1,7 @@
-#include <algorithm>
-#include <fstream>
-#include <string>
-
-#include "ParseData.hpp"
-
 #ifndef PARSERWAV
 #define PARSERWAV
+
+#include "ParseData.hpp"
 
 class ParseDataWav : public ParseData {
     typedef struct WavHeader {
