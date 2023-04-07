@@ -51,6 +51,10 @@ public:
 
     void changeLocalScale(double lmin, double lmax);
 
+    static void setDefaultScale();
+
+    static void setDefaultBias();
+
     static void changeScrollBar(long long amount, long long lcur, long long rcur);
 
     static void changeSingleLocalScale(double lmin, double lmax);

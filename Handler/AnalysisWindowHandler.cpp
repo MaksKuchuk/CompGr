@@ -188,6 +188,30 @@ void AnalysisWindowHandler::setSingleGlobalScale() {
 
 }
 
+void AnalysisWindowHandler::setDefaultScale() {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->data->minLoc = glTemp->data->minVal;
+        glTemp->data->maxLoc = glTemp->data->maxVal;
+        glTemp->gView->updateGraph();
+        glTemp->repaint();
+    }
+}
+
+void AnalysisWindowHandler::setDefaultBias() {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->data->lcur = 0;
+        glTemp->data->rcur = glTemp->data->amountOfSamples - 1;
+        glTemp->gView->updateGraph();
+        glTemp->repaint();
+    }
+}
+
 void AnalysisWindowHandler::changeScrollBar(long long amount, long long lcur, long long rcur) {
     if (analyzeWidget == nullptr) return;
 

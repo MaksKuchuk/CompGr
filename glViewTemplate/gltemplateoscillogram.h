@@ -37,6 +37,10 @@ public:
 
     void selectSingleGlobalScale();
 
+    void setDefaultScale();
+
+    void setDefaultBias();
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
 

@@ -108,6 +108,11 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     menu->addAction(action7);
     QAction* action8 = new QAction(QString::fromUtf8("Single global scale"), this);
     menu->addAction(action8);
+    menu->addSeparator();
+    QAction* action9 = new QAction(QString::fromUtf8("Default scale for all"), this);
+    menu->addAction(action9);
+    QAction* action10 = new QAction(QString::fromUtf8("Default bias for all"), this);
+    menu->addAction(action10);
 
 
     QAction* selectedItem = menu->exec(globalPos);
@@ -133,7 +138,19 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
         selectSingleLocalScale();
     } else if (selectedItem->text() == "Single global scale") {
         selectSingleGlobalScale();
+    } else if (selectedItem->text() == "Default scale for all") {
+        setDefaultScale();
+    } else if (selectedItem->text() == "Default bias for all") {
+        setDefaultBias();
     }
+}
+
+void glTemplateOscillogram::setDefaultScale(){
+    AnalysisWindowHandler::setDefaultScale();
+}
+
+void glTemplateOscillogram::setDefaultBias() {
+    AnalysisWindowHandler::setDefaultBias();
 }
 
 void glTemplateOscillogram::selectSingleLocalScale() {
