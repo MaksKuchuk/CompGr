@@ -29,6 +29,10 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
 
 }
 
+void GraphWidget::closeEvent(QCloseEvent *event) {
+    delete pData;
+}
+
 GraphWidget::~GraphWidget()
 {
     delete ui;

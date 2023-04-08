@@ -2,6 +2,7 @@
 #define GRAPHWIDGET_H
 
 #include <QWidget>
+#include <QCloseEvent>
 #include "Parser/ParseData.hpp"
 
 namespace Ui {
@@ -20,6 +21,7 @@ public:
 
     ParseData *pData = nullptr;
 
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::GraphWidget *ui;
