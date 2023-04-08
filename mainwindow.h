@@ -30,6 +30,8 @@ public:
 private slots:
     void on_actionNew_file_triggered();
 
+    void on_actionSave_file_triggered();
+
     void on_actionAbout_triggered();
 
     void on_actionAnalysis_triggered();

@@ -164,8 +164,8 @@ public:
         }
 
         if (list.size() != amountOfSamples) {
-            qDebug() << QString::fromStdString( "amountOfSamples != amount of samples in file " + std::to_string(list.size()) +
-                                     " " + std::to_string(amountOfSamples));
+            qDebug() << QString::fromStdString( "amountOfSamples != amount of samples in file " +
+                                     std::to_string(amountOfSamples) + " " + std::to_string(list.size()));
             amountOfSamples = list.size();
         }
 

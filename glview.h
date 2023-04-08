@@ -22,6 +22,9 @@ public:
            double minVal = 0
             );
 
+    long long getLCur();
+    long long getRCur();
+
 protected:
     void drawGraph();
 

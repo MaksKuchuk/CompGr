@@ -6,7 +6,7 @@
 #include <filesystem>
 
 class ParseData {
-protected:
+public:
     // where is it from
     QString source;
     // number of channels
@@ -43,8 +43,7 @@ protected:
  
         seconds = totalSeconds_;
     }
- 
-public:
+
     virtual ~ParseData() {
         delete[] channels_names;
         delete[] extremums;

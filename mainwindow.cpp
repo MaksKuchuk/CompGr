@@ -4,10 +4,17 @@
 #include "graphwidget.h"
 #include "aboutwidget.h"
 #include "graphinfo.h"
+#include "glview.h"
+#include "graphtemplate.h"
 #include "Handler/AnalysisWindowHandler.hpp"
 
 #include "Parser/Parser.hpp"
 #include "Parser/ParseData.hpp"
+
+#include "Saver/Saver.hpp"
+#include "Saver/saverwindow.h"
+
+#include <QDebug>
 
 #include <QMdiSubWindow>
 
@@ -54,6 +61,31 @@ void MainWindow::on_actionNew_file_triggered()
     widget->show();
 }
 
+void MainWindow::on_actionSave_file_triggered() {
+    QMdiSubWindow *activeWidget = ui->mdiArea->currentSubWindow(); //ui->mdiArea->activeSubWindow();
+
+    if (activeWidget == nullptr) return;
+
+    GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
+
+    if (grWi->nm != "GraphWidget" || grWi->pData == nullptr) return;
+
+    auto temp = static_cast<GraphTemplate*>(grWi->layout()->itemAt(0)->widget());
+    if (temp == nullptr) return;
+    auto view = static_cast<glView*>(temp->layout()->itemAt(0)->widget());
+
+    QString path = QFileDialog::getSaveFileName(
+                this,
+                "Save File",
+                "",
+                "Text files (*.txt);; All files (*.*)");
+//    qDebug() << path;
+
+    if (path == nullptr || path == "") return;
+
+    auto data = SaverWindow::openWindow(grWi->pData, view->getLCur(), view->getRCur());
+    Saver::TxtSaver(grWi->pData, data.first_sample, data.last_sample, data.channels, path);
+}
 
 void MainWindow::on_actionAbout_triggered()
 {

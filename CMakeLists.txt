@@ -58,6 +58,9 @@ set(PROJECT_SOURCES
         Saver/SaveHandler.hpp
         Saver/SaveHandler.cpp
 
+        Saver/saverwindow.h
+        Saver/saverwindow.cpp
+
         Modeling/modeling.h
         Modeling/modeling.cpp
 

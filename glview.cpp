@@ -65,6 +65,14 @@ void glView::setCurs(long long lcur, long long rcur) {
     update();
 }
 
+long long glView::getLCur() {
+    return lcur;
+}
+
+long long glView::getRCur() {
+    return rcur;
+}
+
 
 
 
