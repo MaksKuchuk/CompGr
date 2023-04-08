@@ -232,7 +232,7 @@ static Graph2DData *exponentialEnvelope(
     data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
     data2D->Hz = 1 / T;
 
@@ -272,7 +272,7 @@ static Graph2DData *balanceEnvelope(
     data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
     data2D->Hz = 1 / T;
 
@@ -313,7 +313,7 @@ static Graph2DData *tonalEnvelope(
     data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
     data2D->Hz = 1 / T;
 
@@ -353,7 +353,7 @@ static Graph2DData *LFM(
     data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
-    data2D->rcur = (N - 1) * T;
+    data2D->rcur = (N - 1);
 
     data2D->Hz = 1 / T;
 

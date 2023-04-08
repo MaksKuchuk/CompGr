@@ -13,6 +13,8 @@
 #include <QTextStream>
 #include <QByteArray>
 
+#include <QDebug>
+
 class ParseDataTxt : public ParseData {
     void setChannelsNames(const QString &string_names) {
 
@@ -156,12 +158,14 @@ public:
         file_to_parse.seek(pos);
         auto list = file_to_parse.readAll().split('\n');
 
-        if (list.back().isEmpty())
+        while (list.back().isEmpty()) {
+            qDebug() << "last line is empty: " + list.back();
             list.pop_back();
+        }
 
         if (list.size() != amountOfSamples) {
-            //throw std::runtime_error("amountOfSamples != amount of samples in file " + std::to_string(list.size()) +
-                                     //" " + std::to_string(amountOfSamples));
+            qDebug() << QString::fromStdString( "amountOfSamples != amount of samples in file " + std::to_string(list.size()) +
+                                     " " + std::to_string(amountOfSamples));
             amountOfSamples = list.size();
         }
 
