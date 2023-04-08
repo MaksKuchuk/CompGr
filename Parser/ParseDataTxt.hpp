@@ -159,9 +159,12 @@ public:
         if (list.back().isEmpty())
             list.pop_back();
 
-        if (list.size() != amountOfSamples)
-            throw std::runtime_error("amountOfSamples != amount of samples in file " + std::to_string(list.size()) +
-                                     " " + std::to_string(amountOfSamples));
+        if (list.size() != amountOfSamples) {
+            //throw std::runtime_error("amountOfSamples != amount of samples in file " + std::to_string(list.size()) +
+                                     //" " + std::to_string(amountOfSamples));
+            amountOfSamples = list.size();
+        }
+
 
         threadsHandle(list);
 
