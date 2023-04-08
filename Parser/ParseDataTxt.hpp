@@ -145,7 +145,7 @@ class ParseDataTxt : public ParseData {
     }
 
 public:
-    void parse(const QString &path_to_file) override {
+    void parse(const std::filesystem::path &path_to_file) override {
         QFile file_to_parse(path_to_file);
         file_to_parse.open(QFile::Text | QFile::ReadOnly);
         QTextStream stream (&file_to_parse);

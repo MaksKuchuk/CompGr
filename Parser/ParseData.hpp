@@ -3,6 +3,7 @@
 
 #include <tuple>
 #include <QString>
+#include <filesystem>
 
 class ParseData {
 protected:
@@ -54,7 +55,7 @@ public:
         }
     }
  
-    virtual void parse(const QString &path_to_file) {}
+    virtual void parse(const std::filesystem::path &path_to_file) {}
  
     unsigned long long getAmountOfChannels() const {
         return amountOfChannels;

@@ -39,6 +39,7 @@ void SaveHandler::AddGraph2DData(Graph2DData* data) {
     if (!CheckConditions(data))
         throw std::runtime_error("channels are different Hz or AmountOfSamples");
 
+    amountOfChannels++;
     channels_name.push_back(data->name);
     channels.push_back(data->samples);
 }

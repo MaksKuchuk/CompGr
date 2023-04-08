@@ -23,7 +23,7 @@ class ParseDataWav : public ParseData {
     WavHeader header;
 
 public:
-    void parse(const QString &wav_file) override;
+    void parse(const std::filesystem::path &wav_file) override;
 };
 
 #endif // !PARSERWAV
