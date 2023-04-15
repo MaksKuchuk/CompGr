@@ -6,6 +6,7 @@
 #include "graphinfo.h"
 #include "glview.h"
 #include "graphtemplate.h"
+#include "modellingwidget.h"
 #include "Handler/AnalysisWindowHandler.hpp"
 
 #include "Parser/Parser.hpp"
@@ -13,6 +14,8 @@
 
 #include "Saver/Saver.hpp"
 #include "Saver/saverwindow.h"
+
+#include "Utility/generaldialog.h"
 
 #include <QDebug>
 
@@ -46,12 +49,20 @@ void MainWindow::on_actionNew_file_triggered()
 
     if (str == nullptr || str == "") return;
 
+    if (grapthData != nullptr) {
+        auto agree = GeneralDialog::AgreeDialog("Close old graph and open new?");
+        if (!agree)
+            return;
+        for (auto subWin : ui->mdiArea->subWindowList())
+            subWin->close();
+    }
+
     ParseData *pData = Parser::parse(str);
 
     grWid = new GraphWidget(ui->mdiArea, pData);
+    grapthData = pData;
 
     QWidget *widget = grWid;
-    //QWidget *widget = new GraphWidget(ui->mdiArea, nullptr);
 
     ui->mdiArea->addSubWindow(widget);
 
@@ -152,5 +163,18 @@ void MainWindow::on_actionInformation_triggered() {
 void MainWindow::on_actionTheme_triggered()
 {
     isDarkTheme = !isDarkTheme;
+}
+
+void MainWindow::on_actionCreate_new_model_triggered() {
+    qDebug() << "HEY!";
+
+    QWidget *widget = new ModellingWidget(ui->mdiArea);
+
+    ui->mdiArea->addSubWindow(widget);
+
+    ui->mdiArea->subWindowList().last()->resize(300, 105);
+
+    widget->setWindowTitle("Modelling");
+    widget->show();
 }
 

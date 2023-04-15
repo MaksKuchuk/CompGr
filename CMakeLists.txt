@@ -49,6 +49,12 @@ set(PROJECT_SOURCES
         glview.cpp
         glview.h
 
+        modellingwidget.h
+        modellingwidget.cpp
+
+        Utility/generaldialog.h
+        Utility/generaldialog.cpp
+
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp

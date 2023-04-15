@@ -12,8 +12,6 @@
 #include <QCheckBox>
 #include <QString>
 
-SaverWindow::SaverWindow() = default;
-
 SaverDataHandler SaverWindow::openWindow(const ParseData* data) {
     return openWindow(data->channels_names, data->amountOfChannels, 0, data->amountOfSamples - 1);
 }

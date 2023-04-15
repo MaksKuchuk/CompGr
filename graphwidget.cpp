@@ -2,6 +2,7 @@
 #include "ui_graphwidget.h"
 #include "graphtemplate.h"
 #include "Parser/ParseData.hpp"
+#include "mainwindow.h"
 
 #include <QVBoxLayout>
 
@@ -31,6 +32,7 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
 
 void GraphWidget::closeEvent(QCloseEvent *event) {
     delete pData;
+    MainWindow::grapthData = nullptr;
 }
 
 GraphWidget::~GraphWidget()

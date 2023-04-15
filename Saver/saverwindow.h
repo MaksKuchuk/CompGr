@@ -16,7 +16,8 @@ class SaverWindow : public QWidget
 {
     Q_OBJECT
 public:
-    SaverWindow();
+    SaverWindow() = default;
+    ~SaverWindow() = default;
 
     static SaverDataHandler openWindow(const ParseData* data);
     static SaverDataHandler openWindow(const ParseData* data, const size_t first_sample, const size_t last_sample);

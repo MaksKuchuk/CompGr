@@ -27,6 +27,8 @@ public:
 
     static inline GraphWidget* grWid = nullptr;
 
+    static inline ParseData* grapthData = nullptr;
+
 private slots:
     void on_actionNew_file_triggered();
 
@@ -39,6 +41,8 @@ private slots:
     void on_actionInformation_triggered();
 
     void on_actionTheme_triggered();
+
+    void on_actionCreate_new_model_triggered();
 
 protected:
 
