@@ -20,16 +20,16 @@ void ParseDataWav::parse(const std::filesystem::path &wav_path) {
     totalSeconds = amountOfSamples / header.sampleRate;
     setDuration(totalSeconds);
 
-    channels_names = new QString[amountOfChannels];
+    channels_names.resize(amountOfChannels);
     for (uint32_t i = 0; i < amountOfChannels; ++i) {
         channels_names[i] = QString::number(i + 1);
     }
 
-    channels = new double* [amountOfChannels];
+    channels.resize(amountOfChannels);
     for (int i = 0; i < amountOfChannels; ++i)
-        channels[i] = new double[amountOfSamples];
+        channels[i].resize(amountOfSamples);
 
-    extremums = new std::pair<double, double>[amountOfChannels];
+    extremums.resize(amountOfChannels);
     for (uint32_t i = 0; i < amountOfSamples; ++i) {
         for (uint16_t j = 0; j < amountOfChannels; ++j) {
             uint64_t index = i * amountOfChannels + j;

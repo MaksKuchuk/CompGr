@@ -1,9 +1,11 @@
 #include "../GraphGlData/Graph2DData.hpp"
-#include "../Parser/ParseData.hpp"
+#include "../GraphGlData/generaldata.h"
 #include "TransformToOscillogram.hpp"
 
-Graph2DData* TransformToOscillogram::transform(ParseData* data, long long n) {
-    Graph2DData* gr = new Graph2DData;
+#include <memory>
+
+std::shared_ptr<Graph2DData> TransformToOscillogram::transform(std::shared_ptr<GeneralData> data, long long n) {
+    auto gr = std::make_shared<Graph2DData>();
 
     gr->name = data->getChannelName(n);
     gr->source = data->getSource();

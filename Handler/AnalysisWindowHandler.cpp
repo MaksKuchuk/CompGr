@@ -17,7 +17,7 @@ AnalysisWindowHandler* AnalysisWindowHandler::getInstance() {
     return instance;
 }
 
-void AnalysisWindowHandler::analyze2DBy(Graph2DData *data, glType t) {
+void AnalysisWindowHandler::analyze2DBy(std::shared_ptr<Graph2DData> data, glType t) {
     if (analyzeWidget == nullptr) return;
 
     long long layoutSize = AnalysisWindowHandler::getAnalyzeWidget()->layout->count();
@@ -43,11 +43,11 @@ void AnalysisWindowHandler::analyze2DBy(Graph2DData *data, glType t) {
     changeScrollBar(data->amountOfSamples, data->lcur, data->rcur);
 }
 
-void AnalysisWindowHandler::analyze3DBy(Graph2DData *data) {
+void AnalysisWindowHandler::analyze3DBy(std::shared_ptr<Graph3DData> data) {
     if (analyzeWidget == nullptr) return;
 }
 
-void AnalysisWindowHandler::addWidget(ParseData* pData) {
+void AnalysisWindowHandler::addWidget(std::shared_ptr<GeneralData> pData) {
     if (analyzeWidget == nullptr) return;
 
     for (long long i = 0; i < pData->getAmountOfChannels(); i++) {

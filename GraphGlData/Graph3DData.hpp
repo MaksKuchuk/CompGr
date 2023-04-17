@@ -1,5 +1,5 @@
-#ifndef GRAPH2DDATA_H
-#define GRAPH2DDATA_H
+#ifndef GRAPH3DDATA_H
+#define GRAPH3DDATA_H
 
 #include <string>
 

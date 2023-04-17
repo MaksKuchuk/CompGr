@@ -9,9 +9,9 @@ class glOscillogram : public QOpenGLWidget
     Q_OBJECT
 
 public:
-    Graph2DData* data;
+    std::shared_ptr<Graph2DData> data;
 
-    glOscillogram(QWidget *parent = nullptr, Graph2DData *data = nullptr);
+    glOscillogram(QWidget *parent = nullptr, std::shared_ptr<Graph2DData> data = nullptr);
 
     void updateGraph();
 protected:

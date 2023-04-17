@@ -1,7 +1,7 @@
 #include "graphtemplate.h"
 #include "ui_graphtemplate.h"
 #include "glview.h"
-#include "Parser/ParseData.hpp"
+#include "GraphGlData/generaldata.h"
 #include "Handler/AnalysisWindowHandler.hpp"
 #include "Transformation/TransformToOscillogram.hpp"
 #include "Transformation/TransformToFourierSpectrum.hpp"
@@ -12,7 +12,7 @@
 
 #include "mainwindow.h"
 
-GraphTemplate::GraphTemplate(QWidget *parent, ParseData* pData, long long ind) :
+GraphTemplate::GraphTemplate(QWidget *parent, std::shared_ptr<GeneralData> pData, long long ind) :
     QWidget(parent),
     ui(new Ui::GraphTemplate),
     pData(pData),

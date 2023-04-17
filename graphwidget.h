@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QCloseEvent>
-#include "Parser/ParseData.hpp"
+#include <memory>
+#include "GraphGlData/generaldata.h"
 
 namespace Ui {
 class GraphWidget;
@@ -16,10 +17,10 @@ class GraphWidget : public QWidget
 public:
     std::string nm = "GraphWidget";
 
-    explicit GraphWidget(QWidget *parent = nullptr, ParseData* pData = nullptr);
+    explicit GraphWidget(QWidget *parent = nullptr, std::shared_ptr<GeneralData> pData = nullptr);
     ~GraphWidget();
 
-    ParseData *pData = nullptr;
+    std::shared_ptr<GeneralData> graphData;
 
     void closeEvent(QCloseEvent *event);
 

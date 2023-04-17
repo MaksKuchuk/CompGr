@@ -49,7 +49,7 @@ void MainWindow::on_actionNew_file_triggered()
 
     if (str == nullptr || str == "") return;
 
-    if (grapthData != nullptr) {
+    if (grWid != nullptr && grWid->graphData != nullptr) {
         auto agree = GeneralDialog::AgreeDialog("Close old graph and open new?");
         if (!agree)
             return;
@@ -57,10 +57,9 @@ void MainWindow::on_actionNew_file_triggered()
             subWin->close();
     }
 
-    ParseData *pData = Parser::parse(str);
+    auto pData = static_cast<std::shared_ptr<GeneralData>>(Parser::parse(str));
 
     grWid = new GraphWidget(ui->mdiArea, pData);
-    grapthData = pData;
 
     QWidget *widget = grWid;
 
@@ -73,17 +72,7 @@ void MainWindow::on_actionNew_file_triggered()
 }
 
 void MainWindow::on_actionSave_file_triggered() {
-    QMdiSubWindow *activeWidget = ui->mdiArea->currentSubWindow(); //ui->mdiArea->activeSubWindow();
-
-    if (activeWidget == nullptr) return;
-
-    GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
-
-    if (grWi->nm != "GraphWidget" || grWi->pData == nullptr) return;
-
-    auto temp = static_cast<GraphTemplate*>(grWi->layout()->itemAt(0)->widget());
-    if (temp == nullptr) return;
-    auto view = static_cast<glView*>(temp->layout()->itemAt(0)->widget());
+    if (grWid->graphData == nullptr) return;
 
     QString path = QFileDialog::getSaveFileName(
                 this,
@@ -94,8 +83,9 @@ void MainWindow::on_actionSave_file_triggered() {
 
     if (path == nullptr || path == "") return;
 
-    auto data = SaverWindow::openWindow(grWi->pData, view->getLCur(), view->getRCur());
-    Saver::TxtSaver(grWi->pData, data.first_sample, data.last_sample, data.channels, path);
+    auto data = SaverWindow::openWindow(grWid->graphData, grWid->graphData->lcur, grWid->graphData->rcur);
+    if (data.success)
+        Saver::TxtSaver(grWid->graphData, data.first_sample, data.last_sample, data.channels, path);
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -121,7 +111,7 @@ void MainWindow::on_actionAnalysis_triggered() {
         GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
 
         if (grWi->nm == "GraphWidget") {
-            instanceAn->addWidget(grWi->pData);
+            instanceAn->addWidget(grWi->graphData);
         }
     }
 }
@@ -150,10 +140,10 @@ void MainWindow::on_actionInformation_triggered() {
 
     if (grWi->nm != "GraphWidget") return;
 
-    QWidget *widget = new GraphInfo(ui->mdiArea, grWi->pData);
+    QWidget *widget = new GraphInfo(ui->mdiArea, grWi->graphData);
 
     ui->mdiArea->addSubWindow(widget);
-    ui->mdiArea->subWindowList().last()->setFixedSize(400, 150 + 25 * grWi->pData->getAmountOfChannels());
+    ui->mdiArea->subWindowList().last()->setFixedSize(400, 150 + 25 * grWi->graphData->getAmountOfChannels());
 
     widget->setWindowTitle("Graph information");
     widget->show();
@@ -166,13 +156,14 @@ void MainWindow::on_actionTheme_triggered()
 }
 
 void MainWindow::on_actionCreate_new_model_triggered() {
-    qDebug() << "HEY!";
 
-    QWidget *widget = new ModellingWidget(ui->mdiArea);
+    QWidget *widget = new ModellingWidget(ui->mdiArea, grWid == nullptr ? nullptr : grWid->graphData);
 
     ui->mdiArea->addSubWindow(widget);
 
-    ui->mdiArea->subWindowList().last()->resize(300, 105);
+    auto wid = ui->mdiArea->subWindowList().last();
+//    wid->resize(wid->sizeHint());
+    wid->resize(wid->sizeHint().width(), 500);
 
     widget->setWindowTitle("Modelling");
     widget->show();

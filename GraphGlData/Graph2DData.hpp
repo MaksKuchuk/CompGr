@@ -2,6 +2,7 @@
 #define GRAPH2DDATA_H
 
 #include <QString>
+#include <QList>
 
 class Graph2DData {
 public:
@@ -22,7 +23,7 @@ public:
     QString startDate{};
     double totalSeconds;
 
-    double* samples;
+    QList<double> samples;
 };
 
 #endif

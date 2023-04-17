@@ -12,13 +12,13 @@ class glTemplateOscillogram;
 class glTemplateOscillogram : public QWidget
 {
     Q_OBJECT
-    Graph2DData *data;
+    std::shared_ptr<Graph2DData> data;
     long long ind;
     glOscillogram* gView = nullptr;
 
 public:
     explicit glTemplateOscillogram(QWidget *parent = nullptr,
-                                   Graph2DData *data = nullptr);
+                                   std::shared_ptr<Graph2DData> data = nullptr);
     ~glTemplateOscillogram();
 
     void drawMenu(QPoint globalPos);

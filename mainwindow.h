@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMdiArea>
+#include <memory>
 
 #include "graphwidget.h"
 
@@ -19,15 +20,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    static inline MainWindow* instance = nullptr;
+    static inline QPointer<MainWindow> instance = nullptr;
 
     static inline void openAnalysisWindow();
 
     static inline bool isDarkTheme = true;
 
-    static inline GraphWidget* grWid = nullptr;
-
-    static inline ParseData* grapthData = nullptr;
+    static inline QPointer<GraphWidget> grWid = nullptr;
 
 private slots:
     void on_actionNew_file_triggered();

@@ -4,33 +4,10 @@
 #include <tuple>
 #include <QString>
 #include <filesystem>
+#include "../GraphGlData/generaldata.h"
 
-class ParseData {
-public:
-    // where is it from
-    QString source;
-    // number of channels
-    unsigned long long amountOfChannels;
-    // number of samples
-    unsigned long long amountOfSamples;
-    // sampling frequency (Hz)
-    double Hz;
-    // recording start datetime (dd-mm-yyyy hh:mm:ss.sss)
-    QString startTime;
-    // recording stop datetime (dd-mm-yyyy hh:mm:ss.sss)
-    QString stopTime;
-    // duration
-    double totalSeconds;
-    unsigned long long days;
-    unsigned long long hours;
-    unsigned long long minutes;
-    double seconds;
-    // data
-    double **channels = nullptr;
-    QString *channels_names = nullptr;
-    std::pair<double, double> *extremums = nullptr;
- 
- 
+class ParseData : public GeneralData {
+protected:
     void setDuration(double totalSeconds_) {
         days = floor(totalSeconds_ / (60 * 60 * 24));
         totalSeconds_ -= days * (60 * 60 * 24);
@@ -44,85 +21,10 @@ public:
         seconds = totalSeconds_;
     }
 
-    virtual ~ParseData() {
-        delete[] channels_names;
-        delete[] extremums;
-        if (channels != nullptr) {
-            for (int i = 0; i < amountOfChannels; ++i)
-                delete[] channels[i];
-            delete[] channels;
-        }
-    }
- 
-    virtual void parse(const std::filesystem::path &path_to_file) {}
- 
-    unsigned long long getAmountOfChannels() const {
-        return amountOfChannels;
-    };
- 
-    unsigned long long getAmountOfSamples() const {
-        return amountOfSamples;
-    };
- 
-    double getHz() const {
-        return Hz;
-    }
- 
-    QString getStartTime() const {
-        return startTime;
-    }
- 
-    QString getStopTime() const {
-        return stopTime;
-    }
- 
-    double getTotalDuration() const {
-        return totalSeconds;
-    }
- 
-    std::tuple<unsigned long long, unsigned long long, unsigned long long, double> getDuration() const {
-        return {days, hours, minutes, seconds};
-    }
+public:
+    virtual ~ParseData() = default;
 
-    QString getSource() const {
-        return source;
-    }
- 
-    // return n-th channel
-    double *getChannel(long long n) const {
-        if (channels != nullptr)
-            return channels[n];
-        throw std::runtime_error("Channels nullptr");
-    }
- 
-    // return name of n-th channel
-    QString getChannelName(long long n) const {
-        if (channels_names != nullptr)
-            return channels_names[n];
-        throw std::runtime_error("Channels names nullptr");
-    }
- 
-    //return min value of n-th channel
-    double minVal(long long n) const {
-        if (extremums != nullptr)
-            return extremums[n].first;
-        throw std::runtime_error("Extremums nullptr");
-    }
- 
-    //return max value of n-th channel
-    double maxVal(long long n) const {
-        if (extremums != nullptr)
-            return extremums[n].second;
-        throw std::runtime_error("Extremums nullptr");
-    }
-
-    void setName(QString fName) {
-        source = fName;
-    }
-
-    QString getFileName() {
-        return source;
-    }
+    virtual void parse(const std::filesystem::path &path_to_file) {};
 };
 
 #endif

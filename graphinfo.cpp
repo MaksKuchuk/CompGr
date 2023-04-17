@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-GraphInfo::GraphInfo(QWidget *parent, ParseData *pData) :
+GraphInfo::GraphInfo(QWidget *parent, std::shared_ptr<GeneralData> pData) :
     QWidget(parent),
     ui(new Ui::GraphInfo)
 {

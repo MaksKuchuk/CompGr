@@ -1,6 +1,6 @@
 #include "saverwindow.h"
 #include "../mainwindow.h"
-#include "../Parser/ParseData.hpp"
+#include "../GraphGlData/generaldata.h"
 
 #include <utility>
 
@@ -12,15 +12,15 @@
 #include <QCheckBox>
 #include <QString>
 
-SaverDataHandler SaverWindow::openWindow(const ParseData* data) {
+SaverDataHandler SaverWindow::openWindow(std::shared_ptr<GeneralData> data) {
     return openWindow(data->channels_names, data->amountOfChannels, 0, data->amountOfSamples - 1);
 }
 
-SaverDataHandler SaverWindow::openWindow(const ParseData* data, const size_t first_sample, const size_t last_sample) {
+SaverDataHandler SaverWindow::openWindow(std::shared_ptr<GeneralData> data, const size_t first_sample, const size_t last_sample) {
     return openWindow(data->channels_names, data->amountOfChannels, first_sample, last_sample);
 }
 
-SaverDataHandler SaverWindow::openWindow(const QString* names, const size_t names_count, const size_t first_sample, const size_t last_sample) {
+SaverDataHandler SaverWindow::openWindow(const QList<QString>& names, const size_t names_count, const size_t first_sample, const size_t last_sample) {
     QDialog dlg(MainWindow::instance);
     dlg.setWindowTitle(tr("Save graphs"));
 
@@ -61,6 +61,7 @@ SaverDataHandler SaverWindow::openWindow(const QString* names, const size_t name
             if (checkBoxes[i]->isChecked())
                 outData.channels.push_back(i);
         }
+        outData.success = true;
     }
 
     delete[] checkBoxes;
