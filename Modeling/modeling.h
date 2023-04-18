@@ -8,6 +8,7 @@
 
 class Modeling {
 public:
+
     static std::shared_ptr<Graph2DData> delayedSingleImpulse(const long long N, const long long n);
 
     static std::shared_ptr<Graph2DData> delayedSingleHop(const long long N, const long long n);
@@ -27,25 +28,31 @@ public:
 
     static std::shared_ptr<Graph2DData> saw(const long long N, const long long L);
 
-    static std::shared_ptr<Graph2DData> exponentialEnvelope(
+    static std::shared_ptr<Graph2DData> exponentialEnvelope
+    (
         const long long N, const double T, const double a,
         const double tau, const double f, const double phi
     );
 
-    static std::shared_ptr<Graph2DData> balanceEnvelope(
+    static std::shared_ptr<Graph2DData> balanceEnvelope
+    (
             const long long N, const double T, const double a,
             const double f0, const double fn, const double phi
     );
 
-    static std::shared_ptr<Graph2DData> tonalEnvelope(
+    static std::shared_ptr<Graph2DData> tonalEnvelope
+    (
             const long long N, const double T, const double a,
             const double f0, const double fn, const double phi, const double m
     );
 
-    static std::shared_ptr<Graph2DData> LFM(
+    static std::shared_ptr<Graph2DData> LFM
+    (
             const long long N, const double T, const double a,
             const double f0, const double fk, const double phi0
     );
+
+
 
     enum class Type {
         SingleImpulse,

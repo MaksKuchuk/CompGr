@@ -28,6 +28,8 @@ public:
 
     static inline QPointer<GraphWidget> grWid = nullptr;
 
+    static inline bool isModelling = false;
+
 private slots:
     void on_actionNew_file_triggered();
 

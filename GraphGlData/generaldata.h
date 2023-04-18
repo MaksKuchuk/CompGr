@@ -5,6 +5,7 @@
 #include <QList>
 #include <QPointer>
 #include <filesystem>
+#include "Graph2DData.hpp"
 
 class GeneralData
 {
@@ -68,6 +69,8 @@ public:
     void setName(QString fName);
 
     QString getFileName();
+
+    std::shared_ptr<Graph2DData> channelTo2D(long long n) const;
 };
 
 #endif // GENERALDATA_H

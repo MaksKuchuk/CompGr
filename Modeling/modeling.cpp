@@ -1,6 +1,11 @@
-#include "modeling.h"
-
 #define _USE_MATH_DEFINES
+
+#include <cmath>
+#include <memory>
+
+#include "modeling.h"
+#include "../GraphGlData/Graph2DData.hpp"
+
 
 /*
     N - amount of samples
@@ -216,7 +221,7 @@ std::shared_ptr<Graph2DData> Modeling::saw(const long long N, const long long L)
     return data2D;
 }
 
-std::shared_ptr<Graph2DData> exponentialEnvelope(
+std::shared_ptr<Graph2DData> Modeling::exponentialEnvelope(
         const long long N, const double T, const double a,
         const double tau, const double f, const double phi
 ) {
@@ -255,7 +260,7 @@ std::shared_ptr<Graph2DData> exponentialEnvelope(
     return data2D;
 }
 
-std::shared_ptr<Graph2DData> balanceEnvelope(
+std::shared_ptr<Graph2DData> Modeling::balanceEnvelope(
         const long long N, const double T, const double a,
         const double f0, const double fn, const double phi
 ) {
@@ -294,7 +299,7 @@ std::shared_ptr<Graph2DData> balanceEnvelope(
     return data2D;
 }
 
-std::shared_ptr<Graph2DData> tonalEnvelope(
+std::shared_ptr<Graph2DData> Modeling::tonalEnvelope(
         const long long N, const double T, const double a,
         const double f0, const double fn, const double phi, const double m
 ) {
@@ -334,7 +339,7 @@ std::shared_ptr<Graph2DData> tonalEnvelope(
     return data2D;
 }
 
-std::shared_ptr<Graph2DData> LFM(
+std::shared_ptr<Graph2DData> Modeling::LFM(
         const long long N, const double T, const double a,
         const double f0, const double fk, const double phi0
 ) {

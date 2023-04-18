@@ -167,5 +167,6 @@ void MainWindow::on_actionCreate_new_model_triggered() {
 
     widget->setWindowTitle("Modelling");
     widget->show();
+    this->isModelling = true;
 }
 

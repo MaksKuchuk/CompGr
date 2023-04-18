@@ -7,10 +7,13 @@
 #include "glview.h"
 #include "ui_modellingwidget.h"
 #include "Modeling/modeling.h"
+#include "graphtemplate.h"
 #include <QFormLayout>
 #include <QLineEdit>
 #include <QComboBox>
 #include <QLabel>
+#include <QCloseEvent>
+#include <QCheckBox>
 
 namespace Ui {
 class ModellingWidget;
@@ -33,17 +36,6 @@ class ModellingWidget : public QWidget
         QPointer<QLineEdit> _freq1;
         QPointer<QLineEdit> _freq2;
 
-        void Disconnect() {
-            _amountOfSamples->disconnect();
-            _timeStep->disconnect();
-            _delay->disconnect();
-            _scale1->disconnect();
-            _scale2->disconnect();
-            _phase->disconnect();
-            _freq1->disconnect();
-            _freq2->disconnect();
-        }
-
         void Hide() {
             _amountOfSamples->setVisible(false);
             _timeStep->setVisible(false);
@@ -58,8 +50,8 @@ class ModellingWidget : public QWidget
         size_t samples() {
             return _amountOfSamples->text().toULongLong();
         }
-        size_t timeStep() {
-            return _timeStep->text().toULongLong();
+        double timeStep() {
+            return _timeStep->text().toDouble();
         }
         size_t delay() {
             return _delay->text().toULongLong();
@@ -80,6 +72,8 @@ class ModellingWidget : public QWidget
             return _freq2->text().toDouble();
         }
     };
+
+    size_t amoutOfSamples = 10;
 public:
     const std::string nm = "ModellingWidget";
 
@@ -89,8 +83,10 @@ public:
     ~ModellingWidget() = default;
 
     QPointer<glView> gv = nullptr;
+    QPointer<GraphTemplate> graphTemplate = nullptr;
     QPointer<QFormLayout> form = nullptr;
     QPointer<QComboBox> dropDown = nullptr;
+    QPointer<QCheckBox> isAddToCurrent = nullptr;
     InputLines inputLines;
 
     QPointer<QFormLayout> inputForm = nullptr;
@@ -104,7 +100,11 @@ public:
 
     void Disconnect();
 
+    void CurrentCheckChanged();
+
 private:
+    void closeEvent(QCloseEvent *event);
+
     Ui::ModellingWidget *ui;
 
     void newRow(QString str, QPointer<QLineEdit> line);

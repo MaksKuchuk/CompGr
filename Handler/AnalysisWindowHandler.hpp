@@ -8,6 +8,7 @@
 #include "../glViewType/glType.hpp"
 #include <cmath>
 #include "../glViewTemplate/gltemplateoscillogram.h"
+#include "../graphtemplate.h"
 
 class AnalysisWindowHandler: public QWidget {
     AnalysisWindowHandler();
@@ -30,7 +31,7 @@ public:
 
     static AnalysisWindowHandler* getInstance();
 
-    void analyze2DBy(std::shared_ptr<Graph2DData> data, glType t);
+    void analyze2DBy(std::shared_ptr<Graph2DData> data, glType t, QPointer<GraphTemplate> templ = nullptr);
 
     void analyze3DBy(std::shared_ptr<Graph3DData> data);
 

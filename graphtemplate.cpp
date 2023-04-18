@@ -12,24 +12,26 @@
 
 #include "mainwindow.h"
 
-GraphTemplate::GraphTemplate(QWidget *parent, std::shared_ptr<GeneralData> pData, long long ind) :
+GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<GeneralData> gData, long long ind) :
+    GraphTemplate(parent, gData->channelTo2D(ind)) {}
+
+GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<Graph2DData> gData) :
     QWidget(parent),
     ui(new Ui::GraphTemplate),
-    pData(pData),
-    ind(ind)
+    data(gData)
 {
     ui->setupUi(this);
 
-    glView *gView = new glView(this,
-                               pData->getAmountOfSamples(),
-                               pData->getChannel(ind),
-                               pData->maxVal(ind),
-                               pData->minVal(ind));
+    gView = new glView(this,
+                       data->amountOfSamples,
+                       data->samples,
+                       data->maxVal,
+                       data->minVal);
     gView->setFixedHeight(60);
     gView->setFixedWidth(300);
 
     QLabel *label = new QLabel(this);
-    label->setText(pData->getChannelName(ind));
+    label->setText(data->name);
 
     QFont font = label->font();
     font.setPixelSize(24);
@@ -73,12 +75,12 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
         MainWindow::openAnalysisWindow();
 
         AnalysisWindowHandler::getInstance()->analyze2DBy(
-            TransformToOscillogram::transform(pData, ind), glType::Oscillogram);
+            data, glType::Oscillogram, this);
     } else if (selectedItem->text() == "Fourier spectrum") {
         MainWindow::openAnalysisWindow();
 
         AnalysisWindowHandler::getInstance()->analyze2DBy(
-            TransformToFourierSpectrum::transform(pData, ind), glType::FourierSpectrum);
+            data, glType::FourierSpectrum, this);
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();
     }

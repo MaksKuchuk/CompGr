@@ -70,3 +70,26 @@ void GeneralData::setName(QString fName) {
 QString GeneralData::getFileName() {
     return source;
 }
+
+std::shared_ptr<Graph2DData> GeneralData::channelTo2D(long long n) const {
+    auto gr = std::make_shared<Graph2DData>();
+
+    gr->name = getChannelName(n);
+    gr->source = getSource();
+
+    gr->maxVal = maxVal(n);
+    gr->minVal = minVal(n);
+
+    gr->maxLoc = gr->maxVal;
+    gr->minLoc = gr->minVal;
+
+    gr->amountOfSamples = getAmountOfSamples();
+    gr->Hz = getHz();
+    gr->totalSeconds = getTotalDuration();
+    gr->samples = getChannel(n);
+
+    gr->lcur = 0;
+    gr->rcur = gr->amountOfSamples - 1;
+
+    return gr;
+}

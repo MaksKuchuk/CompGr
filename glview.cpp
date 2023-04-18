@@ -54,16 +54,18 @@ void glView::drawGraph() {
     glBegin(GL_LINES);
         glVertex2f(((double)lcur / parNum) * 2 - 1, -1);
         glVertex2f(((double)lcur / parNum) * 2 - 1, 1);
-        glVertex2f(((double)rcur / parNum) * 2 - 1, -1);
-        glVertex2f(((double)rcur / parNum) * 2 - 1, 1);
+        glVertex2f(((double)(rcur+2) / parNum) * 2 - 1, -1);
+        glVertex2f(((double)(rcur+2) / parNum) * 2 - 1, 1);
     glEnd();
 }
 
 void glView::setCurs(long long lcur, long long rcur) {
     this->lcur = lcur;
     this->rcur = rcur;
-    MainWindow::grWid->graphData->lcur = lcur;
-    MainWindow::grWid->graphData->rcur = rcur;
+    if (!MainWindow::isModelling && MainWindow::grWid != nullptr) {
+        MainWindow::grWid->graphData->lcur = lcur;
+        MainWindow::grWid->graphData->rcur = rcur;
+    }
     update();
 }
 

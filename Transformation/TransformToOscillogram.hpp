@@ -7,7 +7,7 @@
 class TransformToOscillogram {
 public:
 
-    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<GeneralData> data, long long n);
+//    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<GeneralData> data, long long n);
 
 };
 
