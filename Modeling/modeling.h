@@ -14,12 +14,12 @@ public:
 
     static std::shared_ptr<Graph2DData> sampledDecreasingExponent
             (
-                    const long long N, const int a
+                    const long long N, const double a
             );
 
     static std::shared_ptr<Graph2DData> sampledSineWave
             (
-                    const long long N, const int a,
+                    const long long N, const double a,
                     const double omega, const double phi
             );
 

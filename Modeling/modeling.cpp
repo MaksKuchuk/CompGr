@@ -72,7 +72,7 @@ std::shared_ptr<Graph2DData> Modeling::delayedSingleHop(const long long N, const
 */
 std::shared_ptr<Graph2DData> Modeling::sampledDecreasingExponent
         (
-                const long long N, const int a
+                const long long N, const double a
         ) {
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Model_J_3";
@@ -113,7 +113,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledDecreasingExponent
 std::shared_ptr<Graph2DData> Modeling::sampledSineWave
         (
                 const long long N,
-                const int a, const double circFreq, const double initPhase
+                const double a, const double circFreq, const double initPhase
         ) {
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Model_J_4";
@@ -166,10 +166,12 @@ std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const long lon
     double max = -1;
 
     data2D->samples.resize(N);
-    for (unsigned long long i = 0; i < N; ++i) {
-        data2D->samples[i] = (i % L < L / 2) ? 1 : -1;
-        if (data2D->samples[i] > max) max = data2D->samples[i];
-        if (data2D->samples[i] < min) min = data2D->samples[i];
+    if (L > 0) {
+        for (unsigned long long i = 0; i < N; ++i) {
+            data2D->samples[i] = (i % L < L / 2) ? 1 : -1;
+            if (data2D->samples[i] > max) max = data2D->samples[i];
+            if (data2D->samples[i] < min) min = data2D->samples[i];
+        }
     }
 
     data2D->minVal = min;
@@ -200,7 +202,7 @@ std::shared_ptr<Graph2DData> Modeling::saw(const long long N, const long long L)
     data2D->samples.resize(N);
     if (L > 0) {
         for (unsigned long long i = 0; i < N; ++i) {
-            data2D->samples[i] = (i % L) / L;
+            data2D->samples[i] = (i % L) / (double)L;
             if (data2D->samples[i] > max) max = data2D->samples[i];
             if (data2D->samples[i] < min) min = data2D->samples[i];
         }

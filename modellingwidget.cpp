@@ -51,16 +51,22 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
 
     this->setLayout(form);
 
-    auto upd = [&](){ ChangeSamples(); };
-    connect(dropDown,&QComboBox::currentIndexChanged, [&](){ ChangedModel(); });
-    connect(inputLines._amountOfSamples, &QLineEdit::editingFinished, upd);
-    connect(inputLines._delay, &QLineEdit::editingFinished, upd);
-    connect(inputLines._timeStep, &QLineEdit::editingFinished, upd);
-    connect(inputLines._scale1, &QLineEdit::editingFinished, upd);
-    connect(inputLines._scale2, &QLineEdit::editingFinished, upd);
-    connect(inputLines._phase, &QLineEdit::editingFinished, upd);
-    connect(inputLines._freq1, &QLineEdit::editingFinished, upd);
-    connect(inputLines._freq2, &QLineEdit::editingFinished, upd);
+
+
+    auto connectDraw = [&](QPointer<QLineEdit> line){
+        connect(line, &QLineEdit::editingFinished, this, &ModellingWidget::DrawGraph);
+    };
+
+    connect(dropDown,&QComboBox::currentIndexChanged, this, &ModellingWidget::ChangedModel);
+
+    connectDraw(inputLines._amountOfSamples);
+    connectDraw(inputLines._delay);
+    connectDraw(inputLines._timeStep);
+    connectDraw(inputLines._scale1);
+    connectDraw(inputLines._scale2);
+    connectDraw(inputLines._phase);
+    connectDraw(inputLines._freq1);
+    connectDraw(inputLines._freq2);
 }
 
 void ModellingWidget::ChangedModel() {
@@ -74,13 +80,23 @@ void ModellingWidget::ChangedModel() {
     newRow("No. samples", inputLines._amountOfSamples);
     switch (currentType) {
     case Modeling::Type::SingleImpulse:
-    case Modeling::Type::SingleHop: {
+    case Modeling::Type::SingleHop:{
         newRow("Delay", inputLines._delay);
         break;
     }
-    case Modeling::Type::SineWave: {
-
+    case Modeling::Type::DecreasingExponent: {
+        newRow("Base", inputLines._scale1);
         break;
+    }
+    case Modeling::Type::Saw:
+    case Modeling::Type::Meander: {
+        newRow("Period", inputLines._delay);
+        break;
+    }
+    case Modeling::Type::SineWave: {
+        newRow("Amplitude", inputLines._scale1);
+        newRow("Circle phase", inputLines._scale2);
+        newRow("Phase", inputLines._phase);
     }
     default:
         break;
@@ -108,8 +124,21 @@ void ModellingWidget::DrawGraph() {
         data = Modeling::delayedSingleHop(a_samples, delay);
         break;
     }
+    case Modeling::Type::DecreasingExponent: {
+        data = Modeling::sampledDecreasingExponent(a_samples, inputLines.scale1());
+        break;
+    }
+    case Modeling::Type::SineWave: {
+        data = Modeling::sampledSineWave(a_samples, inputLines.scale1(), inputLines.scale2(), inputLines.phase());
+        break;
+    }
+    case Modeling::Type::Meander: {
+        data = Modeling::meander(a_samples, delay);
+        break;
+    }
     case Modeling::Type::Saw: {
         data = Modeling::saw(a_samples, delay);
+        break;
     }
     default:
         break;
@@ -128,19 +157,20 @@ void ModellingWidget::DrawGraph() {
 
 void ModellingWidget::newRow(QString str, QPointer<QLineEdit> line) {
     line->setVisible(true);
-    auto label = new QLabel();
-    label->setText(str);
-    label->resize(300,100);
+    auto label = new QLabel(str, this);
     inputForm->addWidget(label);
+    label->show();
+    labels.append(label);
     inputForm->addWidget(line);
-//    form->addWidget(label);
 }
 
 void ModellingWidget::inputFormRemoveRows() {
     qDebug() << inputForm->rowCount();
     for (size_t i = 0; i < inputForm->rowCount(); ++i) {
-        auto row = inputForm->takeRow(0);
+        inputForm->takeRow(0);
     }
+    for (const auto& l : labels)
+        l->close();
 }
 
 
@@ -149,10 +179,10 @@ ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<General
 
     _timeStep = new QLineEdit(QString::number( data == nullptr ? 1 : 1/data->Hz), parent);
     _delay = new QLineEdit(QString::number(0), parent);
-    _scale1 = new QLineEdit(QString::number(0), parent);
-    _scale2 = new QLineEdit(QString::number(0), parent);
+    _scale1 = new QLineEdit(QString::number(1), parent);
+    _scale2 = new QLineEdit(QString::number(1), parent);
     _phase = new QLineEdit(QString::number(0), parent);
-    _freq1 = new QLineEdit(QString::number(0), parent);
-    _freq2 = new QLineEdit(QString::number(0), parent);
+    _freq1 = new QLineEdit(QString::number(1), parent);
+    _freq2 = new QLineEdit(QString::number(1), parent);
     Hide();
 }
