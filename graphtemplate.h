@@ -21,7 +21,7 @@ public:
     QPointer<glView> gView = nullptr;
 
     explicit GraphTemplate(QWidget *parent = nullptr, const std::shared_ptr<GeneralData> gData = nullptr, long long ind = -1);
-    explicit GraphTemplate(QWidget *parent = nullptr, const std::shared_ptr<Graph2DData> gData = nullptr);
+    explicit GraphTemplate(QWidget *parent = nullptr, const std::shared_ptr<Graph2DData> gData = nullptr, bool showName = true);
     ~GraphTemplate();
 
 protected:

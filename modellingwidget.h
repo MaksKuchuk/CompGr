@@ -29,6 +29,7 @@ class ModellingWidget : public QWidget
 
         QPointer<QLineEdit> _amountOfSamples;
         QPointer<QLineEdit> _timeStep;
+        QPointer<QLineEdit> _timeFreq;
         QPointer<QLineEdit> _delay;
         QPointer<QLineEdit> _scale1;
         QPointer<QLineEdit> _scale2;
@@ -39,6 +40,7 @@ class ModellingWidget : public QWidget
         void Hide() {
             _amountOfSamples->setVisible(false);
             _timeStep->setVisible(false);
+            _timeFreq->setVisible(false);
             _delay->setVisible(false);
             _scale1->setVisible(false);
             _scale2->setVisible(false);
@@ -52,6 +54,9 @@ class ModellingWidget : public QWidget
         }
         double timeStep() {
             return _timeStep->text().toDouble();
+        }
+        double timeFreq() {
+            return _timeFreq->text().toDouble();
         }
         size_t delay() {
             return _delay->text().toULongLong();
@@ -74,6 +79,7 @@ class ModellingWidget : public QWidget
     };
 
     size_t amoutOfSamples = 10;
+    double Hz = 1;
 public:
     const std::string nm = "ModellingWidget";
 
@@ -94,16 +100,19 @@ public:
 
     Modeling::Type currentType = Modeling::Type::Saw;
 
+private:
     void ChangedModel();
-    void ChangeSamples();
     void DrawGraph();
 
-    void Disconnect();
+    bool timeStepConverting = false;
+    void TimeStepChanged();
+    void TimeFreqChanged();
 
     void CurrentCheckChanged();
-
-private:
     void closeEvent(QCloseEvent *event);
+    void closeWidget();
+
+    void saveModel();
 
     Ui::ModellingWidget *ui;
 

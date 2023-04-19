@@ -19,8 +19,8 @@ GraphWidget::GraphWidget(QWidget *parent, std::shared_ptr<GeneralData> pData) :
     layout->setContentsMargins(0, 0, 0, 0);
 //    layout->setSpacing(0);
 
-    for (int i = 0; i < pData->amountOfChannels; i++) {
-        GraphTemplate* gTemp = new GraphTemplate(this, pData, i);
+    for (int i = 0; i < graphData->amountOfChannels; i++) {
+        GraphTemplate* gTemp = new GraphTemplate(this, graphData, i);
 
         layout->addWidget(gTemp);
 
@@ -29,6 +29,15 @@ GraphWidget::GraphWidget(QWidget *parent, std::shared_ptr<GeneralData> pData) :
 
     this->setLayout(layout);
 
+}
+
+void GraphWidget::AddNewChannel(std::shared_ptr<Graph2DData> newData) {
+    graphData->addNewChannel(newData);
+
+    size_t i = graphData->amountOfChannels - 1;
+    GraphTemplate* gTemp = new GraphTemplate(this, graphData, i);
+    layout()->setSpacing(5);
+    layout()->addWidget(gTemp);
 }
 
 void GraphWidget::closeEvent(QCloseEvent *event) {

@@ -59,13 +59,23 @@ void MainWindow::on_actionNew_file_triggered()
 
     auto pData = static_cast<std::shared_ptr<GeneralData>>(Parser::parse(str));
 
-    grWid = new GraphWidget(ui->mdiArea, pData);
+    ShowGraphWidget(pData);
+}
+
+void MainWindow::ShowGraphWidget(std::shared_ptr<GeneralData> data) {
+    if (grWid != nullptr){
+        grWid->close();
+        grWindow->close();
+    }
+
+    grWid = new GraphWidget(ui->mdiArea, data);
 
     QWidget *widget = grWid;
 
     ui->mdiArea->addSubWindow(widget);
 
-    ui->mdiArea->subWindowList().last()->setFixedSize(300, 105 * pData->getAmountOfChannels());
+    grWindow = ui->mdiArea->subWindowList().last();
+    grWindow->setFixedSize(300, grWindow->sizeHint().height()); //105 * data->getAmountOfChannels()
 
     widget->setWindowTitle("Channels");
     widget->show();
@@ -74,16 +84,15 @@ void MainWindow::on_actionNew_file_triggered()
 void MainWindow::on_actionSave_file_triggered() {
     if (grWid->graphData == nullptr) return;
 
+    auto data = SaverWindow::openWindow(grWid->graphData, grWid->graphData->lcur, grWid->graphData->rcur);
+
     QString path = QFileDialog::getSaveFileName(
                 this,
                 "Save File",
                 "",
                 "Text files (*.txt);; All files (*.*)");
-//    qDebug() << path;
-
     if (path == nullptr || path == "") return;
 
-    auto data = SaverWindow::openWindow(grWid->graphData, grWid->graphData->lcur, grWid->graphData->rcur);
     if (data.success)
         Saver::TxtSaver(grWid->graphData, data.first_sample, data.last_sample, data.channels, path);
 }
@@ -157,16 +166,15 @@ void MainWindow::on_actionTheme_triggered()
 
 void MainWindow::on_actionCreate_new_model_triggered() {
 
-    QWidget *widget = new ModellingWidget(ui->mdiArea, grWid == nullptr ? nullptr : grWid->graphData);
+    modelWid = new ModellingWidget(ui->mdiArea, grWid == nullptr ? nullptr : grWid->graphData);
 
-    ui->mdiArea->addSubWindow(widget);
+    ui->mdiArea->addSubWindow(modelWid);
 
-    auto wid = ui->mdiArea->subWindowList().last();
-//    wid->resize(wid->sizeHint());
-    wid->resize(wid->sizeHint().width(), 500);
+    modelWindow = ui->mdiArea->subWindowList().last();
+    modelWindow->resize(modelWindow->sizeHint());
+//    wid->resize(wid->sizeHint().width(), 500);
 
-    widget->setWindowTitle("Modelling");
-    widget->show();
-    this->isModelling = true;
+    modelWid->setWindowTitle("Modelling");
+    modelWid->show();
 }
 

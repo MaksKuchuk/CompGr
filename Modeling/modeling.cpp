@@ -32,7 +32,8 @@ std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, c
     data2D->totalSeconds = (N - 1);
 
     data2D->samples.resize(N);
-    data2D->samples[n] = 1;
+    if (n < N)
+        data2D->samples[n] = 1;
 
     return data2D;
 }

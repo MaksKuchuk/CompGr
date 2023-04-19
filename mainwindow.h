@@ -4,9 +4,11 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMdiArea>
+#include <QMdiSubWindow>
 #include <memory>
 
 #include "graphwidget.h"
+#include "modellingwidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,8 +29,12 @@ public:
     static inline bool isDarkTheme = true;
 
     static inline QPointer<GraphWidget> grWid = nullptr;
+    static inline QPointer<QMdiSubWindow> grWindow = nullptr;
 
-    static inline bool isModelling = false;
+    static inline QPointer<ModellingWidget> modelWid = nullptr;
+    static inline QPointer<QMdiSubWindow> modelWindow = nullptr;
+
+    void ShowGraphWidget(std::shared_ptr<GeneralData>);
 
 private slots:
     void on_actionNew_file_triggered();

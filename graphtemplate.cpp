@@ -15,7 +15,7 @@
 GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<GeneralData> gData, long long ind) :
     GraphTemplate(parent, gData->channelTo2D(ind)) {}
 
-GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<Graph2DData> gData) :
+GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<Graph2DData> gData, bool showName) :
     QWidget(parent),
     ui(new Ui::GraphTemplate),
     data(gData)
@@ -30,21 +30,24 @@ GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<Graph2DData>
     gView->setFixedHeight(60);
     gView->setFixedWidth(300);
 
-    QLabel *label = new QLabel(this);
-    label->setText(data->name);
-
-    QFont font = label->font();
-    font.setPixelSize(24);
-    label->setFont(font);
-
-    label->setAlignment(Qt::AlignCenter);
-    label->setFixedHeight(18);
-
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(gView);
-    layout->setSpacing(3);
-    layout->addWidget(label);
+
+    if (showName) {
+        QLabel *label = new QLabel(this);
+        label->setText(data->name);
+
+        QFont font = label->font();
+        font.setPixelSize(20);
+        label->setFont(font);
+
+        label->setAlignment(Qt::AlignCenter);
+        label->setFixedHeight(18);
+        layout->setSpacing(3);
+        layout->addWidget(label);
+    }
+
     this->setLayout(layout);
 }
 

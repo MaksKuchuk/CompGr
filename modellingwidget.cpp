@@ -11,13 +11,10 @@
 #include <QLineEdit>
 #include <QLayoutItem>
 #include <QTextItem>
-
-#include "glview.h"
+#include <QMdiSubWindow>
 
 #include "Modeling/modeling.h"
-
-#include "Parser/Parser.hpp"
-#include "Parser/ParseData.hpp"
+#include "Utility/generaldialog.h"
 
 #include <QDebug>
 
@@ -26,7 +23,8 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
 : QWidget(parent),
   ui(new Ui::ModellingWidget),
   inputLines(ModellingWidget::InputLines(this, generalData)),
-  amoutOfSamples(generalData == nullptr ? 10 : generalData->amountOfSamples)
+  amoutOfSamples(generalData == nullptr ? 10 : generalData->amountOfSamples),
+  Hz(generalData == nullptr ? 1 : generalData->Hz)
 {
     ui->setupUi(this);
 
@@ -42,13 +40,15 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
     form->addWidget(dropDown);
 
     isAddToCurrent = new QCheckBox(this);
-    isAddToCurrent->setCheckState(Qt::CheckState::Unchecked);
+    isAddToCurrent->setChecked(false);
+    isAddToCurrent->setText("Add to current signals");
     if (MainWindow::grWid == nullptr) {
         isAddToCurrent->setCheckable(false);
         isAddToCurrent->setDisabled(true);
-//        isAddToCurrent->hide();
+    } else {
+        isAddToCurrent->setChecked(true);
     }
-    isAddToCurrent->setText("Add to current signals");
+    CurrentCheckChanged();
 
     ChangedModel();
     form->addWidget(isAddToCurrent);
@@ -65,13 +65,18 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
 
     connect(dropDown,&QComboBox::currentIndexChanged, this, &ModellingWidget::ChangedModel);
     connect(isAddToCurrent, &QCheckBox::stateChanged, this, &ModellingWidget::CurrentCheckChanged);
+    connect(btn_box, &QDialogButtonBox::rejected, this, &ModellingWidget::closeWidget);
+    connect(btn_box, &QDialogButtonBox::accepted, this, &ModellingWidget::saveModel);
 
     auto connectDraw = [&](QPointer<QLineEdit> line){
         connect(line, &QLineEdit::textChanged, this, &ModellingWidget::DrawGraph);
     };
     connectDraw(inputLines._amountOfSamples);
     connectDraw(inputLines._delay);
-    connectDraw(inputLines._timeStep);
+
+    connect(inputLines._timeStep, &QLineEdit::textChanged, this, &ModellingWidget::TimeStepChanged);
+    connect(inputLines._timeFreq, &QLineEdit::textChanged, this, &ModellingWidget::TimeFreqChanged);
+
     connectDraw(inputLines._scale1);
     connectDraw(inputLines._scale2);
     connectDraw(inputLines._phase);
@@ -109,6 +114,7 @@ void ModellingWidget::ChangedModel() {
     }
     case Modeling::Type::ExponentialEnvelope: {
         newRow("Time step", inputLines._timeStep);
+        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude", inputLines._scale1);
         newRow("Env. width", inputLines._scale2);
         newRow("Freq", inputLines._freq1);
@@ -117,6 +123,7 @@ void ModellingWidget::ChangedModel() {
     }
     case Modeling::Type::BalanceEnvelope: {
         newRow("Time step", inputLines._timeStep);
+        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude", inputLines._scale1);
         newRow("Env. freq", inputLines._freq1);
         newRow("Carry freq", inputLines._freq2);
@@ -125,6 +132,7 @@ void ModellingWidget::ChangedModel() {
     }
     case Modeling::Type::TonalEnvelope: {
         newRow("Time step", inputLines._timeStep);
+        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude", inputLines._scale1);
         newRow("Env. freq", inputLines._freq1);
         newRow("Carry freq", inputLines._freq2);
@@ -134,6 +142,7 @@ void ModellingWidget::ChangedModel() {
     }
     case Modeling::Type::LFM: {
         newRow("Time step", inputLines._timeStep);
+        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude", inputLines._scale1);
         newRow("Start freq", inputLines._freq1);
         newRow("End freq", inputLines._freq2);
@@ -144,70 +153,65 @@ void ModellingWidget::ChangedModel() {
         break;
     }
 
-    DrawGraph();
-}
-
-void ModellingWidget::ChangeSamples() {
+    if (MainWindow::modelWindow != nullptr) {
+        MainWindow::modelWindow->resize(MainWindow::modelWindow->sizeHint().width(),
+                                        210 + 18*inputForm->rowCount());
+    }
     DrawGraph();
 }
 
 void ModellingWidget::DrawGraph() {
-    auto a_samples = inputLines.samples();
-    auto delay0 = inputLines.delay();
-    auto delay = delay0 < a_samples ? delay0 : a_samples-1;
     switch (currentType) {
     case Modeling::Type::SingleImpulse: {
-        data = Modeling::delayedSingleImpulse(a_samples, delay);
+        data = Modeling::delayedSingleImpulse(inputLines.samples(), inputLines.delay());
         break;
     }
     case Modeling::Type::SingleHop: {
-        data = Modeling::delayedSingleHop(a_samples, delay);
+        data = Modeling::delayedSingleHop(inputLines.samples(), inputLines.delay());
         break;
     }
     case Modeling::Type::DecreasingExponent: {
-        data = Modeling::sampledDecreasingExponent(a_samples, inputLines.scale1());
+        data = Modeling::sampledDecreasingExponent(inputLines.samples(), inputLines.scale1());
         break;
     }
     case Modeling::Type::SineWave: {
-        data = Modeling::sampledSineWave(a_samples, inputLines.scale1(), inputLines.scale2(), inputLines.phase());
+        data = Modeling::sampledSineWave(inputLines.samples(), inputLines.scale1(), inputLines.scale2(), inputLines.phase());
         break;
     }
     case Modeling::Type::Meander: {
-        data = Modeling::meander(a_samples, delay0);
+        data = Modeling::meander(inputLines.samples(), inputLines.delay());
         break;
     }
     case Modeling::Type::Saw: {
-        data = Modeling::saw(a_samples, delay0);
+        data = Modeling::saw(inputLines.samples(), inputLines.delay());
         break;
     }
     case Modeling::Type::ExponentialEnvelope: {
-        data = Modeling::exponentialEnvelope(a_samples, inputLines.timeStep(), inputLines.scale1(),
-                                            inputLines.scale2(), inputLines.freq1(), inputLines.phase());
+        data = Modeling::exponentialEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
+                                             inputLines.scale2(), inputLines.freq1(), inputLines.phase());
         break;
     }
     case Modeling::Type::BalanceEnvelope: {
-        data = Modeling::balanceEnvelope(a_samples, inputLines.timeStep(), inputLines.scale1(),
+        data = Modeling::balanceEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
                                          inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;
     }
     case Modeling::Type::TonalEnvelope: {
-        data = Modeling::tonalEnvelope(a_samples, inputLines.timeStep(), inputLines.scale1(),
+        data = Modeling::tonalEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
                                        inputLines.freq1(), inputLines.freq2(), inputLines.phase(),
                                        inputLines.scale2());
         break;
     }
     case Modeling::Type::LFM: {
-        data = Modeling::LFM(a_samples, inputLines.timeStep(), inputLines.scale1(),
-                                       inputLines.freq1(), inputLines.freq2(), inputLines.phase());
+        data = Modeling::LFM(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
+                             inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;
     }
     default:
         break;
     }
     delete graphTemplate;
-    graphTemplate = new GraphTemplate(this, data);
-//    gv->setFixedHeight(60);
-//    gv->setFixedWidth(300);
+    graphTemplate = new GraphTemplate(this, data, false);
     form->setWidget(1, QFormLayout::FieldRole, graphTemplate);
 
     this->update();
@@ -224,27 +228,55 @@ void ModellingWidget::newRow(QString str, QPointer<QLineEdit> line) {
 }
 
 void ModellingWidget::inputFormRemoveRows() {
-    qDebug() << inputForm->rowCount();
-    for (size_t i = 0; i < inputForm->rowCount(); ++i) {
+    for (qint64 i = inputForm->rowCount() - 1; i >= 0 ; --i) {
         inputForm->takeRow(0);
     }
-    for (const auto& l : labels)
-        l->close();
+    for (qint64 i = labels.size() - 1; i >= 0; --i) {
+        labels[i]->close();
+    }
 }
 
 void ModellingWidget::CurrentCheckChanged() {
     if (isAddToCurrent->isChecked()) {
         inputLines._amountOfSamples->setText(QString::number(amoutOfSamples));
         inputLines._amountOfSamples->setDisabled(true);
+        inputLines._timeFreq->setText(QString::number(Hz));
+        inputLines._timeStep->setText(QString::number(1/Hz));
+
+        inputLines._timeFreq->setDisabled(true);
+        inputLines._timeStep->setDisabled(true);
     } else {
         inputLines._amountOfSamples->setDisabled(false);
+        inputLines._timeFreq->setDisabled(false);
+        inputLines._timeStep->setDisabled(false);
     }
+}
+
+void ModellingWidget::TimeStepChanged() {
+    if (timeStepConverting)
+        return;
+
+    timeStepConverting = true;
+    inputLines._timeFreq->setText( QString::number(1/inputLines.timeStep()) );
+    timeStepConverting = false;
+    DrawGraph();
+}
+
+void ModellingWidget::TimeFreqChanged() {
+    if (timeStepConverting)
+        return;
+
+    timeStepConverting = true;
+    inputLines._timeStep->setText( QString::number(1/inputLines.timeFreq()) );
+    timeStepConverting = false;
+    DrawGraph();
 }
 
 ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<GeneralData> data) {
     _amountOfSamples = new QLineEdit(QString::number( data == nullptr ? 10 : data->amountOfSamples), parent);
 
     _timeStep = new QLineEdit(QString::number( data == nullptr ? 1 : 1/data->Hz), parent);
+    _timeFreq = new QLineEdit(QString::number( data == nullptr ? 1 : data->Hz), parent);
     _delay = new QLineEdit(QString::number(0), parent);
     _scale1 = new QLineEdit(QString::number(1), parent);
     _scale2 = new QLineEdit(QString::number(1), parent);
@@ -256,5 +288,30 @@ ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<General
 
 
 void ModellingWidget::closeEvent(QCloseEvent *event) {
-    MainWindow::isModelling = false;
+    MainWindow::modelWid.clear();
+}
+
+void ModellingWidget::closeWidget() {
+    this->parentWidget()->close();
+}
+
+void ModellingWidget::saveModel() {
+    QString dialog_text = "Save model";
+    if (MainWindow::grWid != nullptr)
+        dialog_text += isAddToCurrent->isChecked() ?
+                    " and add to current signals" :
+                    " and close old signals";
+    dialog_text += "?";
+    auto dialog = GeneralDialog::AgreeDialog(dialog_text);
+    if (!dialog)
+        return;
+
+    if (MainWindow::grWid != nullptr) {
+        MainWindow::grWid->AddNewChannel(data);
+        MainWindow::grWindow->setFixedSize(300, 100 * MainWindow::grWid->graphData->getAmountOfChannels());
+    }
+    if (MainWindow::grWid == nullptr || !isAddToCurrent->isChecked())
+        MainWindow::instance->ShowGraphWidget(std::make_shared<GeneralData>(data));
+
+    closeWidget();
 }

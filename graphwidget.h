@@ -22,6 +22,8 @@ public:
 
     std::shared_ptr<GeneralData> graphData;
 
+    void AddNewChannel(std::shared_ptr<Graph2DData> newData);
+
     void closeEvent(QCloseEvent *event);
 
 private:

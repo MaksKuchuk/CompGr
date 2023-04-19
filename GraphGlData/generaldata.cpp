@@ -2,6 +2,16 @@
 
 GeneralData::GeneralData() = default;
 
+void GeneralData::addNewChannel(std::shared_ptr<Graph2DData> data) {
+    if (amountOfSamples != data->amountOfSamples)
+        throw std::runtime_error("Different numbers of samples: " + std::to_string(amountOfSamples)
+                                 + " != "+ std::to_string(data->amountOfSamples));
+
+    channels.push_back(data->samples);
+    channels_names.push_back(data->name);
+    extremums.push_back({data->minVal, data->maxVal});
+    ++amountOfChannels;
+}
 
 unsigned long long GeneralData::getAmountOfChannels() const {
     return amountOfChannels;
@@ -92,4 +102,13 @@ std::shared_ptr<Graph2DData> GeneralData::channelTo2D(long long n) const {
     gr->rcur = gr->amountOfSamples - 1;
 
     return gr;
+}
+
+GeneralData::GeneralData(std::shared_ptr<Graph2DData> data) :
+    amountOfSamples(data->amountOfSamples),
+    startTime("01-01-2000 00:00:00"),
+    totalSeconds(data->totalSeconds),
+    Hz(data->Hz)
+{
+    addNewChannel(data);
 }

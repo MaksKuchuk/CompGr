@@ -13,7 +13,7 @@ public:
     // where is it from
     QString source;
     // number of channels
-    unsigned long long amountOfChannels;
+    unsigned long long amountOfChannels = 0;
     // number of samples
     unsigned long long amountOfSamples;
     // sampling frequency (Hz)
@@ -37,6 +37,9 @@ public:
     size_t rcur;
 
     GeneralData();
+    GeneralData(std::shared_ptr<Graph2DData>);
+
+    void addNewChannel(std::shared_ptr<Graph2DData> data);
 
     unsigned long long getAmountOfChannels() const;
 

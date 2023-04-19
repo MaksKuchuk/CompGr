@@ -62,7 +62,7 @@ void glView::drawGraph() {
 void glView::setCurs(long long lcur, long long rcur) {
     this->lcur = lcur;
     this->rcur = rcur;
-    if (!MainWindow::isModelling && MainWindow::grWid != nullptr) {
+    if (MainWindow::modelWid == nullptr && MainWindow::grWid != nullptr) {
         MainWindow::grWid->graphData->lcur = lcur;
         MainWindow::grWid->graphData->rcur = rcur;
     }
