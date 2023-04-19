@@ -14,7 +14,7 @@
 */
 std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, const long long n) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_1";
+    data2D->name = "Model_1_";
     data2D->source = "Delayed Single Impulse n = " + QString::number(n);
 
     data2D->maxVal = 1;
@@ -45,7 +45,7 @@ std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, c
 */
 std::shared_ptr<Graph2DData> Modeling::delayedSingleHop(const long long N, const long long n) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_2";
+    data2D->name = "Model_2_";
     data2D->source = "Delayed Single Hop n = " + QString::number(n);
 
     data2D->maxVal = 1;
@@ -81,7 +81,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledDecreasingExponent
                 const long long N, const double a
         ) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_3";
+    data2D->name = "Model_3_";
     data2D->source = "Sampled Decreased Exponent a = " + QString::number(a);
 
     data2D->amountOfSamples = N;
@@ -122,7 +122,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledSineWave
                 const double a, const double circFreq, const double initPhase
         ) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_4";
+    data2D->name = "Model_4_";
     data2D->source = "Sampled Sine Wave amplitude = " + QString::number(a)
                      + " circle frequency = " + QString::number(circFreq)
                      + " initial phase = " + QString::number(initPhase);
@@ -156,7 +156,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledSineWave
 
 std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const long long L) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_5";
+    data2D->name = "Model_5_";
     data2D->source = "Meander period = " + QString::number(L);
 
     data2D->amountOfSamples = N;
@@ -190,7 +190,7 @@ std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const long lon
 
 std::shared_ptr<Graph2DData> Modeling::saw(const long long N, const long long L) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_6";
+    data2D->name = "Model_6_";
     data2D->source = "Saw period = " + QString::number(L);
 
     data2D->amountOfSamples = N;
@@ -227,7 +227,7 @@ std::shared_ptr<Graph2DData> Modeling::exponentialEnvelope(
         const double tau, const double f, const double phi
 ) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_7";
+    data2D->name = "Model_7_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " envelope width = " + QString::number(tau)
                      + " carrier freq = " + QString::number(f)
@@ -266,7 +266,7 @@ std::shared_ptr<Graph2DData> Modeling::balanceEnvelope(
         const double f0, const double fn, const double phi
 ) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_8";
+    data2D->name = "Model_8_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " envelope freq = " + QString::number(f0)
                      + " carrier freq = " + QString::number(fn)
@@ -305,7 +305,7 @@ std::shared_ptr<Graph2DData> Modeling::tonalEnvelope(
         const double f0, const double fn, const double phi, const double m
 ) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_9";
+    data2D->name = "Model_9_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " envelope freq = " + QString::number(f0)
                      + " carrier freq = " + QString::number(fn)
@@ -345,7 +345,7 @@ std::shared_ptr<Graph2DData> Modeling::LFM(
         const double f0, const double fk, const double phi0
 ) {
     auto data2D = std::make_shared<Graph2DData>();
-    data2D->name = "Model_J_10";
+    data2D->name = "Model_10_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " start freq = " + QString::number(f0)
                      + " end freq = " + QString::number(fk)

@@ -307,11 +307,15 @@ void ModellingWidget::saveModel() {
         return;
 
     if (MainWindow::grWid != nullptr) {
+        data->name += QString::number( MainWindow::instance->grWid->graphData->modellingCounts[(int)currentType] += 1);
         MainWindow::grWid->AddNewChannel(data);
         MainWindow::grWindow->setFixedSize(300, 100 * MainWindow::grWid->graphData->getAmountOfChannels());
     }
-    if (MainWindow::grWid == nullptr || !isAddToCurrent->isChecked())
+    if (MainWindow::grWid == nullptr || !isAddToCurrent->isChecked()) {
+        data->name+="1";
         MainWindow::instance->ShowGraphWidget(std::make_shared<GeneralData>(data));
+        MainWindow::instance->grWid->graphData->modellingCounts[(int)currentType] += 1;
+    }
 
     closeWidget();
 }

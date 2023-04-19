@@ -98,7 +98,7 @@ public:
     QPointer<QFormLayout> inputForm = nullptr;
     QList<QPointer<QLabel>> labels;
 
-    Modeling::Type currentType = Modeling::Type::Saw;
+    Modeling::Type currentType = Modeling::Type::SingleImpulse;
 
 private:
     void ChangedModel();

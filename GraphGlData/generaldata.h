@@ -33,6 +33,8 @@ public:
     QList<QString> channels_names;
     QList<std::pair<double, double>> extremums;
 
+    QList<int> modellingCounts;
+
     size_t lcur = 0;
     size_t rcur;
 

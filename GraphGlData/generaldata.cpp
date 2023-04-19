@@ -1,6 +1,9 @@
 #include "generaldata.h"
+#include "../Modeling/modeling.h"
 
-GeneralData::GeneralData() = default;
+GeneralData::GeneralData() {
+    modellingCounts.resize(Modeling::AmountOfTypes());
+};
 
 void GeneralData::addNewChannel(std::shared_ptr<Graph2DData> data) {
     if (amountOfSamples != data->amountOfSamples)
@@ -110,5 +113,6 @@ GeneralData::GeneralData(std::shared_ptr<Graph2DData> data) :
     totalSeconds(data->totalSeconds),
     Hz(data->Hz)
 {
+    modellingCounts.resize(Modeling::AmountOfTypes());
     addNewChannel(data);
 }
