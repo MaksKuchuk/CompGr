@@ -49,20 +49,25 @@ set(PROJECT_SOURCES
         glview.cpp
         glview.h
 
+        modellingwidget.h
+        modellingwidget.cpp
+
+        Utility/generaldialog.h
+        Utility/generaldialog.cpp
+
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
 
         Saver/Saver.hpp
         Saver/Saver.cpp
-        Saver/SaveHandler.hpp
-        Saver/SaveHandler.cpp
 
         Saver/saverwindow.h
         Saver/saverwindow.cpp
 
         Modeling/modeling.h
         Modeling/modeling.cpp
+        modellingwidget.ui
 
         graphinfo.cpp
         graphinfo.h
@@ -74,6 +79,9 @@ set(PROJECT_SOURCES
         
         Parser/ParseDataWav.cpp
         Parser/ParseDataWav.hpp
+
+        GraphGlData/generaldata.h
+        GraphGlData/generaldata.cpp
 
         GraphGlData/Graph2DData.hpp
         GraphGlData/Graph2DData.cpp

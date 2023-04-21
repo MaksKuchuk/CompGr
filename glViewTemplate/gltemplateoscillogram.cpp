@@ -57,10 +57,11 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
     }
 }
 
-glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, Graph2DData *data) :
+glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ_) :
     QWidget(parent),
     ui(new Ui::glTemplateOscillogram),
-    data(data)
+    data(data),
+    templ(templ_)
 {
     ui->setupUi(this);
 

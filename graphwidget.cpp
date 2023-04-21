@@ -1,14 +1,16 @@
 #include "graphwidget.h"
 #include "ui_graphwidget.h"
 #include "graphtemplate.h"
-#include "Parser/ParseData.hpp"
+#include "GraphGlData/generaldata.h"
+#include "mainwindow.h"
+#include <memory>
 
 #include <QVBoxLayout>
 
-GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
+GraphWidget::GraphWidget(QWidget *parent, std::shared_ptr<GeneralData> pData) :
     QWidget(parent),
     ui(new Ui::GraphWidget),
-    pData(pData)
+    graphData(pData)
 {
     ui->setupUi(this);
     if (pData == nullptr) return;
@@ -17,8 +19,8 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
     layout->setContentsMargins(0, 0, 0, 0);
 //    layout->setSpacing(0);
 
-    for (int i = 0; i < pData->getAmountOfChannels(); i++) {
-        GraphTemplate *gTemp = new GraphTemplate(this, pData, i);
+    for (int i = 0; i < graphData->amountOfChannels; i++) {
+        GraphTemplate* gTemp = new GraphTemplate(this, graphData, i);
 
         layout->addWidget(gTemp);
 
@@ -29,8 +31,17 @@ GraphWidget::GraphWidget(QWidget *parent, ParseData* pData) :
 
 }
 
+void GraphWidget::AddNewChannel(std::shared_ptr<Graph2DData> newData) {
+    graphData->addNewChannel(newData);
+
+    size_t i = graphData->amountOfChannels - 1;
+    GraphTemplate* gTemp = new GraphTemplate(this, graphData, i);
+    layout()->setSpacing(5);
+    layout()->addWidget(gTemp);
+}
+
 void GraphWidget::closeEvent(QCloseEvent *event) {
-    delete pData;
+    MainWindow::grWid->graphData.reset();
 }
 
 GraphWidget::~GraphWidget()

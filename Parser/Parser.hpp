@@ -11,7 +11,7 @@
 #include <QDebug>
 
 class Parser {
-    static ParseData* parseFile(const QString& path_to_file_str) {
+    static std::shared_ptr<ParseData> parseFile(const QString& path_to_file_str) {
         std::filesystem::path path_to_file(path_to_file_str.toStdWString());
 
         if (!QFile::exists(path_to_file)) {
@@ -19,19 +19,19 @@ class Parser {
         }
 
         if (path_to_file_str.endsWith("txt")) {
-            auto pd = new ParseDataTxt();
+            auto pd = std::make_shared<ParseDataTxt>();
             pd->parse(path_to_file);
-            return static_cast<ParseData*>(pd);
+            return static_cast<std::shared_ptr<ParseData>>(pd);
         }
         else if (path_to_file_str.endsWith("wav")) {
-            auto pd = new ParseDataWav();
+            auto pd = std::make_shared<ParseDataWav>();
             pd->parse(path_to_file);
-            return static_cast<ParseData*>(pd);
+            return static_cast<std::shared_ptr<ParseData>>(pd);
         }
         return nullptr;
     }
 public:
-    static ParseData *parse(const QString& path_to_file) {
+    static std::shared_ptr<ParseData> parse(const QString& path_to_file) {
         auto s = std::chrono::high_resolution_clock().now();
         auto pd = parseFile(path_to_file);
         if (pd == nullptr)

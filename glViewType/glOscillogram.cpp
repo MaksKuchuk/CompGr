@@ -1,10 +1,9 @@
 #include "glOscillogram.hpp"
 #include "../mainwindow.h"
 
-glOscillogram::glOscillogram(QWidget *parent, Graph2DData *data) :
+glOscillogram::glOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data) :
     QOpenGLWidget(parent),
     data(data) {
-
 }
 
 void glOscillogram::updateGraph() {

@@ -1,15 +1,20 @@
-#include "modeling.h"
-
 #define _USE_MATH_DEFINES
+
+#include <cmath>
+#include <memory>
+
+#include "modeling.h"
+#include "../GraphGlData/Graph2DData.hpp"
+
 
 /*
     N - amount of samples
     T - sampling step
     n - parameter
 */
-Graph2DData *Modeling::delayedSingleImpulse(const long long N, const long long n, Graph2DData* data) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_1";
+std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, const long long n) {
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_1_";
     data2D->source = "Delayed Single Impulse n = " + QString::number(n);
 
     data2D->maxVal = 1;
@@ -17,7 +22,7 @@ Graph2DData *Modeling::delayedSingleImpulse(const long long N, const long long n
 
     data2D->maxLoc = 1;
     data2D->minLoc = 0;
-    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
+    data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
@@ -26,9 +31,9 @@ Graph2DData *Modeling::delayedSingleImpulse(const long long N, const long long n
 
     data2D->totalSeconds = (N - 1);
 
-    double *samples = new double[N]();
-    samples[n] = 1;
-    data2D->samples = samples;
+    data2D->samples.resize(N);
+    if (n < N)
+        data2D->samples[n] = 1;
 
     return data2D;
 }
@@ -38,9 +43,9 @@ Graph2DData *Modeling::delayedSingleImpulse(const long long N, const long long n
     T - sampling step
     n - parameter
 */
-Graph2DData *Modeling::delayedSingleHop(const long long N, const long long n, Graph2DData* data) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_2";
+std::shared_ptr<Graph2DData> Modeling::delayedSingleHop(const long long N, const long long n) {
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_2_";
     data2D->source = "Delayed Single Hop n = " + QString::number(n);
 
     data2D->maxVal = 1;
@@ -48,7 +53,7 @@ Graph2DData *Modeling::delayedSingleHop(const long long N, const long long n, Gr
 
     data2D->maxLoc = 1;
     data2D->minLoc = 0;
-    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
+    data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
@@ -57,11 +62,10 @@ Graph2DData *Modeling::delayedSingleHop(const long long N, const long long n, Gr
 
     data2D->totalSeconds = (N - 1);
 
-    double *samples = new double[N]();
+    data2D->samples.resize(N);
     for (unsigned long long i = n; i < N; ++i) {
-        samples[i] = 1;
+        data2D->samples[i] = 1;
     }
-    data2D->samples = samples;
 
     return data2D;
 }
@@ -72,15 +76,15 @@ Graph2DData *Modeling::delayedSingleHop(const long long N, const long long n, Gr
     T - sampling step
     a - parameter, n >= 0, 0 <= a <= 1
 */
-Graph2DData *Modeling::sampledDecreasingExponent
+std::shared_ptr<Graph2DData> Modeling::sampledDecreasingExponent
         (
-                const long long N, const int a, Graph2DData* data
+                const long long N, const double a
         ) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_3";
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_3_";
     data2D->source = "Sampled Decreased Exponent a = " + QString::number(a);
 
-    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
+    data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
@@ -92,13 +96,12 @@ Graph2DData *Modeling::sampledDecreasingExponent
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
-    double *samples = new double[N]();
+    data2D->samples.resize(N);
     for (unsigned long long i = 0; i < N; ++i) {
-        samples[i] = std::pow(a, i);
-        if (samples[i] > max) max = samples[i];
-        if (samples[i] < min) min = samples[i];
+        data2D->samples[i] = std::pow(a, i);
+        if (data2D->samples[i] > max) max = data2D->samples[i];
+        if (data2D->samples[i] < min) min = data2D->samples[i];
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;
@@ -113,18 +116,18 @@ Graph2DData *Modeling::sampledDecreasingExponent
     circFreq - circle frequency, [0, pi]
     initPhase - initial phase, [0, 2pi]
 */
-Graph2DData *Modeling::sampledSineWave
+std::shared_ptr<Graph2DData> Modeling::sampledSineWave
         (
                 const long long N,
-                const int a, const double circFreq, const double initPhase, Graph2DData* data
+                const double a, const double circFreq, const double initPhase
         ) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_4";
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_4_";
     data2D->source = "Sampled Sine Wave amplitude = " + QString::number(a)
                      + " circle frequency = " + QString::number(circFreq)
                      + " initial phase = " + QString::number(initPhase);
 
-    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
+    data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
@@ -136,13 +139,12 @@ Graph2DData *Modeling::sampledSineWave
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
-    double *samples = new double[N]();
+    data2D->samples.resize(N);
     for (unsigned long long i = 0; i < N; ++i) {
-        samples[i] = a * std::sin(i * circFreq + initPhase);
-        if (samples[i] > max) max = samples[i];
-        if (samples[i] < min) min = samples[i];
+        data2D->samples[i] = a * std::sin(i * circFreq + initPhase);
+        if (data2D->samples[i] > max) max = data2D->samples[i];
+        if (data2D->samples[i] < min) min = data2D->samples[i];
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;
@@ -152,12 +154,12 @@ Graph2DData *Modeling::sampledSineWave
     return data2D;
 }
 
-Graph2DData *Modeling::meander(const long long N, const long long L, Graph2DData* data) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_5";
+std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const long long L) {
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_5_";
     data2D->source = "Meander period = " + QString::number(L);
 
-    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
+    data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
@@ -169,13 +171,14 @@ Graph2DData *Modeling::meander(const long long N, const long long L, Graph2DData
     double min = 1;
     double max = -1;
 
-    double *samples = new double[N]();
-    for (unsigned long long i = 0; i < N; ++i) {
-        samples[i] = (i % L < L / 2) ? 1 : -1;
-        if (samples[i] > max) max = samples[i];
-        if (samples[i] < min) min = samples[i];
+    data2D->samples.resize(N);
+    if (L > 0) {
+        for (unsigned long long i = 0; i < N; ++i) {
+            data2D->samples[i] = (i % L < L / 2) ? 1 : -1;
+            if (data2D->samples[i] > max) max = data2D->samples[i];
+            if (data2D->samples[i] < min) min = data2D->samples[i];
+        }
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;
@@ -185,12 +188,12 @@ Graph2DData *Modeling::meander(const long long N, const long long L, Graph2DData
     return data2D;
 }
 
-Graph2DData *Modeling::saw(const long long N, const long long L, Graph2DData* data) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_6";
+std::shared_ptr<Graph2DData> Modeling::saw(const long long N, const long long L) {
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_6_";
     data2D->source = "Saw period = " + QString::number(L);
 
-    data2D->amountOfSamples = (data == nullptr) ? N : data->amountOfSamples;
+    data2D->amountOfSamples = N;
 
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
@@ -202,13 +205,14 @@ Graph2DData *Modeling::saw(const long long N, const long long L, Graph2DData* da
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
-    double *samples = new double[N]();
-    for (unsigned long long i = 0; i < N; ++i) {
-        samples[i] = (i % L) / L;
-        if (samples[i] > max) max = samples[i];
-        if (samples[i] < min) min = samples[i];
+    data2D->samples.resize(N);
+    if (L > 0) {
+        for (unsigned long long i = 0; i < N; ++i) {
+            data2D->samples[i] = (i % L) / (double)L;
+            if (data2D->samples[i] > max) max = data2D->samples[i];
+            if (data2D->samples[i] < min) min = data2D->samples[i];
+        }
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;
@@ -218,12 +222,12 @@ Graph2DData *Modeling::saw(const long long N, const long long L, Graph2DData* da
     return data2D;
 }
 
-static Graph2DData *exponentialEnvelope(
+std::shared_ptr<Graph2DData> Modeling::exponentialEnvelope(
         const long long N, const double T, const double a,
         const double tau, const double f, const double phi
 ) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_7";
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_7_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " envelope width = " + QString::number(tau)
                      + " carrier freq = " + QString::number(f)
@@ -241,14 +245,13 @@ static Graph2DData *exponentialEnvelope(
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
-    double *samples = new double[N]();
+    data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
         double t = data2D->Hz * i;
-        samples[i] = a * exp(-t / tau) * cos(2 * M_PI * f * t + phi);
-        min = std::min(min, samples[i]);
-        max = std::max(max, samples[i]);
+        data2D->samples[i] = a * exp(-t / tau) * cos(2 * M_PI * f * t + phi);
+        min = std::min(min, data2D->samples[i]);
+        max = std::max(max, data2D->samples[i]);
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;
@@ -258,12 +261,12 @@ static Graph2DData *exponentialEnvelope(
     return data2D;
 }
 
-static Graph2DData *balanceEnvelope(
+std::shared_ptr<Graph2DData> Modeling::balanceEnvelope(
         const long long N, const double T, const double a,
         const double f0, const double fn, const double phi
 ) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_8";
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_8_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " envelope freq = " + QString::number(f0)
                      + " carrier freq = " + QString::number(fn)
@@ -281,14 +284,13 @@ static Graph2DData *balanceEnvelope(
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
-    double *samples = new double[N]();
+    data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
         double t = data2D->Hz * i;
-        samples[i] = a * cos(2 * M_PI * f0 * t) * cos(2 * M_PI * fn * t + phi);
-        min = std::min(min, samples[i]);
-        max = std::max(max, samples[i]);
+        data2D->samples[i] = a * cos(2 * M_PI * f0 * t) * cos(2 * M_PI * fn * t + phi);
+        min = std::min(min, data2D->samples[i]);
+        max = std::max(max, data2D->samples[i]);
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;
@@ -298,12 +300,12 @@ static Graph2DData *balanceEnvelope(
     return data2D;
 }
 
-static Graph2DData *tonalEnvelope(
+std::shared_ptr<Graph2DData> Modeling::tonalEnvelope(
         const long long N, const double T, const double a,
         const double f0, const double fn, const double phi, const double m
 ) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_9";
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_9_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " envelope freq = " + QString::number(f0)
                      + " carrier freq = " + QString::number(fn)
@@ -322,14 +324,13 @@ static Graph2DData *tonalEnvelope(
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
-    double *samples = new double[N]();
+    data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
         double t = data2D->Hz * i;
-        samples[i] = a * (1 + m * cos(2 * M_PI * f0 * t)) * cos(2 * M_PI * fn * t + phi);
-        min = std::min(min, samples[i]);
-        max = std::max(max, samples[i]);
+        data2D->samples[i] = a * (1 + m * cos(2 * M_PI * f0 * t)) * cos(2 * M_PI * fn * t + phi);
+        min = std::min(min, data2D->samples[i]);
+        max = std::max(max, data2D->samples[i]);
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;
@@ -339,12 +340,12 @@ static Graph2DData *tonalEnvelope(
     return data2D;
 }
 
-static Graph2DData *LFM(
+std::shared_ptr<Graph2DData> Modeling::LFM(
         const long long N, const double T, const double a,
         const double f0, const double fk, const double phi0
 ) {
-    Graph2DData *data2D = new Graph2DData();
-    data2D->name = "Model_J_10";
+    auto data2D = std::make_shared<Graph2DData>();
+    data2D->name = "Model_10_";
     data2D->source = "Amplitude = " + QString::number(a)
                      + " start freq = " + QString::number(f0)
                      + " end freq = " + QString::number(fk)
@@ -364,14 +365,13 @@ static Graph2DData *LFM(
 
     double totalTime = N * T;
 
-    double *samples = new double[N]();
+    data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
         double t = data2D->Hz * i;
-        samples[i] = a * cos(2 * M_PI * (f0 + (fk - f0) * t / totalTime) * t + phi0);
-        min = std::min(min, samples[i]);
-        max = std::max(max, samples[i]);
+        data2D->samples[i] = a * cos(2 * M_PI * (f0 + (fk - f0) * t / totalTime) * t + phi0);
+        min = std::min(min, data2D->samples[i]);
+        max = std::max(max, data2D->samples[i]);
     }
-    data2D->samples = samples;
 
     data2D->minVal = min;
     data2D->maxVal = max;

@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 #include <iostream>
 
-glView::glView(QWidget *parent, long long parNum, double* data, double maxVal, double minVal) :
+glView::glView(QWidget *parent, long long parNum, const QList<double>& data, double maxVal, double minVal) :
     QOpenGLWidget(parent),
     parNum(parNum),
     data(data),
@@ -54,25 +54,20 @@ void glView::drawGraph() {
     glBegin(GL_LINES);
         glVertex2f(((double)lcur / parNum) * 2 - 1, -1);
         glVertex2f(((double)lcur / parNum) * 2 - 1, 1);
-        glVertex2f(((double)rcur / parNum) * 2 - 1, -1);
-        glVertex2f(((double)rcur / parNum) * 2 - 1, 1);
+        glVertex2f(((double)(rcur+2) / parNum) * 2 - 1, -1);
+        glVertex2f(((double)(rcur+2) / parNum) * 2 - 1, 1);
     glEnd();
 }
 
 void glView::setCurs(long long lcur, long long rcur) {
     this->lcur = lcur;
     this->rcur = rcur;
+    if (MainWindow::modelWid == nullptr && MainWindow::grWid != nullptr) {
+        MainWindow::grWid->graphData->lcur = lcur;
+        MainWindow::grWid->graphData->rcur = rcur;
+    }
     update();
 }
-
-long long glView::getLCur() {
-    return lcur;
-}
-
-long long glView::getRCur() {
-    return rcur;
-}
-
 
 
 

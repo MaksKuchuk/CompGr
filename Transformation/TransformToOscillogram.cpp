@@ -1,26 +1,28 @@
 #include "../GraphGlData/Graph2DData.hpp"
-#include "../Parser/ParseData.hpp"
+#include "../GraphGlData/generaldata.h"
 #include "TransformToOscillogram.hpp"
 
-Graph2DData* TransformToOscillogram::transform(ParseData* data, long long n) {
-    Graph2DData* gr = new Graph2DData;
+#include <memory>
 
-    gr->name = data->getChannelName(n);
-    gr->source = data->getSource();
+//std::shared_ptr<Graph2DData> TransformToOscillogram::transform(std::shared_ptr<GeneralData> data, long long n) {
+//    auto gr = std::make_shared<Graph2DData>();
 
-    gr->maxVal = data->maxVal(n);
-    gr->minVal = data->minVal(n);
+//    gr->name = data->getChannelName(n);
+//    gr->source = data->getSource();
 
-    gr->maxLoc = gr->maxVal;
-    gr->minLoc = gr->minVal;
+//    gr->maxVal = data->maxVal(n);
+//    gr->minVal = data->minVal(n);
 
-    gr->amountOfSamples = data->getAmountOfSamples();
-    gr->Hz = data->getHz();
-    gr->totalSeconds = data->getTotalDuration();
-    gr->samples = data->getChannel(n);
+//    gr->maxLoc = gr->maxVal;
+//    gr->minLoc = gr->minVal;
 
-    gr->lcur = 0;
-    gr->rcur = gr->amountOfSamples - 1;
+//    gr->amountOfSamples = data->getAmountOfSamples();
+//    gr->Hz = data->getHz();
+//    gr->totalSeconds = data->getTotalDuration();
+//    gr->samples = data->getChannel(n);
 
-    return gr;
-}
+//    gr->lcur = 0;
+//    gr->rcur = gr->amountOfSamples - 1;
+
+//    return gr;
+//}

@@ -2,7 +2,7 @@
 #define GRAPHINFO_H
 
 #include <QWidget>
-#include "Parser/ParseData.hpp"
+#include "GraphGlData/generaldata.h"
 
 namespace Ui {
 class GraphInfo;
@@ -13,7 +13,7 @@ class GraphInfo : public QWidget
     Q_OBJECT
 
 public:
-    explicit GraphInfo(QWidget *parent = nullptr, ParseData *pData = nullptr);
+    explicit GraphInfo(QWidget *parent = nullptr, std::shared_ptr<GeneralData> pData = nullptr);
     ~GraphInfo();
 
 private:

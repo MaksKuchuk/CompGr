@@ -17,41 +17,39 @@ AnalysisWindowHandler* AnalysisWindowHandler::getInstance() {
     return instance;
 }
 
-void AnalysisWindowHandler::analyze2DBy(Graph2DData *data, glType t) {
+void AnalysisWindowHandler::analyze2DBy(std::shared_ptr<Graph2DData> data, glType t, QPointer<GraphTemplate> templ) {
     if (analyzeWidget == nullptr) return;
 
     long long layoutSize = AnalysisWindowHandler::getAnalyzeWidget()->layout->count();
 
     if (t == glType::Oscillogram) {
-        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data);
+        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data, templ);
         gView->resize(300, 60);
 
         AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
         //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
         gView->show();
-        return;
     } else if (t == glType::FourierSpectrum) {
-        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data);
+        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data, templ);
         gView->resize(300, 60);
 
         AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
         //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
         gView->show();
-        return;
     }
 
     changeScrollBar(data->amountOfSamples, data->lcur, data->rcur);
 }
 
-void AnalysisWindowHandler::analyze3DBy(Graph2DData *data) {
+void AnalysisWindowHandler::analyze3DBy(std::shared_ptr<Graph3DData> data) {
     if (analyzeWidget == nullptr) return;
 }
 
-void AnalysisWindowHandler::addWidget(ParseData* pData) {
+void AnalysisWindowHandler::addWidget(std::shared_ptr<GeneralData> pData) {
     if (analyzeWidget == nullptr) return;
 
     for (long long i = 0; i < pData->getAmountOfChannels(); i++) {
-        analyze2DBy(TransformToOscillogram::transform(pData, i), glType::Oscillogram);
+        analyze2DBy(pData->channelTo2D(i), glType::Oscillogram);
         //analyze2DBy(TransformToFourierSpectrum::transform(pData, i), glType::Oscillogram);
     }
 }
@@ -129,8 +127,12 @@ void AnalysisWindowHandler::moveGraph(long long y) {
 
     long long ch = y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
 
-    if (ref->data->lcur + ch < 0) return;
-    if (ref->data->rcur + ch >= ref->data->amountOfSamples) return;
+    if (ref->data->lcur + ch < 0) {
+        ch = -ref->data->lcur;
+    }
+    if (ref->data->rcur + ch >= ref->data->amountOfSamples) {
+        ch = ref->data->amountOfSamples - ref->data->rcur - 1;
+    }
 
     ref->data->lcur += ch;
     ref->data->rcur += ch;
@@ -218,7 +220,7 @@ void AnalysisWindowHandler::changeScrollBar(long long amount, long long lcur, lo
     QScrollBar* scr = static_cast<QScrollBar*>(analyzeWidget
                             ->layout->itemAt(analyzeWidget->layout->count() - 1)->widget());
 
-    scr->setRange(0, amount - (rcur - lcur));
+    scr->setRange(0, amount - (rcur - lcur) - 1);
     scr->setValue(lcur);
 }
 
@@ -231,17 +233,9 @@ void AnalysisWindowHandler::updateGraphs(glTemplateOscillogram* rf) {
         glTemp->data->rcur = rf->data->rcur;
         glTemp->gView->updateGraph();
         glTemp->repaint();
-    }
 
-    if (MainWindow::grWid == nullptr) return;
-
-    for (long long i = 0; i < MainWindow::grWid->layout()->count(); i++) {
-        GraphTemplate* grTemp =
-                static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget());
-
-        static_cast<glView*>
-                (grTemp->layout()->itemAt(0)->widget())->
-                setCurs(rf->data->lcur, rf->data->rcur);
+        if (glTemp->templ != nullptr && glTemp->templ->gView != nullptr)
+            glTemp->templ->gView->setCurs(rf->data->lcur, rf->data->rcur);
     }
 }
 
@@ -265,6 +259,12 @@ void AnalysisWindowHandler::scrollBarHasChanged() {
 
     glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
             (analyzeWidget->layout->itemAt(0)->widget());
+
+    if (rc >= glTemp->data->amountOfSamples) {
+        auto diff = rc - glTemp->data->amountOfSamples + 1;
+        lc -= diff;
+        rc -= diff;
+    }
 
     glTemp->data->lcur = lc;
     glTemp->data->rcur = rc;

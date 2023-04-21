@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QByteArray>
+#include <QDateTime>
 
 #include <QDebug>
 
@@ -53,11 +54,14 @@ class ParseDataTxt : public ParseData {
     }
 
     static void setChannels(ParseDataTxt *data, const QList<QByteArray>& list,
-                            qint64 first, qint64 last) {
+                            qint64 first, qint64 last, QList<std::pair<double, double>>* sub_extr) {
         for (qint64 p = first; p < last; ++p) {
             auto nums = list[p].split(' ');
             for (qint64 i = 0; i < data->amountOfChannels; ++i) {
                 data->channels[i][p] = nums[i].toDouble();
+
+                if (sub_extr->at(i).first > data->channels[i][p]) sub_extr->operator[](i).first = data->channels[i][p];
+                if (sub_extr->at(i).second < data->channels[i][p]) sub_extr->operator[](i).second = data->channels[i][p];
             }
         }
     }
@@ -66,18 +70,29 @@ class ParseDataTxt : public ParseData {
         size_t number_of_threads = std::thread::hardware_concurrency();
 
         if (number_of_threads * 4 > amountOfSamples) {
-            setChannels(this, list, 0, amountOfSamples);
+            setChannels(this, list, 0, amountOfSamples, &extremums);
             return;
         }
+
+
+        QList<std::pair<double, double>> se(amountOfChannels,
+                                                  {std::numeric_limits<double>::max(), -std::numeric_limits<double>::max()});
+        QList<QList<std::pair<double, double>>> sub_extrs(number_of_threads, se);
 
         auto **threads = new std::thread *[number_of_threads];
         for (size_t y = 0; y < number_of_threads; ++y) {
             threads[y] = new std::thread(setChannels, this, list,
-                                         amountOfSamples * y / number_of_threads, amountOfSamples * (y+1) / number_of_threads);
+                                         amountOfSamples * y / number_of_threads,
+                                         amountOfSamples * (y+1) / number_of_threads,
+                                         &sub_extrs[y]);
         }
 
         for (size_t y = 0; y < number_of_threads; ++y) {
             threads[y]->join();
+            for (size_t i = 0; i < amountOfChannels; ++i) {
+                extremums[i].first = std::min(extremums[i].first, sub_extrs[y][i].first);
+                extremums[i].second = std::max(extremums[i].second, sub_extrs[y][i].second);
+            }
         }
         for (size_t y = 0; y < number_of_threads; ++y) {
             delete threads[y];
@@ -91,6 +106,7 @@ class ParseDataTxt : public ParseData {
         QString startDate_, startTime_;
         getData(file_to_parse, amountOfChannels);
         getData(file_to_parse, amountOfSamples);
+        rcur = amountOfSamples - 1;
         getData(file_to_parse, Hz);
         getData(file_to_parse, startDate_);
         getData(file_to_parse, startTime_);
@@ -99,55 +115,38 @@ class ParseDataTxt : public ParseData {
 
         totalSeconds = (amountOfSamples - 1) / Hz;
         setDuration(totalSeconds);
+        setStopTime();
 
-        std::tm t{};
-        std::istringstream ss((startDate_ + " " + startTime.sliced(0, 8)).toStdString());
-        //ss.imbue(std::locale(""));
-        ss >> std::get_time(&t, "%d-%m-%Y %H:%M:%S");
-        auto dotPos = startTime_.indexOf('.');
-        int milliseconds = 0;
-        if (dotPos != std::string::npos)
-            milliseconds = startTime_.sliced(dotPos+1).toInt();
-
-        t.tm_sec += totalSeconds + milliseconds / 1000.0;
-        mktime(&t);
-
-        int millAdd = (totalSeconds - floor(totalSeconds)) * 1000 + milliseconds;
-        milliseconds = millAdd >= 1000 ? millAdd % 1000 : millAdd;
-
-        std::ostringstream oss;
-        oss << std::put_time(&t, "%d-%m-%Y %H:%M:%S");
-        if (milliseconds > 0)
-            oss << '.' << milliseconds;
-
-        stopTime = QString::fromStdString( oss.str() );
-
-        channels_names = new QString[amountOfChannels]();
+        channels_names.resize(amountOfChannels);
         getData(file_to_parse, in_str);
         setChannelsNames(in_str);
 
-        channels = new double *[amountOfChannels]();
+        channels.resize(amountOfChannels);
         for (int i = 0; i < amountOfChannels; ++i)
-            channels[i] = new double[amountOfSamples];
+            channels[i].resize(amountOfSamples);
+
+        extremums.resize(amountOfChannels, {std::numeric_limits<double>::max(), -std::numeric_limits<double>::max()});
 
         return file_to_parse.pos();
     }
 
     void findExtrs() {
-        extremums = new std::pair<double, double>[amountOfChannels];
         for (int i = 0; i < amountOfChannels; ++i) {
             extremums[i].first = extremums[i].second = channels[i][0];
         }
         for (int k = 1; k < amountOfSamples; ++k) {
             for (int i = 0; i < amountOfChannels; ++i) {
-                extremums[i].second = std::max(extremums[i].second, channels[i][k]);
                 extremums[i].first = std::min(extremums[i].first, channels[i][k]);
+                extremums[i].second = std::max(extremums[i].second, channels[i][k]);
             }
         }
     }
 
 public:
     void parse(const std::filesystem::path &path_to_file) override {
+
+        auto s = std::chrono::high_resolution_clock().now();
+
         QFile file_to_parse(path_to_file);
         file_to_parse.open(QFile::Text | QFile::ReadOnly);
         QTextStream stream (&file_to_parse);
@@ -155,8 +154,14 @@ public:
 
         auto pos = parseGeneral(stream);
 
+        qDebug() << duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock().now() - s).count() << " ms";
+
         file_to_parse.seek(pos);
-        auto list = file_to_parse.readAll().split('\n');
+        auto list1 = file_to_parse.readAll();
+
+        qDebug() << duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock().now() - s).count() << " ms";
+
+        auto list = list1.split('\n');
 
         while (list.back().isEmpty()) {
             qDebug() << "last line is empty: " + list.back();
@@ -169,10 +174,15 @@ public:
             amountOfSamples = list.size();
         }
 
+        qDebug() << duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock().now() - s).count() << " ms";
 
         threadsHandle(list);
 
-        findExtrs();
+        qDebug() << duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock().now() - s).count() << " ms";
+
+//        findExtrs();
+
+        qDebug() << duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock().now() - s).count() << " ms";
     }
 };
 

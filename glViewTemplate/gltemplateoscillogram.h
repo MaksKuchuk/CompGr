@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "../GraphGlData/Graph2DData.hpp"
 #include "../glViewType/glOscillogram.hpp"
+#include "../graphtemplate.h"
 
 namespace Ui {
 class glTemplateOscillogram;
@@ -12,13 +13,15 @@ class glTemplateOscillogram;
 class glTemplateOscillogram : public QWidget
 {
     Q_OBJECT
-    Graph2DData *data;
-    long long ind;
+    std::shared_ptr<Graph2DData> data;
     glOscillogram* gView = nullptr;
 
 public:
+    QPointer<GraphTemplate> templ = nullptr;
+
     explicit glTemplateOscillogram(QWidget *parent = nullptr,
-                                   Graph2DData *data = nullptr);
+                                   std::shared_ptr<Graph2DData> data = nullptr,
+                                   QPointer<GraphTemplate> templ_ = nullptr);
     ~glTemplateOscillogram();
 
     void drawMenu(QPoint globalPos);

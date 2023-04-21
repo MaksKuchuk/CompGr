@@ -57,6 +57,7 @@
     <property name="title">
      <string>Modeling</string>
     </property>
+    <addaction name="actionCreate_new_model"/>
    </widget>
    <widget class="QMenu" name="menuFiltration">
     <property name="title">
@@ -120,6 +121,11 @@
   <action name="actionSave_file">
    <property name="text">
     <string>Save file</string>
+   </property>
+  </action>
+  <action name="actionCreate_new_model">
+   <property name="text">
+    <string>Create new model</string>
    </property>
   </action>
  </widget>

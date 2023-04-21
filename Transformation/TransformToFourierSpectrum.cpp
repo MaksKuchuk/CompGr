@@ -4,7 +4,7 @@
 #include <limits>
 #include <iostream>
 
-void TransformToFourierSpectrum::FFTAnalysis(double *AVal, double *FTvl, int Nvl, int Nft) {
+void TransformToFourierSpectrum::FFTAnalysis(QList<double>& AVal, QList<double>& FTvl, int Nvl, int Nft) {
      const double TwoPi = 6.283185307179586;
      int i, j, n, m, Mmax, Istp;
      double Tmpr, Tmpi, Wtmp, Theta;
@@ -63,17 +63,14 @@ void TransformToFourierSpectrum::FFTAnalysis(double *AVal, double *FTvl, int Nvl
      delete []Tmvl;
    }
 
-Graph2DData* TransformToFourierSpectrum::transform(ParseData* data, long long n) {
+std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform(std::shared_ptr<GeneralData> data, long long n) {
     long long size = data->getAmountOfSamples();
-    double* _AVal = data->getChannel(n);
     long long new_size = std::pow(2, std::ceil(std::log2(size)));
-    double* AVal = new double[new_size]();
-    double* FTvl = new double[new_size];
-    for (long long i = 0; i < size; ++i) {
-        AVal[i] = _AVal[i];
-    }
+
+    QList<double> AVal(data->getChannel(n));
+    AVal.resize(new_size);
+    QList<double> FTvl(new_size);
     FFTAnalysis(AVal, FTvl, new_size, new_size);
-    delete[]AVal;
 
     double min = FTvl[0];
     double max = FTvl[0];
@@ -88,21 +85,17 @@ Graph2DData* TransformToFourierSpectrum::transform(ParseData* data, long long n)
 
     new_size = new_size / 2;
     if (new_size == 0) new_size = 1;
-    double* _FTvl = new double[new_size];
-    for (int i = 0; i < new_size; ++i) {
-        _FTvl[i] = FTvl[i];
-    }
-    delete[] FTvl;
+    FTvl.resize(new_size);
 
-    Graph2DData* data2d = new Graph2DData();
+    auto data2d = std::make_shared<Graph2DData>();
 
     data2d->Hz = 1 / (new_size);
     data2d->totalSeconds = 1;
     data2d->amountOfSamples = new_size;
-    data2d->samples = _FTvl;
+    data2d->samples = std::move(FTvl);
     data2d->lcur = 0;
     data2d->rcur = (new_size) - 1;
-    data2d->name = data->getFileName() +  QString::fromStdString( " Fourier transform" );
+    data2d->name = data->getChannelName(n) + QString::fromStdString( " Fourier transform" );
     data2d->minVal = min;
     data2d->maxVal = max / 10;
     data2d->minLoc = min;

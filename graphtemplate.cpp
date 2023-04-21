@@ -1,7 +1,7 @@
 #include "graphtemplate.h"
 #include "ui_graphtemplate.h"
 #include "glview.h"
-#include "Parser/ParseData.hpp"
+#include "GraphGlData/generaldata.h"
 #include "Handler/AnalysisWindowHandler.hpp"
 #include "Transformation/TransformToOscillogram.hpp"
 #include "Transformation/TransformToFourierSpectrum.hpp"
@@ -12,37 +12,42 @@
 
 #include "mainwindow.h"
 
-GraphTemplate::GraphTemplate(QWidget *parent, ParseData* pData, long long ind) :
+GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<GeneralData> gData, long long ind) :
+    GraphTemplate(parent, gData->channelTo2D(ind)) {}
+
+GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<Graph2DData> gData, bool showName) :
     QWidget(parent),
     ui(new Ui::GraphTemplate),
-    pData(pData),
-    ind(ind)
+    data(gData)
 {
     ui->setupUi(this);
 
-    glView *gView = new glView(this,
-                               pData->getAmountOfSamples(),
-                               pData->getChannel(ind),
-                               pData->maxVal(ind),
-                               pData->minVal(ind));
+    gView = new glView(this,
+                       data->amountOfSamples,
+                       data->samples,
+                       data->maxVal,
+                       data->minVal);
     gView->setFixedHeight(60);
     gView->setFixedWidth(300);
-
-    QLabel *label = new QLabel(this);
-    label->setText(pData->getChannelName(ind));
-
-    QFont font = label->font();
-    font.setPixelSize(24);
-    label->setFont(font);
-
-    label->setAlignment(Qt::AlignCenter);
-    label->setFixedHeight(18);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(gView);
-    layout->setSpacing(3);
-    layout->addWidget(label);
+
+    if (showName) {
+        QLabel *label = new QLabel(this);
+        label->setText(data->name);
+
+        QFont font = label->font();
+        font.setPixelSize(20);
+        label->setFont(font);
+
+        label->setAlignment(Qt::AlignCenter);
+        label->setFixedHeight(18);
+        layout->setSpacing(3);
+        layout->addWidget(label);
+    }
+
     this->setLayout(layout);
 }
 
@@ -73,12 +78,12 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
         MainWindow::openAnalysisWindow();
 
         AnalysisWindowHandler::getInstance()->analyze2DBy(
-            TransformToOscillogram::transform(pData, ind), glType::Oscillogram);
+            data, glType::Oscillogram, this);
     } else if (selectedItem->text() == "Fourier spectrum") {
         MainWindow::openAnalysisWindow();
 
         AnalysisWindowHandler::getInstance()->analyze2DBy(
-            TransformToFourierSpectrum::transform(pData, ind), glType::FourierSpectrum);
+            data, glType::FourierSpectrum, this);
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();
     }

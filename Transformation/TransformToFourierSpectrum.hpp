@@ -5,10 +5,10 @@
 #include "../GraphGlData/Graph2DData.hpp"
 
 class TransformToFourierSpectrum {
-    static void FFTAnalysis(double *AVal, double *FTvl, int Nvl, int Nft);
+    static void FFTAnalysis(QList<double>& AVal, QList<double>& FTvl, int Nvl, int Nft);
 public:
 
-    static Graph2DData* transform(ParseData* data, long long n);
+    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<GeneralData> data, long long n);
 
 };
 

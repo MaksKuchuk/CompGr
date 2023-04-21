@@ -2,11 +2,15 @@
 #define GLVIEW_H
 
 #include <QOpenGLWidget>
+#include <QPointer>
+#include <QList>
+
+static const QList<double> _ref{0};
 
 class glView : public QOpenGLWidget
 {
     Q_OBJECT
-    double* data;
+    const QList<double>& data;
     long long parNum;
     double maxVal;
     double minVal;
@@ -17,13 +21,10 @@ public:
 
     glView(QWidget *parent = nullptr,
            long long parNum = 0,
-           double* data = nullptr,
+           const QList<double>& data = _ref,
            double maxVal = 0,
            double minVal = 0
             );
-
-    long long getLCur();
-    long long getRCur();
 
 protected:
     void drawGraph();
