@@ -9,9 +9,11 @@
 
 class GeneralData
 {
+protected:
+    void setDuration(double totalSeconds_);
+    void setStopTime();
+
 public:
-    // where is it from
-    QString source;
     // number of channels
     unsigned long long amountOfChannels = 0;
     // number of samples
@@ -31,6 +33,7 @@ public:
     // data
     QList<QList<double>> channels;
     QList<QString> channels_names;
+    QList<QString> sources;
     QList<std::pair<double, double>> extremums;
 
     QList<int> modellingCounts;
@@ -57,8 +60,6 @@ public:
 
     std::tuple<unsigned long long, unsigned long long, unsigned long long, double> getDuration() const;
 
-    QString getSource() const;
-
     // return n-th channel
     const QList<double>& getChannel(long long n) const;
 
@@ -73,7 +74,7 @@ public:
 
     void setName(QString fName);
 
-    QString getFileName();
+    QString getChannelSource(qint64 n) const;
 
     std::shared_ptr<Graph2DData> channelTo2D(long long n) const;
 };

@@ -101,7 +101,7 @@ void MainWindow::on_actionAbout_triggered()
 {
     QWidget *widget = new AboutWidget(ui->mdiArea);
     ui->mdiArea->addSubWindow(widget);
-    ui->mdiArea->subWindowList().last()->setFixedSize(350, 110);
+//    ui->mdiArea->subWindowList().last()->setFixedSize(350, 110);
 
     widget->setWindowTitle("About");
     widget->show();
@@ -152,7 +152,7 @@ void MainWindow::on_actionInformation_triggered() {
     QWidget *widget = new GraphInfo(ui->mdiArea, grWi->graphData);
 
     ui->mdiArea->addSubWindow(widget);
-    ui->mdiArea->subWindowList().last()->setFixedSize(400, 150 + 25 * grWi->graphData->getAmountOfChannels());
+//    ui->mdiArea->subWindowList().last()->setFixedSize(400, 150 + 25 * grWi->graphData->getAmountOfChannels());
 
     widget->setWindowTitle("Graph information");
     widget->show();

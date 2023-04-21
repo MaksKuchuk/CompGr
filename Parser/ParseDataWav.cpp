@@ -16,9 +16,9 @@ void ParseDataWav::parse(const std::filesystem::path &wav_path) {
     amountOfSamples = header.subchunk2Size / (amountOfChannels * header.bitsPerSample / 8);
     Hz = header.sampleRate;
     startTime = "01-01-2000 00:00:00.000";
-    stopTime = "01-01-2000 00:00:00.000";
-    totalSeconds = amountOfSamples / header.sampleRate;
+    totalSeconds = (double)amountOfSamples / header.sampleRate;
     setDuration(totalSeconds);
+    setStopTime();
 
     channels_names.resize(amountOfChannels);
     for (uint32_t i = 0; i < amountOfChannels; ++i) {

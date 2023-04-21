@@ -95,7 +95,7 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform(std::shared_p
     data2d->samples = std::move(FTvl);
     data2d->lcur = 0;
     data2d->rcur = (new_size) - 1;
-    data2d->name = data->getFileName() +  QString::fromStdString( " Fourier transform" );
+    data2d->name = data->getChannelName(n) + QString::fromStdString( " Fourier transform" );
     data2d->minVal = min;
     data2d->maxVal = max / 10;
     data2d->minLoc = min;

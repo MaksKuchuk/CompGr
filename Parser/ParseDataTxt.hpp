@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QByteArray>
+#include <QDateTime>
 
 #include <QDebug>
 
@@ -114,28 +115,7 @@ class ParseDataTxt : public ParseData {
 
         totalSeconds = (amountOfSamples - 1) / Hz;
         setDuration(totalSeconds);
-
-        std::tm t{};
-        std::istringstream ss((startDate_ + " " + startTime.sliced(0, 8)).toStdString());
-        //ss.imbue(std::locale(""));
-        ss >> std::get_time(&t, "%d-%m-%Y %H:%M:%S");
-        auto dotPos = startTime_.indexOf('.');
-        int milliseconds = 0;
-        if (dotPos != std::string::npos)
-            milliseconds = startTime_.sliced(dotPos+1).toInt();
-
-        t.tm_sec += totalSeconds + milliseconds / 1000.0;
-        mktime(&t);
-
-        int millAdd = (totalSeconds - floor(totalSeconds)) * 1000 + milliseconds;
-        milliseconds = millAdd >= 1000 ? millAdd % 1000 : millAdd;
-
-        std::ostringstream oss;
-        oss << std::put_time(&t, "%d-%m-%Y %H:%M:%S");
-        if (milliseconds > 0)
-            oss << '.' << milliseconds;
-
-        stopTime = QString::fromStdString( oss.str() );
+        setStopTime();
 
         channels_names.resize(amountOfChannels);
         getData(file_to_parse, in_str);
