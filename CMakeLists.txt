@@ -52,6 +52,9 @@ set(PROJECT_SOURCES
         modellingwidget.h
         modellingwidget.cpp
 
+        Modeling/randommodeling.h
+        Modeling/randommodeling.cpp
+
         Utility/generaldialog.h
         Utility/generaldialog.cpp
 

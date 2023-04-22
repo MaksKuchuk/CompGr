@@ -84,7 +84,7 @@ public:
         case Type::DecreasingExponent:
             return "Decreasing Exponent";
         case Type::SineWave:
-            return "Sqmpled Sine Wave";
+            return "Sampled Sine Wave";
         case Type::Meander:
             return "Meander";
         case Type::Saw:
