@@ -247,7 +247,7 @@ std::shared_ptr<Graph2DData> Modeling::exponentialEnvelope(
 
     data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
-        double t = data2D->Hz * i;
+        double t = i / data2D->Hz;
         data2D->samples[i] = a * exp(-t / tau) * cos(2 * M_PI * f * t + phi);
         min = std::min(min, data2D->samples[i]);
         max = std::max(max, data2D->samples[i]);
@@ -286,7 +286,7 @@ std::shared_ptr<Graph2DData> Modeling::balanceEnvelope(
 
     data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
-        double t = data2D->Hz * i;
+        double t = i / data2D->Hz;
         data2D->samples[i] = a * cos(2 * M_PI * f0 * t) * cos(2 * M_PI * fn * t + phi);
         min = std::min(min, data2D->samples[i]);
         max = std::max(max, data2D->samples[i]);
@@ -326,7 +326,7 @@ std::shared_ptr<Graph2DData> Modeling::tonalEnvelope(
 
     data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
-        double t = data2D->Hz * i;
+        double t = i / data2D->Hz;
         data2D->samples[i] = a * (1 + m * cos(2 * M_PI * f0 * t)) * cos(2 * M_PI * fn * t + phi);
         min = std::min(min, data2D->samples[i]);
         max = std::max(max, data2D->samples[i]);
@@ -367,7 +367,7 @@ std::shared_ptr<Graph2DData> Modeling::LFM(
 
     data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
-        double t = data2D->Hz * i;
+        double t = i / data2D->Hz;
         data2D->samples[i] = a * cos(2 * M_PI * (f0 + (fk - f0) * t / totalTime) * t + phi0);
         min = std::min(min, data2D->samples[i]);
         max = std::max(max, data2D->samples[i]);
