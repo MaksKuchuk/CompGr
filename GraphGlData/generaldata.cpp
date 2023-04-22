@@ -118,6 +118,8 @@ GeneralData::GeneralData(std::shared_ptr<Graph2DData> data) :
     setDuration(totalSeconds);
 
     setStopTime();
+
+    rcur = amountOfSamples-1;
 }
 
 void GeneralData::setDuration(double totalSeconds_) {

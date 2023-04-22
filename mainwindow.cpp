@@ -86,6 +86,9 @@ void MainWindow::on_actionSave_file_triggered() {
 
     auto data = SaverWindow::openWindow(grWid->graphData, grWid->graphData->lcur, grWid->graphData->rcur);
 
+    if (!data.success)
+        return;
+
     QString path = QFileDialog::getSaveFileName(
                 this,
                 "Save File",
