@@ -82,7 +82,7 @@ void MainWindow::ShowGraphWidget(std::shared_ptr<GeneralData> data) {
 }
 
 void MainWindow::on_actionSave_file_triggered() {
-    if (grWid->graphData == nullptr) return;
+    if (grWid == nullptr || grWid->graphData == nullptr) return;
 
     auto data = SaverWindow::openWindow(grWid->graphData, grWid->graphData->lcur, grWid->graphData->rcur);
 
@@ -111,7 +111,7 @@ void MainWindow::on_actionAbout_triggered()
 }
 
 void MainWindow::on_actionAnalysis_triggered() {
-    if (!AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
+    if (!AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget() || grWid == nullptr) return;
 
     QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
 

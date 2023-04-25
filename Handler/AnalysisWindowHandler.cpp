@@ -49,7 +49,8 @@ void AnalysisWindowHandler::addWidget(std::shared_ptr<GeneralData> pData) {
     if (analyzeWidget == nullptr) return;
 
     for (long long i = 0; i < pData->getAmountOfChannels(); i++) {
-        analyze2DBy(pData->channelTo2D(i), glType::Oscillogram);
+        analyze2DBy(pData->channelTo2D(i), glType::Oscillogram,
+                    static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget()));
         //analyze2DBy(TransformToFourierSpectrum::transform(pData, i), glType::Oscillogram);
     }
 }

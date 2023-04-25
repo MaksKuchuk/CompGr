@@ -100,6 +100,8 @@ public:
 
     Modeling::Type currentType = Modeling::Type::SingleImpulse;
 
+    void DisableToggle();
+
 private:
     void ChangedModel();
     void DrawGraph();

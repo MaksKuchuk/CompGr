@@ -32,7 +32,11 @@ GraphWidget::GraphWidget(QWidget *parent, std::shared_ptr<GeneralData> pData) :
 }
 
 void GraphWidget::AddNewChannel(std::shared_ptr<Graph2DData> newData) {
-    graphData->addNewChannel(newData);
+    AddNewChannel(newData, newData->name);
+}
+
+void GraphWidget::AddNewChannel(std::shared_ptr<Graph2DData> newData, QString name) {
+    graphData->addNewChannel(newData, name);
 
     size_t i = graphData->amountOfChannels - 1;
     GraphTemplate* gTemp = new GraphTemplate(this, graphData, i);
@@ -42,6 +46,9 @@ void GraphWidget::AddNewChannel(std::shared_ptr<Graph2DData> newData) {
 
 void GraphWidget::closeEvent(QCloseEvent *event) {
     MainWindow::grWid->graphData.reset();
+
+    if (MainWindow::modelWindow != nullptr)
+        MainWindow::modelWid->DisableToggle();
 }
 
 GraphWidget::~GraphWidget()

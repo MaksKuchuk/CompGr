@@ -65,6 +65,7 @@ public:
         BalanceEnvelope,
         TonalEnvelope,
         LFM,
+        WhiteNoise,
 
 
 
@@ -97,8 +98,10 @@ public:
             return "Tonal Envelope";
         case Type::LFM:
             return "LFM";
+        case Type::WhiteNoise:
+            return "White Noise";
         default:
-            return "";
+            return "DEFAULT";
         }
     }
 };

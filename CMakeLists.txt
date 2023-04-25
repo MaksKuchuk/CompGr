@@ -55,6 +55,9 @@ set(PROJECT_SOURCES
         Modeling/randommodeling.h
         Modeling/randommodeling.cpp
 
+        Modeling/superposition.h
+        Modeling/superposition.cpp
+
         Utility/generaldialog.h
         Utility/generaldialog.cpp
 

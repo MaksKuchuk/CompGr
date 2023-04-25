@@ -14,6 +14,7 @@
 #include <QMdiSubWindow>
 
 #include "Modeling/modeling.h"
+#include "Modeling/randommodeling.h"
 #include "Utility/generaldialog.h"
 
 #include <QDebug>
@@ -149,6 +150,13 @@ void ModellingWidget::ChangedModel() {
         newRow("Phase", inputLines._phase);
         break;
     }
+    case Modeling::Type::WhiteNoise: {
+        newRow("Time step", inputLines._timeStep);
+        newRow("Time freq", inputLines._timeFreq);
+        newRow("From", inputLines._scale1);
+        newRow("To", inputLines._scale2);
+        break;
+    }
     default:
         break;
     }
@@ -205,6 +213,11 @@ void ModellingWidget::DrawGraph() {
     case Modeling::Type::LFM: {
         data = Modeling::LFM(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
                              inputLines.freq1(), inputLines.freq2(), inputLines.phase());
+        break;
+    }
+    case Modeling::Type::WhiteNoise: {
+        data = randomModeling::whiteNoise(inputLines.samples(), inputLines.timeStep(),
+                                          inputLines.scale1(), inputLines.scale2());
         break;
     }
     default:
@@ -295,6 +308,11 @@ void ModellingWidget::closeWidget() {
     this->parentWidget()->close();
 }
 
+void ModellingWidget::DisableToggle() {
+    isAddToCurrent->setCheckable(false);
+    isAddToCurrent->setDisabled(true);
+}
+
 void ModellingWidget::saveModel() {
     QString dialog_text = "Save model";
     if (MainWindow::grWid != nullptr)
@@ -306,17 +324,21 @@ void ModellingWidget::saveModel() {
     if (!dialog)
         return;
 
-    data->source = "Modelling";
+//    data->source = "Modelling";
     if (MainWindow::grWid == nullptr || !isAddToCurrent->isChecked()) {
-        data->name+="1";
-        MainWindow::instance->ShowGraphWidget(std::make_shared<GeneralData>(data));
+        MainWindow::instance->ShowGraphWidget(std::make_shared<GeneralData>(data, data->name + "1"));
         MainWindow::instance->grWid->graphData->modellingCounts[(int)currentType] += 1;
+
+        isAddToCurrent->setDisabled(false);
+        isAddToCurrent->setCheckable(true);
     }
     else if (MainWindow::grWid != nullptr) {
-        data->name += QString::number( MainWindow::instance->grWid->graphData->modellingCounts[(int)currentType] += 1);
-        MainWindow::grWid->AddNewChannel(data);
+        MainWindow::grWid->AddNewChannel(data,
+                                         data->name + QString::number( MainWindow::instance->grWid->graphData->modellingCounts[(int)currentType] += 1));
         MainWindow::grWindow->setFixedSize(300, 100 * MainWindow::grWid->graphData->getAmountOfChannels());
     }
 
-    closeWidget();
+    isAddToCurrent->setChecked(true);
+
+//    closeWidget();
 }

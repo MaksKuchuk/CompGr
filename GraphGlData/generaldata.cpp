@@ -7,12 +7,16 @@ GeneralData::GeneralData() {
 };
 
 void GeneralData::addNewChannel(std::shared_ptr<Graph2DData> data) {
+   addNewChannel(data, data->name);
+}
+
+void GeneralData::addNewChannel(std::shared_ptr<Graph2DData> data, QString name) {
     if (amountOfSamples != data->amountOfSamples)
         throw std::runtime_error("Different numbers of samples: " + std::to_string(amountOfSamples)
                                  + " != "+ std::to_string(data->amountOfSamples));
 
     channels.push_back(data->samples);
-    channels_names.push_back(data->name);
+    channels_names.push_back(name);
     sources.push_back(data->source);
     extremums.push_back({data->minVal, data->maxVal});
     ++amountOfChannels;
@@ -120,6 +124,13 @@ GeneralData::GeneralData(std::shared_ptr<Graph2DData> data) :
     setStopTime();
 
     rcur = amountOfSamples-1;
+}
+
+
+GeneralData::GeneralData(std::shared_ptr<Graph2DData> data, QString name) :
+    GeneralData(data)
+{
+    channels_names[0] = name;
 }
 
 void GeneralData::setDuration(double totalSeconds_) {

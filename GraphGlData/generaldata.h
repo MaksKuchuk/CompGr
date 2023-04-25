@@ -43,8 +43,10 @@ public:
 
     GeneralData();
     GeneralData(std::shared_ptr<Graph2DData>);
+    GeneralData(std::shared_ptr<Graph2DData>, QString name);
 
     void addNewChannel(std::shared_ptr<Graph2DData> data);
+    void addNewChannel(std::shared_ptr<Graph2DData> data, QString name);
 
     unsigned long long getAmountOfChannels() const;
 
