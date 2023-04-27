@@ -57,6 +57,8 @@ set(PROJECT_SOURCES
 
         Modeling/superposition.h
         Modeling/superposition.cpp
+        Modeling/superpositiondialog.h
+        Modeling/superpositiondialog.cpp
 
         Utility/generaldialog.h
         Utility/generaldialog.cpp

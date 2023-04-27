@@ -25,6 +25,7 @@ std::shared_ptr<Graph2DData> Superposition::LinearSuperposition(std::shared_ptr<
 std::shared_ptr<Graph2DData> Superposition::MuliplicativeSuperposition(std::shared_ptr<GeneralData> data, QList<int> indices, double coeff) {
     auto graph = std::make_shared<Graph2DData>();
     graph->samples.resize(data->amountOfSamples);
+    graph->amountOfSamples = data->amountOfSamples;
     graph->maxVal = -std::numeric_limits<double>::max();
     graph->minVal = std::numeric_limits<double>::max();
     for (size_t i = 0; i < data->amountOfSamples; ++i) {

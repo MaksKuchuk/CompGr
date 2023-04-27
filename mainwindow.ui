@@ -58,6 +58,7 @@
      <string>Modeling</string>
     </property>
     <addaction name="actionCreate_new_model"/>
+    <addaction name="actionCreate_superposition"/>
    </widget>
    <widget class="QMenu" name="menuFiltration">
     <property name="title">
@@ -126,6 +127,11 @@
   <action name="actionCreate_new_model">
    <property name="text">
     <string>Create new model</string>
+   </property>
+  </action>
+  <action name="actionCreate_superposition">
+   <property name="text">
+    <string>Create superposition</string>
    </property>
   </action>
  </widget>

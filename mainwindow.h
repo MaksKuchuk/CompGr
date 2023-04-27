@@ -51,6 +51,8 @@ private slots:
 
     void on_actionCreate_new_model_triggered();
 
+    void on_actionCreate_superposition_triggered();
+
 protected:
 
 private:

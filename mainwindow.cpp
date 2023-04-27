@@ -17,6 +17,8 @@
 
 #include "Utility/generaldialog.h"
 
+#include "Modeling/superpositiondialog.h"
+
 #include <QDebug>
 
 #include <QMdiSubWindow>
@@ -179,5 +181,24 @@ void MainWindow::on_actionCreate_new_model_triggered() {
 
     modelWid->setWindowTitle("Modelling");
     modelWid->show();
+}
+
+void MainWindow::on_actionCreate_superposition_triggered() {
+    qDebug() << "asd";
+
+    if (grWid == nullptr || grWid->graphData == nullptr) return;
+
+    auto type = GeneralDialog::ChooseDialog("Choose type of Superposition", {"Linear", "Multiplicative"});
+
+    switch (type) {
+    case 0:
+
+        break;
+    case 1:
+        SuperpositionDialog::MultSupDialog(grWid->graphData);
+        break;
+    default:
+        break;
+    }
 }
 
