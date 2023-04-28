@@ -38,9 +38,9 @@ std::shared_ptr<Graph2DData> Superposition::MuliplicativeSuperposition(std::shar
         if (cur < graph->minVal) graph->minVal = cur;
     }
     graph->name = "Mult Superpos ";
-    graph->source = "Mult Superpos of";
+    graph->source = "Mult Superpos (x"+ QString::number(coeff) +") of";
     for (auto i : indices)
-        graph->source += " " + QString::number(i);
+        graph->source += " " + QString::number(i)+",";
 
     return graph;
 }

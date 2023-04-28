@@ -76,34 +76,11 @@ public:
         return (size_t)Type::__AMOUNT_OF_SAMPLES;
     }
 
-    static QString TypeToString(Type type) {
-        switch (type) {
-        case Type::SingleImpulse:
-            return "Single Impulse";
-        case Type::SingleHop:
-            return "Single Hop";
-        case Type::DecreasingExponent:
-            return "Decreasing Exponent";
-        case Type::SineWave:
-            return "Sampled Sine Wave";
-        case Type::Meander:
-            return "Meander";
-        case Type::Saw:
-            return "Saw";
-        case Type::ExponentialEnvelope:
-            return "Exponential Envelope";
-        case Type::BalanceEnvelope:
-            return "Balance Envelope";
-        case Type::TonalEnvelope:
-            return "Tonal Envelope";
-        case Type::LFM:
-            return "LFM";
-        case Type::WhiteNoise:
-            return "White Noise";
-        default:
-            return "DEFAULT";
-        }
-    }
+    static QList<QString> TypesList();
+
+    static QString TypeToString(Type type);
+
+    static QString TypeToFormula(Type type);
 };
 
 #endif // MODELING_H

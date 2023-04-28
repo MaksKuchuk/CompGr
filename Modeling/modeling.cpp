@@ -380,3 +380,69 @@ std::shared_ptr<Graph2DData> Modeling::LFM(
 
     return data2D;
 }
+
+QString Modeling::TypeToString(Type type) {
+    switch (type) {
+    case Type::SingleImpulse:
+        return "Single Impulse";
+    case Type::SingleHop:
+        return "Single Hop";
+    case Type::DecreasingExponent:
+        return "Decreasing Exponent";
+    case Type::SineWave:
+        return "Sampled Sine Wave";
+    case Type::Meander:
+        return "Meander";
+    case Type::Saw:
+        return "Saw";
+    case Type::ExponentialEnvelope:
+        return "Exponential Envelope";
+    case Type::BalanceEnvelope:
+        return "Balance Envelope";
+    case Type::TonalEnvelope:
+        return "Tonal Envelope";
+    case Type::LFM:
+        return "LFM";
+    case Type::WhiteNoise:
+        return "White Noise";
+    default:
+        return "DEFAULT";
+    }
+}
+
+QList<QString> Modeling::TypesList() {
+    QList<QString> list;
+    for (size_t i = 0; i < AmountOfTypes(); ++i) {
+        list.push_back(TypeToString((Type)i));
+    }
+    return list;
+}
+
+QString Modeling::TypeToFormula(Type type) {
+    switch (type) {
+    case Type::SingleImpulse:
+        return "n0 = delay";
+    case Type::SingleHop:
+        return "n0 = delay";
+    case Type::DecreasingExponent:
+        return "a^n";
+    case Type::SineWave:
+        return "a*sin(n*w + p)";
+    case Type::Meander:
+        return "1 if mod(n,L) < L/2 else -1";
+    case Type::Saw:
+        return "mod(n,L)/L";
+    case Type::ExponentialEnvelope:
+        return "a*exp(-t/x)*cos(2pi*f*t + p)";
+    case Type::BalanceEnvelope:
+        return "a*cos(2pi*fo*t)*cos(2pi*fn*t+p)";
+    case Type::TonalEnvelope:
+        return "a(1+m*cos(2pi*fo*t))*cos(2pi*fn*t+p)";
+    case Type::LFM:
+        return "a*cos(2pi(f0 + (fk-f0)/NT*t)*t + p)";
+    case Type::WhiteNoise:
+        return "White Noise";
+    default:
+        return "";
+    }
+}

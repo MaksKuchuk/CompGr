@@ -42,6 +42,11 @@ void GraphWidget::AddNewChannel(std::shared_ptr<Graph2DData> newData, QString na
     GraphTemplate* gTemp = new GraphTemplate(this, graphData, i);
     layout()->setSpacing(5);
     layout()->addWidget(gTemp);
+
+    if (MainWindow::grWindow != nullptr)
+        MainWindow::grWindow->resize(MainWindow::grWindow->sizeHint().width(), 85 * graphData->amountOfChannels + 20);
+//        MainWindow::grWindow->adjustSize();
+//        MainWindow::grWindow->resize(MainWindow::grWindow->sizeHint().width(), MainWindow::grWindow->sizeHint().height());
 }
 
 void GraphWidget::closeEvent(QCloseEvent *event) {

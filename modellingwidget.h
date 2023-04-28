@@ -25,7 +25,7 @@ class ModellingWidget : public QWidget
     class InputLines
     {
     public:
-        InputLines(QWidget* parent, std::shared_ptr<GeneralData> data);
+        InputLines(QWidget* parent, std::shared_ptr<GeneralData> data, Modeling::Type type);
 
         QPointer<QLineEdit> _amountOfSamples;
         QPointer<QLineEdit> _timeStep;
@@ -85,7 +85,7 @@ public:
 
     std::shared_ptr<Graph2DData> data = nullptr;
 
-    ModellingWidget(QWidget* parent, std::shared_ptr<GeneralData> generalData = nullptr);
+    ModellingWidget(QWidget* parent, std::shared_ptr<GeneralData> generalData = nullptr, Modeling::Type type = Modeling::Type::SingleImpulse);
     ~ModellingWidget() = default;
 
     QPointer<glView> gv = nullptr;
@@ -93,6 +93,7 @@ public:
     QPointer<QFormLayout> form = nullptr;
     QPointer<QComboBox> dropDown = nullptr;
     QPointer<QCheckBox> isAddToCurrent = nullptr;
+    QPointer<QLabel> formulaLabel = nullptr;
     InputLines inputLines;
 
     QPointer<QFormLayout> inputForm = nullptr;

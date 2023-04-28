@@ -17,14 +17,17 @@
 #include "Modeling/randommodeling.h"
 #include "Utility/generaldialog.h"
 
+#include <QtMath>
+
 #include <QDebug>
 
 
-ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> generalData)
+ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> generalData, Modeling::Type type)
 : QWidget(parent),
   ui(new Ui::ModellingWidget),
-  inputLines(ModellingWidget::InputLines(this, generalData)),
-  amoutOfSamples(generalData == nullptr ? 10 : generalData->amountOfSamples),
+  currentType(type),
+  inputLines(ModellingWidget::InputLines(this, generalData, type)),
+  amoutOfSamples(generalData == nullptr ? 100 : generalData->amountOfSamples),
   Hz(generalData == nullptr ? 1 : generalData->Hz)
 {
     ui->setupUi(this);
@@ -39,6 +42,10 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
     dropDown->setCurrentIndex((int)currentType);
 
     form->addWidget(dropDown);
+
+    formulaLabel = new QLabel(Modeling::TypeToFormula(currentType), this);
+    formulaLabel->setAlignment(Qt::AlignCenter);
+    form->addWidget(formulaLabel);
 
     isAddToCurrent = new QCheckBox(this);
     isAddToCurrent->setChecked(false);
@@ -87,11 +94,10 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
 
 void ModellingWidget::ChangedModel() {
     currentType = (Modeling::Type)dropDown->currentIndex();
-//    inputLines.Disconnect();
     inputLines.Hide();
     inputFormRemoveRows();
 
-    newRow("No. samples", inputLines._amountOfSamples);
+    newRow("No. samples (N)", inputLines._amountOfSamples);
     switch (currentType) {
     case Modeling::Type::SingleImpulse:
     case Modeling::Type::SingleHop:{
@@ -99,55 +105,55 @@ void ModellingWidget::ChangedModel() {
         break;
     }
     case Modeling::Type::DecreasingExponent: {
-        newRow("Base", inputLines._scale1);
+        newRow("Base (0 < a < 1)", inputLines._scale1);
         break;
     }
     case Modeling::Type::Saw:
     case Modeling::Type::Meander: {
-        newRow("Period", inputLines._delay);
+        newRow("Period (L)", inputLines._delay);
         break;
     }
     case Modeling::Type::SineWave: {
-        newRow("Amplitude", inputLines._scale1);
-        newRow("Circle phase", inputLines._scale2);
-        newRow("Phase", inputLines._phase);
+        newRow("Amplitude (a)", inputLines._scale1);
+        newRow("Circle phase (0 < w < pi)", inputLines._scale2);
+        newRow("Phase (0 < p < 2pi)", inputLines._phase);
         break;
     }
     case Modeling::Type::ExponentialEnvelope: {
         newRow("Time step", inputLines._timeStep);
         newRow("Time freq", inputLines._timeFreq);
-        newRow("Amplitude", inputLines._scale1);
-        newRow("Env. width", inputLines._scale2);
-        newRow("Freq", inputLines._freq1);
-        newRow("Phase", inputLines._phase);
+        newRow("Amplitude (a)", inputLines._scale1);
+        newRow("Env. width (x) ", inputLines._scale2);
+        newRow("Freq (0 < f < 0.5 time freq)", inputLines._freq1);
+        newRow("Phase (p)", inputLines._phase);
         break;
     }
     case Modeling::Type::BalanceEnvelope: {
         newRow("Time step", inputLines._timeStep);
         newRow("Time freq", inputLines._timeFreq);
-        newRow("Amplitude", inputLines._scale1);
-        newRow("Env. freq", inputLines._freq1);
-        newRow("Carry freq", inputLines._freq2);
-        newRow("Phase", inputLines._phase);
+        newRow("Amplitude (a)", inputLines._scale1);
+        newRow("Env. freq (fo)", inputLines._freq1);
+        newRow("Carry freq (fn)", inputLines._freq2);
+        newRow("Phase (p)", inputLines._phase);
         break;
     }
     case Modeling::Type::TonalEnvelope: {
         newRow("Time step", inputLines._timeStep);
         newRow("Time freq", inputLines._timeFreq);
-        newRow("Amplitude", inputLines._scale1);
-        newRow("Env. freq", inputLines._freq1);
-        newRow("Carry freq", inputLines._freq2);
-        newRow("Phase", inputLines._phase);
-        newRow("Module index (0-1)", inputLines._scale2);
+        newRow("Amplitude (a)", inputLines._scale1);
+        newRow("Env. freq (fo)", inputLines._freq1);
+        newRow("Carry freq (fn)", inputLines._freq2);
+        newRow("Phase (p)", inputLines._phase);
+        newRow("Module index (0 < m < 1)", inputLines._scale2);
         break;
     }
     case Modeling::Type::LFM: {
         newRow("Time step", inputLines._timeStep);
         newRow("Time freq", inputLines._timeFreq);
-        newRow("Amplitude", inputLines._scale1);
-        newRow("Start freq", inputLines._freq1);
-        newRow("End freq", inputLines._freq2);
-        newRow("Phase", inputLines._phase);
+        newRow("Amplitude (a)", inputLines._scale1);
+        newRow("Start freq (f0)", inputLines._freq1);
+        newRow("End freq (fk)", inputLines._freq2);
+        newRow("Phase (p)", inputLines._phase);
         break;
     }
     case Modeling::Type::WhiteNoise: {
@@ -225,7 +231,8 @@ void ModellingWidget::DrawGraph() {
     }
     delete graphTemplate;
     graphTemplate = new GraphTemplate(this, data, false);
-    form->setWidget(1, QFormLayout::FieldRole, graphTemplate);
+    formulaLabel->setText(Modeling::TypeToFormula(currentType));
+    form->setWidget(2, QFormLayout::FieldRole, graphTemplate);
 
     this->update();
 }
@@ -285,17 +292,90 @@ void ModellingWidget::TimeFreqChanged() {
     DrawGraph();
 }
 
-ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<GeneralData> data) {
-    _amountOfSamples = new QLineEdit(QString::number( data == nullptr ? 10 : data->amountOfSamples), parent);
-
+ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<GeneralData> data, Modeling::Type type) {
+    _amountOfSamples = new QLineEdit(QString::number( data == nullptr ? 100 : data->amountOfSamples), parent);
     _timeStep = new QLineEdit(QString::number( data == nullptr ? 1 : 1/data->Hz), parent);
     _timeFreq = new QLineEdit(QString::number( data == nullptr ? 1 : data->Hz), parent);
-    _delay = new QLineEdit(QString::number(0), parent);
-    _scale1 = new QLineEdit(QString::number(1), parent);
-    _scale2 = new QLineEdit(QString::number(1), parent);
-    _phase = new QLineEdit(QString::number(0), parent);
-    _freq1 = new QLineEdit(QString::number(1), parent);
-    _freq2 = new QLineEdit(QString::number(1), parent);
+
+    size_t delay = 1;
+    double scale1 = 1;
+    double scale2 = 1;
+    double phase = 0;
+    double freq1 = 1;
+    double freq2 = 1;
+
+    switch (type) {
+    case Modeling::Type::SingleImpulse:
+    case Modeling::Type::SingleHop: {
+        delay = samples()/4;
+        break;
+    }
+    case Modeling::Type::DecreasingExponent: {
+        scale1 = qPow(0.01, 1.0/samples());
+        break;
+    }
+    case Modeling::Type::SineWave: {
+        scale2 = 20 * M_PI / samples();
+//        data = Modeling::sampledSineWave(inputLines.samples(), inputLines.scale1(), inputLines.scale2(), inputLines.phase());
+        break;
+    }
+    case Modeling::Type::Meander: {
+        delay = samples()/10;
+//        data = Modeling::meander(inputLines.samples(), inputLines.delay());
+        break;
+    }
+    case Modeling::Type::Saw: {
+        delay = samples()/10;
+//        data = Modeling::saw(inputLines.samples(), inputLines.delay());
+        break;
+    }
+    case Modeling::Type::ExponentialEnvelope: {
+        scale2 = samples() / (2.0 * qLn(10) * timeFreq());
+        freq1 = 10 * timeFreq() / samples();
+//        data = Modeling::exponentialEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
+//                                             inputLines.scale2(), inputLines.freq1(), inputLines.phase());
+        break;
+    }
+    case Modeling::Type::BalanceEnvelope: {
+        freq1 = 5 * timeFreq() / samples();
+        freq2 = 10 * timeFreq() / samples();
+//        data = Modeling::balanceEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
+//                                         inputLines.freq1(), inputLines.freq2(), inputLines.phase());
+        break;
+    }
+    case Modeling::Type::TonalEnvelope: {
+        freq1 = 5 * timeFreq() / samples();
+        freq2 = 10 * timeFreq() / samples();
+        scale2 = 0.5;
+//        data = Modeling::tonalEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
+//                                       inputLines.freq1(), inputLines.freq2(), inputLines.phase(),
+//                                       inputLines.scale2());
+        break;
+    }
+    case Modeling::Type::LFM: {
+        freq1 = 0;
+        freq2 = (10.0 * timeFreq()) / samples();
+//        data = Modeling::LFM(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
+//                             inputLines.freq1(), inputLines.freq2(), inputLines.phase());
+        break;
+    }
+    case Modeling::Type::WhiteNoise: {
+        scale1 = 0;
+        scale2 = 1;
+//        data = randomModeling::whiteNoise(inputLines.samples(), inputLines.timeStep(),
+//                                          inputLines.scale1(), inputLines.scale2());
+        break;
+    }
+    default:
+        break;
+    }
+
+    _delay = new QLineEdit(QString::number(delay), parent);
+    _scale1 = new QLineEdit(QString::number(scale1), parent);
+    _scale2 = new QLineEdit(QString::number(scale2), parent);
+    _phase = new QLineEdit(QString::number(phase), parent);
+    _freq1 = new QLineEdit(QString::number(freq1), parent);
+    _freq2 = new QLineEdit(QString::number(freq2), parent);
     Hide();
 }
 
@@ -335,7 +415,7 @@ void ModellingWidget::saveModel() {
     else if (MainWindow::grWid != nullptr) {
         MainWindow::grWid->AddNewChannel(data,
                                          data->name + QString::number( MainWindow::instance->grWid->graphData->modellingCounts[(int)currentType] += 1));
-        MainWindow::grWindow->setFixedSize(300, 100 * MainWindow::grWid->graphData->getAmountOfChannels());
+//        MainWindow::grWindow->resize(300, 100 * MainWindow::grWid->graphData->getAmountOfChannels());
     }
 
     isAddToCurrent->setChecked(true);

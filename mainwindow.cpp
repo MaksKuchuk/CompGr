@@ -77,7 +77,7 @@ void MainWindow::ShowGraphWidget(std::shared_ptr<GeneralData> data) {
     ui->mdiArea->addSubWindow(widget);
 
     grWindow = ui->mdiArea->subWindowList().last();
-    grWindow->setFixedSize(300, grWindow->sizeHint().height()); //105 * data->getAmountOfChannels()
+//    grWindow->setFixedSize(300, grWindow->sizeHint().height()); //105 * data->getAmountOfChannels()
 
     widget->setWindowTitle("Channels");
     widget->show();
@@ -146,15 +146,9 @@ void MainWindow::openAnalysisWindow() {
 
 void MainWindow::on_actionInformation_triggered() {
 
-    QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
+    if (grWid == nullptr) return;
 
-    if (activeWidget == nullptr) return;
-
-    GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
-
-    if (grWi->nm != "GraphWidget") return;
-
-    QWidget *widget = new GraphInfo(ui->mdiArea, grWi->graphData);
+    QWidget *widget = new GraphInfo(ui->mdiArea, grWid->graphData);
 
     ui->mdiArea->addSubWindow(widget);
 //    ui->mdiArea->subWindowList().last()->setFixedSize(400, 150 + 25 * grWi->graphData->getAmountOfChannels());
@@ -171,7 +165,15 @@ void MainWindow::on_actionTheme_triggered()
 
 void MainWindow::on_actionCreate_new_model_triggered() {
 
-    modelWid = new ModellingWidget(ui->mdiArea, grWid == nullptr ? nullptr : grWid->graphData);
+    auto type = GeneralDialog::ButtonDialog("Choose model", Modeling::TypesList());
+    if (type < 0)
+        return;
+
+    if (modelWid != nullptr) {
+        modelWindow->close();
+    }
+
+    modelWid = new ModellingWidget(ui->mdiArea, grWid == nullptr ? nullptr : grWid->graphData, (Modeling::Type)type);
 
     ui->mdiArea->addSubWindow(modelWid);
 
@@ -184,11 +186,12 @@ void MainWindow::on_actionCreate_new_model_triggered() {
 }
 
 void MainWindow::on_actionCreate_superposition_triggered() {
-    qDebug() << "asd";
+    if (grWid == nullptr || grWid->graphData == nullptr) {
+        GeneralDialog::InfoDialog("No graphs are opened");
+        return;
+    }
 
-    if (grWid == nullptr || grWid->graphData == nullptr) return;
-
-    auto type = GeneralDialog::ChooseDialog("Choose type of Superposition", {"Linear", "Multiplicative"});
+    auto type = GeneralDialog::ButtonDialog("Choose type of Superposition", {"Linear", "Multiplicative"});
 
     switch (type) {
     case 0:
