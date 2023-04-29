@@ -106,18 +106,27 @@ std::shared_ptr<Graph2DData> randomModeling::MAOA(
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
+    double* xn = new double[N];
+
     data2D->samples.resize(N);
     for (size_t i = 0; i < N; ++i) {
         data2D->samples[i] = random(rng);
+        xn[i] = data2D->samples[i];
         for (int j = 0; j < q; ++j) {
-            data2D->samples[i] += bs[j] * (i - j + 1);
+            if (i - j < 0)
+                break;
+            data2D->samples[i] += bs[j] * xn[i - j];
         }
         for (int j = 0; j < p; ++j) {
-            data2D->samples[i] += as[j] * (i - j + 1);
+            if (i - j < 0)
+                break;
+            data2D->samples[i] -= as[j] * data2D->samples[i - j];
         }
         if (data2D->samples[i] > max) max = data2D->samples[i];
         if (data2D->samples[i] < min) min = data2D->samples[i];
     }
+
+    delete[] xn;
 
     data2D->minVal = min;
     data2D->maxVal = max;
