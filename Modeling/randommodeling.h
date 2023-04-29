@@ -15,6 +15,10 @@ public:
     static std::shared_ptr<Graph2DData> whiteNoise(
             const long long N, const double T, const double a, const double b
         );
+
+    static std::shared_ptr<Graph2DData> normalDistrWhiteNoise(
+            const long long N, const double T, const double a, const double dispersion
+        );
 };
 
 #endif // RANDOMMODELING_H
