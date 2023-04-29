@@ -1,4 +1,5 @@
 #include "randommodeling.h"
+#include <QtMath>
 
 std::shared_ptr<Graph2DData> randomModeling::whiteNoise(
         const long long N, const double T, const double a, const double b
@@ -45,7 +46,7 @@ std::shared_ptr<Graph2DData> randomModeling::normalDistrWhiteNoise(
 {
     std::random_device dev;
     std::mt19937 rng(dev());
-    std::normal_distribution<double> random(a, dispersion);
+    std::normal_distribution<double> random(a, qSqrt(qAbs(dispersion)));
 
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Normal white noise";
@@ -80,19 +81,19 @@ std::shared_ptr<Graph2DData> randomModeling::normalDistrWhiteNoise(
 
 }
 
-std::shared_ptr<Graph2DData> randomModeling::MAOA(
-            const long long N, const double T, const double p, const double q, const double dispersion,
-            const double* as, const double* bs
+std::shared_ptr<Graph2DData> randomModeling::ARMA(
+            const long long N, const double T, const double dispersion,
+            const QList<double> as, const QList<double> bs
         )
 {
     std::random_device dev;
     std::mt19937 rng(dev());
-    std::normal_distribution<double> random(0, dispersion);
+    std::normal_distribution<double> random(0, qSqrt(qAbs(dispersion)));
 
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Autoregression";
-    data2D->source = "Autoregression with p = " + QString::number(p) +
-            " and q = " + QString::number(q);
+    data2D->source = "Autoregression with p = " + QString::number(as.size()) +
+            " and q = " + QString::number(bs.size());
 
     data2D->amountOfSamples = N;
 
@@ -106,27 +107,27 @@ std::shared_ptr<Graph2DData> randomModeling::MAOA(
     double min = std::numeric_limits<double>::max();
     double max = -std::numeric_limits<double>::max();
 
-    double* xn = new double[N];
+    QList<double> rand_disp(N);
+    for (size_t i = 0; i < N; ++i) {
+        rand_disp[i] = random(rng);
+    }
 
     data2D->samples.resize(N);
-    for (size_t i = 0; i < N; ++i) {
-        data2D->samples[i] = random(rng);
-        xn[i] = data2D->samples[i];
-        for (int j = 0; j < q; ++j) {
-            if (i - j < 0)
-                break;
-            data2D->samples[i] += bs[j] * xn[i - j];
+    for (qint64 i = 0; i < N; ++i) {
+        data2D->samples[i] = rand_disp[i];
+        for (qint64 j = 0; j < bs.size(); ++j) {
+            if (i - j - 1 >= 0) {
+                data2D->samples[i] += bs[j] * rand_disp[i - j - 1];
+            }
         }
-        for (int j = 0; j < p; ++j) {
-            if (i - j < 0)
-                break;
-            data2D->samples[i] -= as[j] * data2D->samples[i - j];
+        for (qint64 j = 0; j < as.size(); ++j) {
+            if (i - j - 1 >= 0) {
+                data2D->samples[i] -= as[j] * data2D->samples[i - j - 1];
+            }
         }
         if (data2D->samples[i] > max) max = data2D->samples[i];
         if (data2D->samples[i] < min) min = data2D->samples[i];
     }
-
-    delete[] xn;
 
     data2D->minVal = min;
     data2D->maxVal = max;

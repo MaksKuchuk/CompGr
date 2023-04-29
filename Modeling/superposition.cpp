@@ -3,6 +3,7 @@
 std::shared_ptr<Graph2DData> Superposition::LinearSuperposition(std::shared_ptr<GeneralData> data, QList<int> indices, QList<double> coeffs) {
     auto graph = std::make_shared<Graph2DData>();
     graph->samples.resize(data->amountOfSamples);
+    graph->amountOfSamples = data->amountOfSamples;
     graph->maxVal = -std::numeric_limits<double>::max();
     graph->minVal = std::numeric_limits<double>::max();
     for (size_t i = 0; i < data->amountOfSamples; ++i) {
@@ -17,7 +18,7 @@ std::shared_ptr<Graph2DData> Superposition::LinearSuperposition(std::shared_ptr<
     graph->name = "Lin Superpos ";
     graph->source = "Lin Superpos of";
     for (auto i : indices)
-        graph->source += " " + QString::number(i);
+        graph->source += " " + QString::number(i)+"(x"+QString::number(coeffs[i])+"), ";
 
     return graph;
 }

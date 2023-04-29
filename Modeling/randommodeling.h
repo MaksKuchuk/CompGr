@@ -20,9 +20,9 @@ public:
             const long long N, const double T, const double a, const double dispersion
         );
 
-    static std::shared_ptr<Graph2DData> MAOA(
-            const long long N, const double T, const double p, const double q, const double dispersion,
-            const double* as, const double* bs
+    static std::shared_ptr<Graph2DData> ARMA(
+            const long long N, const double T, const double dispersion,
+            const QList<double> as, const QList<double> bs
         );
 };
 

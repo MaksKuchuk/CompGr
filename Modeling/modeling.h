@@ -65,15 +65,17 @@ public:
         BalanceEnvelope,
         TonalEnvelope,
         LFM,
-        WhiteNoise,
+
+        UniformWhiteNoise,
+        NormalWhiteNoise,
+        AutoregressiveMovingAverage,
 
 
-
-        __AMOUNT_OF_SAMPLES
+        __AMOUNT_OF_TYPES
     };
 
     static size_t AmountOfTypes() {
-        return (size_t)Type::__AMOUNT_OF_SAMPLES;
+        return (size_t)Type::__AMOUNT_OF_TYPES;
     }
 
     static QList<QString> TypesList();

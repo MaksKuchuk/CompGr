@@ -63,6 +63,9 @@ set(PROJECT_SOURCES
         Utility/generaldialog.h
         Utility/generaldialog.cpp
 
+        Utility/utility.h
+        Utility/utility.cpp
+
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp

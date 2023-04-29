@@ -16,6 +16,7 @@
 #include "Modeling/modeling.h"
 #include "Modeling/randommodeling.h"
 #include "Utility/generaldialog.h"
+#include "Utility/utility.h"
 
 #include <QtMath>
 
@@ -36,12 +37,19 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
     inputForm = new QFormLayout();
 //    layout->setContentsMargins(0, 0, 0, 0);
 
-    dropDown = new QComboBox();
-    for (size_t i = 0; i < Modeling::AmountOfTypes(); ++i)
-        dropDown->addItem(Modeling::TypeToString(Modeling::Type(i)));
-    dropDown->setCurrentIndex((int)currentType);
+//    dropDown = new QComboBox();
+//    for (size_t i = 0; i < Modeling::AmountOfTypes(); ++i)
+//        dropDown->addItem(Modeling::TypeToString(Modeling::Type(i)));
+//    dropDown->setCurrentIndex((int)currentType);
 
-    form->addWidget(dropDown);
+//    form->addWidget(dropDown);
+
+    auto name = new QLabel(Modeling::TypeToString(currentType), this);
+    auto nameFont = name->font();
+    nameFont.setPixelSize(20);
+    name->setFont(nameFont);
+    name->setAlignment(Qt::AlignCenter);
+    form->addWidget(name);
 
     formulaLabel = new QLabel(Modeling::TypeToFormula(currentType), this);
     formulaLabel->setAlignment(Qt::AlignCenter);
@@ -71,7 +79,7 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
     this->setLayout(form);
 
 
-    connect(dropDown,&QComboBox::currentIndexChanged, this, &ModellingWidget::ChangedModel);
+//    connect(dropDown,&QComboBox::currentIndexChanged, this, &ModellingWidget::ChangedModel);
     connect(isAddToCurrent, &QCheckBox::stateChanged, this, &ModellingWidget::CurrentCheckChanged);
     connect(btn_box, &QDialogButtonBox::rejected, this, &ModellingWidget::closeWidget);
     connect(btn_box, &QDialogButtonBox::accepted, this, &ModellingWidget::saveModel);
@@ -90,14 +98,19 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
     connectDraw(inputLines._phase);
     connectDraw(inputLines._freq1);
     connectDraw(inputLines._freq2);
+
+    connect(inputLines._line1, &QLineEdit::editingFinished, this, &ModellingWidget::DrawGraph);
+    connect(inputLines._line2, &QLineEdit::editingFinished, this, &ModellingWidget::DrawGraph);
 }
 
 void ModellingWidget::ChangedModel() {
-    currentType = (Modeling::Type)dropDown->currentIndex();
+//    currentType = (Modeling::Type)dropDown->currentIndex();
     inputLines.Hide();
     inputFormRemoveRows();
 
     newRow("No. samples (N)", inputLines._amountOfSamples);
+    newRow("Time step", inputLines._timeStep);
+    newRow("Time freq", inputLines._timeFreq);
     switch (currentType) {
     case Modeling::Type::SingleImpulse:
     case Modeling::Type::SingleHop:{
@@ -120,8 +133,6 @@ void ModellingWidget::ChangedModel() {
         break;
     }
     case Modeling::Type::ExponentialEnvelope: {
-        newRow("Time step", inputLines._timeStep);
-        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude (a)", inputLines._scale1);
         newRow("Env. width (x) ", inputLines._scale2);
         newRow("Freq (0 < f < 0.5 time freq)", inputLines._freq1);
@@ -129,8 +140,6 @@ void ModellingWidget::ChangedModel() {
         break;
     }
     case Modeling::Type::BalanceEnvelope: {
-        newRow("Time step", inputLines._timeStep);
-        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude (a)", inputLines._scale1);
         newRow("Env. freq (fo)", inputLines._freq1);
         newRow("Carry freq (fn)", inputLines._freq2);
@@ -138,8 +147,6 @@ void ModellingWidget::ChangedModel() {
         break;
     }
     case Modeling::Type::TonalEnvelope: {
-        newRow("Time step", inputLines._timeStep);
-        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude (a)", inputLines._scale1);
         newRow("Env. freq (fo)", inputLines._freq1);
         newRow("Carry freq (fn)", inputLines._freq2);
@@ -148,19 +155,26 @@ void ModellingWidget::ChangedModel() {
         break;
     }
     case Modeling::Type::LFM: {
-        newRow("Time step", inputLines._timeStep);
-        newRow("Time freq", inputLines._timeFreq);
         newRow("Amplitude (a)", inputLines._scale1);
         newRow("Start freq (f0)", inputLines._freq1);
         newRow("End freq (fk)", inputLines._freq2);
         newRow("Phase (p)", inputLines._phase);
         break;
     }
-    case Modeling::Type::WhiteNoise: {
-        newRow("Time step", inputLines._timeStep);
-        newRow("Time freq", inputLines._timeFreq);
-        newRow("From", inputLines._scale1);
-        newRow("To", inputLines._scale2);
+    case Modeling::Type::UniformWhiteNoise: {
+        newRow("From (a)", inputLines._scale1);
+        newRow("To (b)", inputLines._scale2);
+        break;
+    }
+    case Modeling::Type::NormalWhiteNoise: {
+        newRow("Mean (a)", inputLines._scale1);
+        newRow("Dispersion (d^2)", inputLines._scale2);
+        break;
+    }
+    case Modeling::Type::AutoregressiveMovingAverage: {
+        newRow("Dispersion (d^2)", inputLines._scale1);
+        newRow("Array a", inputLines._line1);
+        newRow("Array b", inputLines._line2);
         break;
     }
     default:
@@ -221,10 +235,20 @@ void ModellingWidget::DrawGraph() {
                              inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;
     }
-    case Modeling::Type::WhiteNoise: {
+    case Modeling::Type::UniformWhiteNoise: {
         data = randomModeling::whiteNoise(inputLines.samples(), inputLines.timeStep(),
                                           inputLines.scale1(), inputLines.scale2());
         break;
+    }
+    case Modeling::Type::NormalWhiteNoise: {
+        data = randomModeling::normalDistrWhiteNoise(inputLines.samples(), inputLines.timeStep(),
+                                                     inputLines.scale1(), inputLines.scale2());
+        break;
+    }
+    case Modeling::Type::AutoregressiveMovingAverage: {
+        data = randomModeling::ARMA(inputLines.samples(), inputLines.timeStep(),
+                                    inputLines.scale1(),  Utility::StringToDList(inputLines.line1()),
+                                    Utility::StringToDList(inputLines.line2()));
     }
     default:
         break;
@@ -359,7 +383,8 @@ ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<General
 //                             inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;
     }
-    case Modeling::Type::WhiteNoise: {
+    case Modeling::Type::UniformWhiteNoise:
+    case Modeling::Type::NormalWhiteNoise: {
         scale1 = 0;
         scale2 = 1;
 //        data = randomModeling::whiteNoise(inputLines.samples(), inputLines.timeStep(),
@@ -376,6 +401,8 @@ ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<General
     _phase = new QLineEdit(QString::number(phase), parent);
     _freq1 = new QLineEdit(QString::number(freq1), parent);
     _freq2 = new QLineEdit(QString::number(freq2), parent);
+    _line1 = new QLineEdit("", parent);
+    _line2 = new QLineEdit("", parent);
     Hide();
 }
 
