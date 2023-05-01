@@ -5,6 +5,7 @@
 #include "Handler/AnalysisWindowHandler.hpp"
 #include "Transformation/TransformToOscillogram.hpp"
 #include "Transformation/TransformToFourierSpectrum.hpp"
+#include "Statistics/statistics.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -64,14 +65,14 @@ void GraphTemplate::mousePressEvent(QMouseEvent *event) {
 void GraphTemplate::drawMenu(QPoint globalPos) {
     QMenu *menu = new QMenu();
 
-    QAction* action1 = new QAction(QString::fromUtf8("Oscillogram"), this);
-    menu->addAction(action1);
+    menu->addAction(new QAction(QString::fromUtf8("Oscillogram"), this));
+//    menu->addSeparator();
+    menu->addAction(new QAction(QString::fromUtf8("Fourier spectrum"), this));
+//    menu->addSeparator();
+    menu->addAction(new QAction(QString::fromUtf8("Waveletogram"), this));
     menu->addSeparator();
-    QAction* action2 = new QAction(QString::fromUtf8("Fourier spectrum"), this);
-    menu->addAction(action2);
-    menu->addSeparator();
-    QAction* action3 = new QAction(QString::fromUtf8("Waveletogram"), this);
-    menu->addAction(action3);
+    menu->addAction(new QAction(QString::fromUtf8("Statistics"), this));
+
 
     QAction* selectedItem = menu->exec(globalPos);
 
@@ -90,6 +91,8 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
             data, glType::FourierSpectrum, this);
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();
+    } else if (selectedItem->text() == "Statistics") {
+        Statistics s(data);
     }
 }
 

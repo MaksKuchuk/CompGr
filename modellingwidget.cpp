@@ -317,7 +317,7 @@ void ModellingWidget::TimeFreqChanged() {
 }
 
 ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<GeneralData> data, Modeling::Type type) {
-    _amountOfSamples = new QLineEdit(QString::number( data == nullptr ? 100 : data->amountOfSamples), parent);
+    _amountOfSamples = new QLineEdit(QString::number( data == nullptr ? 1000 : data->amountOfSamples), parent);
     _timeStep = new QLineEdit(QString::number( data == nullptr ? 1 : 1/data->Hz), parent);
     _timeFreq = new QLineEdit(QString::number( data == nullptr ? 1 : data->Hz), parent);
 
@@ -355,21 +355,21 @@ ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<General
     }
     case Modeling::Type::ExponentialEnvelope: {
         scale2 = samples() / (2.0 * qLn(10) * timeFreq());
-        freq1 = 10 * timeFreq() / samples();
+        freq1 = 20 * timeFreq() / samples(); // 20 periods
 //        data = Modeling::exponentialEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
 //                                             inputLines.scale2(), inputLines.freq1(), inputLines.phase());
         break;
     }
     case Modeling::Type::BalanceEnvelope: {
-        freq1 = 5 * timeFreq() / samples();
-        freq2 = 10 * timeFreq() / samples();
+        freq1 = 2 * timeFreq() / samples();
+        freq2 = 50 * timeFreq() / samples();
 //        data = Modeling::balanceEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
 //                                         inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;
     }
     case Modeling::Type::TonalEnvelope: {
-        freq1 = 5 * timeFreq() / samples();
-        freq2 = 10 * timeFreq() / samples();
+        freq1 = 3 * timeFreq() / samples();
+        freq2 = 50 * timeFreq() / samples();
         scale2 = 0.5;
 //        data = Modeling::tonalEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
 //                                       inputLines.freq1(), inputLines.freq2(), inputLines.phase(),
@@ -378,7 +378,7 @@ ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<General
     }
     case Modeling::Type::LFM: {
         freq1 = 0;
-        freq2 = (10.0 * timeFreq()) / samples();
+        freq2 = (20.0 * timeFreq()) / samples();
 //        data = Modeling::LFM(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
 //                             inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;

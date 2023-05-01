@@ -66,6 +66,9 @@ set(PROJECT_SOURCES
         Utility/utility.h
         Utility/utility.cpp
 
+        Statistics/statistics.h
+        Statistics/statistics.cpp
+
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
