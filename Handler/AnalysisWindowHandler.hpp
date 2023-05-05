@@ -65,7 +65,25 @@ public:
 
     static void updateGraphs(glTemplateOscillogram* rf);
 
+    static void changeScaleByMouse();
+
     ~AnalysisWindowHandler();
+
+    static inline bool scaleMod;
+
+    static inline int xpress;
+    static inline int ypress;
+    static inline int xrelease;
+    static inline int yrelease;
+
+    static inline double xleft;
+    static inline double xright;
+    static inline double ybottom;
+    static inline double ytop;
+
+    static long long getXPosition();
+
+    static long long getYPosition();
 
 public slots:
 

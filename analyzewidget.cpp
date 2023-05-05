@@ -43,23 +43,40 @@ void AnalyzeWidget::wheelEvent(QWheelEvent *event) {
 void AnalyzeWidget::keyPressEvent(QKeyEvent* event) {
     if (AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
 
-    if (event->key() == Qt::Key_A || event->key() == Qt::Key_D) {
-        long long x = (event->key() == Qt::Key_A) ? -1 : 1;
+    //38 - a, 40 - d
+    if (event->nativeScanCode() == 38 || event->nativeScanCode() == 40) {
+        long long x = (event->nativeScanCode() == 38) ? -1 : 1;
 
         AnalysisWindowHandler::getInstance()->moveGraph(x);
+    }
+
+    if (event->key() == Qt::Key_Alt) {
+        AnalysisWindowHandler::scaleMod = true;
+    }
+}
+
+void AnalyzeWidget::keyReleaseEvent(QKeyEvent *event) {
+    if (AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
+
+    if (event->key() == Qt::Key_Alt) {
+        AnalysisWindowHandler::scaleMod = false;
     }
 }
 
 bool AnalyzeWidget::eventFilter(QObject *obj, QEvent *event) {
     QKeyEvent *keyEvent = NULL;//event data, if this is a keystroke event
+    QMouseEvent *mouseEvent = NULL;
     bool result = false;//return true to consume the keystroke
 
-    if (event->type() == QEvent::KeyPress)
-    {
+    if (event->type() == QEvent::KeyPress) {
          keyEvent = dynamic_cast<QKeyEvent*>(event);
          this->keyPressEvent(keyEvent);
          result = true;
-    }//if type()
+    } else if (event->type() == QEvent::KeyRelease) {
+         keyEvent = dynamic_cast<QKeyEvent*>(event);
+         this->keyReleaseEvent(keyEvent);
+         result = true;
+    }
 
     //### Standard event processing ###
     else

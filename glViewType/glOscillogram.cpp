@@ -1,5 +1,7 @@
 #include "glOscillogram.hpp"
 #include "../mainwindow.h"
+#include "../Handler/AnalysisWindowHandler.hpp"
+#include <iostream>
 
 glOscillogram::glOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data) :
     QOpenGLWidget(parent),
@@ -51,6 +53,24 @@ void glOscillogram::drawGraph() {
             y = (2 * (data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc) / diff) - 1;
             glVertex2d(x, y);
         }
+    glEnd();
+
+    if (AnalysisWindowHandler::xpress == -1 ||
+        AnalysisWindowHandler::ypress == -1 ||
+        AnalysisWindowHandler::xrelease == -1 ||
+        AnalysisWindowHandler::yrelease == -1) return;
+
+    std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
+              << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
+
+    glColor3f(0, 0, 1);
+    glLineWidth(1);
+    glBegin(GL_LINE_STRIP);
+        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), ((AnalysisWindowHandler::ybottom * 2) - 1));
+        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), ((AnalysisWindowHandler::ytop * 2) - 1));
+        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), ((AnalysisWindowHandler::ytop * 2) - 1));
+        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), ((AnalysisWindowHandler::ybottom * 2) - 1));
+        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), ((AnalysisWindowHandler::ybottom * 2) - 1));
     glEnd();
 }
 

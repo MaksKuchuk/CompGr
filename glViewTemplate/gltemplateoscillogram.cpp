@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <iostream>
 
 void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
     int margin = 65; // adjust as needed
@@ -288,6 +289,89 @@ void glTemplateOscillogram::mousePressEvent(QMouseEvent *event) {
 
     if (event->button() == Qt::RightButton) {
         drawMenu(QCursor::pos());
+    } else if (event->button() == Qt::LeftButton && AnalysisWindowHandler::scaleMod) {
+        AnalysisWindowHandler::xpress = event->pos().x() - gView->geometry().x();
+        AnalysisWindowHandler::ypress = event->pos().y() - gView->geometry().y();
+    }
+}
+
+void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
+    AnalysisWindowHandler::getInstance()->setLocalRef(this);
+    if (event->button() == Qt::LeftButton && AnalysisWindowHandler::scaleMod) {
+        if (AnalysisWindowHandler::xpress == -1 ||
+            AnalysisWindowHandler::ypress == -1) return;
+
+        AnalysisWindowHandler::xrelease = event->pos().x() - gView->geometry().x();
+        AnalysisWindowHandler::yrelease = event->pos().y() - gView->geometry().y();
+
+        std::cout << gView->geometry().x() << ' '
+                  << gView->geometry().y() << "\n"
+                  << gView->geometry().width() << ' '
+                  << gView->geometry().height() << "\n";
+
+        std::cout << AnalysisWindowHandler::xpress
+                  << ' '
+                  << AnalysisWindowHandler::ypress
+                  << '\n'
+                  << AnalysisWindowHandler::xrelease
+                  << ' '
+                  << AnalysisWindowHandler::yrelease
+                  << "\n\n" << std::endl;
+
+        AnalysisWindowHandler::xleft = std::min(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
+        AnalysisWindowHandler::xright = std::max(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
+        AnalysisWindowHandler::ybottom = 1 - std::max(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
+        AnalysisWindowHandler::ytop = 1 - std::min(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
+
+        std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
+                  << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
+
+        int newmaxLoc = AnalysisWindowHandler::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
+        int newminLoc = AnalysisWindowHandler::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
+        int newlcur = AnalysisWindowHandler::xleft * (data->rcur - data->lcur) + data->lcur;
+        int newrcur = AnalysisWindowHandler::xright * (data->rcur - data->lcur) + data->lcur;
+
+        std::cout << newmaxLoc << ' ' << newminLoc << ' ' << newlcur << ' ' << newrcur << std::endl;
+
+        if (data == nullptr || newmaxLoc > data->maxVal || newminLoc < data->minVal
+            || newlcur < 0 || newrcur >= data->amountOfSamples) {
+            AnalysisWindowHandler::xpress = -1;
+            AnalysisWindowHandler::ypress = -1;
+            AnalysisWindowHandler::xrelease = -1;
+            AnalysisWindowHandler::yrelease = -1;
+            gView->updateGraph();
+            this->repaint();
+            return;
+        }
+
+        data->maxLoc = newmaxLoc;
+        data->minLoc = newminLoc;
+        data->lcur = newlcur;
+        data->rcur = newrcur;
+
+        AnalysisWindowHandler::updateGraphs(this);
+
+        gView->updateGraph();
+        this->repaint();
+
+        AnalysisWindowHandler::xpress = -1;
+        AnalysisWindowHandler::ypress = -1;
+        AnalysisWindowHandler::xrelease = -1;
+        AnalysisWindowHandler::yrelease = -1;
+    }
+}
+
+void glTemplateOscillogram::mouseMoveEvent(QMouseEvent* event) {
+    if (AnalysisWindowHandler::scaleMod) {
+        AnalysisWindowHandler::xrelease = event->pos().x() - gView->geometry().x();
+        AnalysisWindowHandler::yrelease = event->pos().y() - gView->geometry().y();
+
+        AnalysisWindowHandler::xleft = std::min(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
+        AnalysisWindowHandler::xright = std::max(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
+        AnalysisWindowHandler::ybottom = 1 - std::max(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
+        AnalysisWindowHandler::ytop = 1 - std::min(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
+
+        AnalysisWindowHandler::changeScaleByMouse();
     }
 }
 

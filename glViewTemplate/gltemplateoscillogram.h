@@ -14,9 +14,10 @@ class glTemplateOscillogram : public QWidget
 {
     Q_OBJECT
     std::shared_ptr<Graph2DData> data;
-    glOscillogram* gView = nullptr;
 
 public:
+    glOscillogram* gView = nullptr;
+
     QPointer<GraphTemplate> templ = nullptr;
 
     explicit glTemplateOscillogram(QWidget *parent = nullptr,
@@ -46,6 +47,10 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+
+    void mouseReleaseEvent(QMouseEvent* event) override;
+
+    void mouseMoveEvent(QMouseEvent* event) override;
 
     void paintEvent(QPaintEvent *event) override;
 

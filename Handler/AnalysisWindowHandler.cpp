@@ -240,6 +240,16 @@ void AnalysisWindowHandler::updateGraphs(glTemplateOscillogram* rf) {
     }
 }
 
+void AnalysisWindowHandler::changeScaleByMouse() {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+            (analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->gView->updateGraph();
+        glTemp->repaint();
+    }
+}
+
 void AnalysisWindowHandler::scrollBarHasChanged() {
     if (analyzeWidget == nullptr) return;
 
@@ -271,6 +281,18 @@ void AnalysisWindowHandler::scrollBarHasChanged() {
     glTemp->data->rcur = rc;
 
     updateGraphs(glTemp);
+}
+
+long long AnalysisWindowHandler::getXPosition() {
+     if (analyzeWidget == nullptr) return 0;
+
+     return analyzeWidget->mapToGlobal(QPoint(0,0)).x();
+}
+
+long long AnalysisWindowHandler::getYPosition() {
+     if (analyzeWidget == nullptr) return 0;
+
+     return analyzeWidget->mapToGlobal(QPoint(0,0)).y();
 }
 
 
