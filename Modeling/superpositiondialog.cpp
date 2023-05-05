@@ -18,12 +18,38 @@ void SuperpositionDialog::LinSupDialog(std::shared_ptr<GeneralData> data) {
     MainWindow::connect(btn_box, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
 
     QFormLayout *layout = new QFormLayout();
-    layout->addWidget(new QLabel(""));
+    auto coeff = new QLineEdit("0", &dlg);
+    layout->addRow(new QLabel("Free C", &dlg), coeff);
+
+    QList<QPointer<QLineEdit>> coeffsLines(data->amountOfChannels);
+    for (size_t i = 0; i < data->amountOfChannels; ++i) {
+        coeffsLines[i] = new QLineEdit("1", &dlg);
+        layout->addRow(new QLabel("C" + QString::number(i) + ": " + data->channels_names[i], &dlg),
+                       coeffsLines[i]);
+    }
+
     layout->addWidget(btn_box);
 
     dlg.setLayout(layout);
+\
+    if (dlg.exec() != QDialog::Accepted) {
+        return;
+    }
 
-//    return dlg.exec() == QDialog::Accepted;
+    QList<int> indicies;
+    QList<double> coeffs;
+    for (size_t i = 0; i < data->amountOfChannels; ++i) {
+        auto c = coeffsLines[i]->text().toDouble();
+        coeffs.push_back(c);
+        if (c != 0) {
+            indicies.push_back(i);
+        }
+    }
+
+    coeffs.push_back(coeff->text().toDouble());
+
+    auto sup = Superposition::LinearSuperposition(data, indicies, coeffs);
+    MainWindow::grWid->AddNewChannel(sup);
 }
 
 void SuperpositionDialog::MultSupDialog(std::shared_ptr<GeneralData> data) {
@@ -40,7 +66,7 @@ void SuperpositionDialog::MultSupDialog(std::shared_ptr<GeneralData> data) {
     auto coeff = new QLineEdit("1", &dlg);
     layout->addWidget(coeff);
 
-    auto checkBoxes = new QCheckBox*[data->amountOfChannels];
+    QList<QPointer<QCheckBox>> checkBoxes(data->amountOfChannels);
     for (size_t i = 0; i < data->amountOfChannels; ++i) {
         checkBoxes[i] = new QCheckBox(QString::number(i) + ": " + data->channels_names[i], &dlg);
         checkBoxes[i]->setCheckState(Qt::CheckState::Checked);

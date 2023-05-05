@@ -36,6 +36,8 @@ class ModellingWidget : public QWidget
         QPointer<QLineEdit> _phase;
         QPointer<QLineEdit> _freq1;
         QPointer<QLineEdit> _freq2;
+        QPointer<QLineEdit> _line1;
+        QPointer<QLineEdit> _line2;
 
         void Hide() {
             _amountOfSamples->setVisible(false);
@@ -47,6 +49,8 @@ class ModellingWidget : public QWidget
             _phase->setVisible(false);
             _freq1->setVisible(false);
             _freq2->setVisible(false);
+            _line1->setVisible(false);
+            _line2->setVisible(false);
         }
 
         size_t samples() {
@@ -76,9 +80,15 @@ class ModellingWidget : public QWidget
         double freq2() {
             return _freq2->text().toDouble();
         }
+        QString line1() {
+            return _line1->text();
+        }
+        QString line2() {
+            return _line2->text();
+        }
     };
 
-    size_t amoutOfSamples = 10;
+    size_t amoutOfSamples = 100;
     double Hz = 1;
 public:
     const std::string nm = "ModellingWidget";

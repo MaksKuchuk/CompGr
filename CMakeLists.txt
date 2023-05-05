@@ -24,8 +24,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Charts)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Charts)
 
 find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 find_package(Qt6 REQUIRED COMPONENTS Gui)
@@ -62,6 +62,15 @@ set(PROJECT_SOURCES
 
         Utility/generaldialog.h
         Utility/generaldialog.cpp
+
+        Utility/utility.h
+        Utility/utility.cpp
+
+        Statistics/statistics.h
+        Statistics/statistics.cpp
+
+        Statistics/statisticswindow.h
+        Statistics/statisticswindow.cpp
 
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
@@ -154,7 +163,7 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::OpenGLWidgets Qt6::Gui)
+target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::OpenGLWidgets Qt6::Gui Qt6::Charts)
 if (WIN32)
     target_link_libraries(untitled PRIVATE opengl32)
 endif()

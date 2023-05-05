@@ -403,8 +403,12 @@ QString Modeling::TypeToString(Type type) {
         return "Tonal Envelope";
     case Type::LFM:
         return "LFM";
-    case Type::WhiteNoise:
-        return "White Noise";
+    case Type::UniformWhiteNoise:
+        return "Uniform White Noise";
+    case Type::NormalWhiteNoise:
+        return "Normal White Noise";
+    case Type::AutoregressiveMovingAverage:
+        return "Autoregressive Moving-Average";
     default:
         return "DEFAULT";
     }
@@ -440,8 +444,12 @@ QString Modeling::TypeToFormula(Type type) {
         return "a(1+m*cos(2pi*fo*t))*cos(2pi*fn*t+p)";
     case Type::LFM:
         return "a*cos(2pi(f0 + (fk-f0)/NT*t)*t + p)";
-    case Type::WhiteNoise:
-        return "White Noise";
+    case Type::UniformWhiteNoise:
+        return "a < x < b";
+    case Type::NormalWhiteNoise:
+        return "N(a, d^2)";
+    case Type::AutoregressiveMovingAverage:
+        return "ARMA";
     default:
         return "";
     }
