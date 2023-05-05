@@ -36,6 +36,8 @@ public:
 
     void ShowGraphWidget(std::shared_ptr<GeneralData>);
 
+    void AddWidget(QWidget* qwid);
+
 private slots:
     void on_actionNew_file_triggered();
 
@@ -53,7 +55,7 @@ private slots:
 
     void on_actionCreate_superposition_triggered();
 
-protected:
+//protected:
 
 private:
     Ui::MainWindow *ui;

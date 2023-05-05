@@ -13,6 +13,7 @@ class Statistics
 
     static void calcMean(double& mean, const QList<double>& samples);
     static void calcPowDiff(double* value, const QList<double>& samples, const double mean, const int pow);
+//    static void calcHist();
 
 public:
     double mean;
@@ -29,8 +30,8 @@ public:
     QList<double> histogram;
 
 
-    Statistics(std::shared_ptr<Graph2DData> data);
-    void CalcStatistics(std::shared_ptr<Graph2DData> data);
+    Statistics(std::shared_ptr<Graph2DData> data, const size_t k = 200);
+    void CalcStatistics(std::shared_ptr<Graph2DData> data, const size_t k = 20);
 };
 
 #endif // STATISTICS_H

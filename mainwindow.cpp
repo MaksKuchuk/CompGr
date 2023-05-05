@@ -205,3 +205,8 @@ void MainWindow::on_actionCreate_superposition_triggered() {
     }
 }
 
+void MainWindow::AddWidget(QWidget* qwid) {
+    ui->mdiArea->addSubWindow(qwid);
+
+    qwid->show();
+}

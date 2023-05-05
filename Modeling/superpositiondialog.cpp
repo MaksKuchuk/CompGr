@@ -40,11 +40,13 @@ void SuperpositionDialog::LinSupDialog(std::shared_ptr<GeneralData> data) {
     QList<double> coeffs;
     for (size_t i = 0; i < data->amountOfChannels; ++i) {
         auto c = coeffsLines[i]->text().toDouble();
+        coeffs.push_back(c);
         if (c != 0) {
             indicies.push_back(i);
-            coeffs.push_back(c);
         }
     }
+
+    coeffs.push_back(coeff->text().toDouble());
 
     auto sup = Superposition::LinearSuperposition(data, indicies, coeffs);
     MainWindow::grWid->AddNewChannel(sup);

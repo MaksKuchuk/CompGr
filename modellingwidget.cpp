@@ -431,6 +431,9 @@ void ModellingWidget::saveModel() {
     if (!dialog)
         return;
 
+    amoutOfSamples = inputLines.samples();
+    Hz = inputLines.timeFreq();
+
 //    data->source = "Modelling";
     if (MainWindow::grWid == nullptr || !isAddToCurrent->isChecked()) {
         MainWindow::instance->ShowGraphWidget(std::make_shared<GeneralData>(data, data->name + "1"));
