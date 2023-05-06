@@ -76,7 +76,27 @@ void Statistics::CalcStatistics(std::shared_ptr<Graph2DData> data, const size_t 
         histogram[i] = (histCount[i] * 1.0) / amountOfSamples;
     }
 
+
+    //to be relocated, only for testing now
+
+
     auto qw = new QWidget(MainWindow::instance);
+
+    auto lay = new QVBoxLayout(qw);
+    lay->addWidget(new QLabel("Mean: " + QString::number( mean )));
+    lay->addWidget(new QLabel("Dispersion: " + QString::number( dispersion )));
+    lay->addWidget(new QLabel("standardDeviation: " + QString::number( standardDeviation )));
+    lay->addWidget(new QLabel("variationCoefficient: " + QString::number( variationCoefficient )));
+    lay->addWidget(new QLabel("asymmetricCoefficient: " + QString::number( asymmetricCoefficient )));
+    lay->addWidget(new QLabel("kurtosisCoefficient: " + QString::number( kurtosisCoefficient )));
+    lay->addWidget(new QLabel("Min: " + QString::number( minVal )));
+    lay->addWidget(new QLabel("Max: " + QString::number( maxVal )));
+    lay->addWidget(new QLabel("quintile05: " + QString::number( quintile05 )));
+    lay->addWidget(new QLabel("quintile95: " + QString::number( quintile95 )));
+    lay->addWidget(new QLabel("median: " + QString::number( median )));
+
+
+
     QBarSet* barSet = new QBarSet("ddd", qw);
     for (auto x : histogram) {
         *barSet << x;
@@ -93,7 +113,6 @@ void Statistics::CalcStatistics(std::shared_ptr<Graph2DData> data, const size_t 
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setMinimumSize(640, 480);
 
-    auto lay = new QVBoxLayout(qw);
     lay->addWidget(chartView);
     qw->setLayout(lay);
     MainWindow::instance->AddWidget(qw);

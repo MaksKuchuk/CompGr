@@ -43,9 +43,11 @@ void AnalyzeWidget::wheelEvent(QWheelEvent *event) {
 void AnalyzeWidget::keyPressEvent(QKeyEvent* event) {
     if (AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
 
+    auto code = event->nativeScanCode();
     //38 - a, 40 - d
-    if (event->nativeScanCode() == 38 || event->nativeScanCode() == 40) {
-        long long x = (event->nativeScanCode() == 38) ? -1 : 1;
+    if (code == 30 || code == 32
+            || code == 38 || code == 40) {
+        long long x = (code == 38 || code == 30) ? -1 : 1;
 
         AnalysisWindowHandler::getInstance()->moveGraph(x);
     }

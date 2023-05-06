@@ -326,10 +326,10 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
         std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
                   << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
 
-        int newmaxLoc = AnalysisWindowHandler::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
-        int newminLoc = AnalysisWindowHandler::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
-        int newlcur = AnalysisWindowHandler::xleft * (data->rcur - data->lcur) + data->lcur;
-        int newrcur = AnalysisWindowHandler::xright * (data->rcur - data->lcur) + data->lcur;
+        double newmaxLoc = AnalysisWindowHandler::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
+        double newminLoc = AnalysisWindowHandler::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
+        qint64 newlcur = AnalysisWindowHandler::xleft * (data->rcur - data->lcur) + data->lcur;
+        qint64 newrcur = AnalysisWindowHandler::xright * (data->rcur - data->lcur) + data->lcur;
 
         std::cout << newmaxLoc << ' ' << newminLoc << ' ' << newlcur << ' ' << newrcur << std::endl;
 
