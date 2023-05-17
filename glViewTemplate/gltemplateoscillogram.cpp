@@ -344,8 +344,8 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
             return;
         }
 
-        data->maxLoc = newmaxLoc;
-        data->minLoc = newminLoc;
+        //data->maxLoc = newmaxLoc;
+        //data->minLoc = newminLoc;
         data->lcur = newlcur;
         data->rcur = newrcur;
 

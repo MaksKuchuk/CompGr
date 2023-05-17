@@ -45,6 +45,7 @@ void glOscillogram::drawGraph() {
     double parNum = rcur - lcur + 1;
 
     double dotsNumber = parNum > 2000 ? 2000 : parNum;
+    //double dotsNumber = parNum;
     double diff = data->maxLoc - data->minLoc;
 
     glBegin(GL_LINE_STRIP);
@@ -65,12 +66,11 @@ void glOscillogram::drawGraph() {
 
     glColor3f(0, 0, 1);
     glLineWidth(1);
-    glBegin(GL_LINE_STRIP);
-        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), ((AnalysisWindowHandler::ybottom * 2) - 1));
-        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), ((AnalysisWindowHandler::ytop * 2) - 1));
-        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), ((AnalysisWindowHandler::ytop * 2) - 1));
-        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), ((AnalysisWindowHandler::ybottom * 2) - 1));
-        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), ((AnalysisWindowHandler::ybottom * 2) - 1));
+    glBegin(GL_LINES);
+        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), -1);
+        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), 1);
+        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), -1);
+        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), 1);
     glEnd();
 }
 
