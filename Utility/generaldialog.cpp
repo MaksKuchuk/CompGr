@@ -48,6 +48,33 @@ bool GeneralDialog::AgreeDialog(const QString text) {
     return dlg.exec() == QDialog::Accepted;
 }
 
+QString GeneralDialog::InputDialog(const QString text, const QString defaultText) {
+    QDialog dlg(MainWindow::instance);
+    dlg.setWindowTitle(tr("Type"));
+
+    QDialogButtonBox *btn_box = new QDialogButtonBox(&dlg);
+    btn_box->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(btn_box, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(btn_box, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    QFormLayout *layout = new QFormLayout();
+    layout->addWidget(new QLabel(text));
+
+
+    auto inputLine = new QLineEdit(defaultText, &dlg);
+    layout->addWidget(inputLine);
+
+    layout->addWidget(btn_box);
+    dlg.setLayout(layout);
+
+    if (dlg.exec() == QDialog::Rejected) {
+        return "__REJECTED_INPUT__";
+    }
+
+    return inputLine->text();
+}
+
 qint64 GeneralDialog::ChooseDialog(const QString text, const QList<QString> texts) {
     QDialog dlg(MainWindow::instance);
     dlg.setWindowTitle(tr("Choose"));

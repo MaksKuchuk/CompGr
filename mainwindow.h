@@ -36,7 +36,7 @@ public:
 
     void ShowGraphWidget(std::shared_ptr<GeneralData>);
 
-    void AddWidget(QWidget* qwid);
+    static void AddWidget(QWidget* qwid);
 
 private slots:
     void on_actionNew_file_triggered();

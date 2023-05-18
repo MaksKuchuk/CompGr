@@ -68,9 +68,10 @@ set(PROJECT_SOURCES
 
         Statistics/statistics.h
         Statistics/statistics.cpp
-
         Statistics/statisticswindow.h
         Statistics/statisticswindow.cpp
+        Statistics/statisticswidget.h
+        Statistics/statisticswidget.cpp
 
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp

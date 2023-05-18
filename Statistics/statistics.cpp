@@ -5,11 +5,7 @@
 
 #include <QtMath>
 
-#include <QtCharts/QBarSet>
-#include <QtCharts/QBarSeries>
-#include <QtCharts/QChart>
-#include <QtCharts/QChartView>
-#include "../mainwindow.h"
+
 //#include "ui_mainwindow.h"
 
 void Statistics::calcMean(double& mean, const QList<double>& samples) {
@@ -31,11 +27,32 @@ void Statistics::sortSamples(Statistics* stats) {
     std::sort(stats->sortedSamples.begin(), stats->sortedSamples.end());
 }
 
-Statistics::Statistics(std::shared_ptr<Graph2DData> data, const size_t k) {
+void Statistics::calcHistogramm() {
+    size_t k = histDivs;
+    size_t amountOfSamples = sortedSamples.size();
+    double h = (maxVal - minVal) / k;
+
+    histogram.resize(k);
+    QList<qint64> histCount(k);
+    for (auto x : sortedSamples) {
+        auto ind = qint64((x - minVal) / h);
+        histCount[ ind < k ? ind : k - 1 ]++;
+    }
+    for (size_t i = 0; i < k; ++i) {
+        histogram[i] = double(histCount[i]) / amountOfSamples;
+    }
+}
+
+Statistics::Statistics(std::shared_ptr<Graph2DData> data, const size_t k) : graphData(data) {
     CalcStatistics(data, k);
 }
 
+void Statistics::Recalc(const size_t k) {
+    CalcStatistics(graphData, k);
+}
+
 void Statistics::CalcStatistics(std::shared_ptr<Graph2DData> data, const size_t k) {
+    histDivs = k;
     size_t amountOfSamples = data->rcur - data->lcur + 1;
     slicedSamples = data->samples.sliced(data->lcur, amountOfSamples);
 
@@ -64,57 +81,5 @@ void Statistics::CalcStatistics(std::shared_ptr<Graph2DData> data, const size_t 
     quintile95 = sortedSamples[ size_t(0.95 * amountOfSamples) ];
     median = sortedSamples[ size_t(amountOfSamples / 2) ];
 
-    double h = (maxVal - minVal) / k;
-
-    histogram.resize(k);
-    QList<qint64> histCount(k);
-    for (auto x : sortedSamples) {
-        auto ind = qint64((x - minVal) / h);
-        histCount[ ind < k ? ind : k - 1 ]++;
-    }
-    for (size_t i = 0; i < k; ++i) {
-        histogram[i] = (histCount[i] * 1.0) / amountOfSamples;
-    }
-
-
-    //to be relocated, only for testing now
-
-
-    auto qw = new QWidget(MainWindow::instance);
-
-    auto lay = new QVBoxLayout(qw);
-    lay->addWidget(new QLabel("Mean: " + QString::number( mean )));
-    lay->addWidget(new QLabel("Dispersion: " + QString::number( dispersion )));
-    lay->addWidget(new QLabel("standardDeviation: " + QString::number( standardDeviation )));
-    lay->addWidget(new QLabel("variationCoefficient: " + QString::number( variationCoefficient )));
-    lay->addWidget(new QLabel("asymmetricCoefficient: " + QString::number( asymmetricCoefficient )));
-    lay->addWidget(new QLabel("kurtosisCoefficient: " + QString::number( kurtosisCoefficient )));
-    lay->addWidget(new QLabel("Min: " + QString::number( minVal )));
-    lay->addWidget(new QLabel("Max: " + QString::number( maxVal )));
-    lay->addWidget(new QLabel("quintile05: " + QString::number( quintile05 )));
-    lay->addWidget(new QLabel("quintile95: " + QString::number( quintile95 )));
-    lay->addWidget(new QLabel("median: " + QString::number( median )));
-
-
-
-    QBarSet* barSet = new QBarSet("ddd", qw);
-    for (auto x : histogram) {
-        *barSet << x;
-    }
-    auto series = new QBarSeries();
-    series->append(barSet);
-
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Simple barchart example");
-//    chart->setAnimationOptions(QChart::SeriesAnimations);
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setMinimumSize(640, 480);
-
-    lay->addWidget(chartView);
-    qw->setLayout(lay);
-    MainWindow::instance->AddWidget(qw);
-    // hist
+    calcHistogramm();
 }

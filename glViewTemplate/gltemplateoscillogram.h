@@ -13,6 +13,7 @@ class glTemplateOscillogram;
 class glTemplateOscillogram : public QWidget
 {
     Q_OBJECT
+
     std::shared_ptr<Graph2DData> data;
 
 public:

@@ -6,6 +6,7 @@
 #include "Transformation/TransformToOscillogram.hpp"
 #include "Transformation/TransformToFourierSpectrum.hpp"
 #include "Statistics/statistics.h"
+#include "Statistics/statisticswidget.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -92,7 +93,9 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();
     } else if (selectedItem->text() == "Statistics") {
-        Statistics s(data);
+        statsWid = new StatisticsWidget(this, data);
+        if (statsWid->isCorrect)
+            MainWindow::AddWidget(statsWid);
     }
 }
 

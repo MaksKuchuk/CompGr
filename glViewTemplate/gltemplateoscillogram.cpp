@@ -124,6 +124,12 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     if (selectedItem == nullptr) return;
     if (selectedItem->text() == "Close") {
         if (AnalysisWindowHandler::getInstance()->getLocalRef() == nullptr) return;
+        data->lcur = 0;
+        data->rcur = data->amountOfSamples-1;
+        templ->gView->setCurs(data->lcur, data->rcur);
+//        AnalysisWindowHandler::updateGraphs(this);
+//        gView->updateGraph();
+//        repaint();
         AnalysisWindowHandler::getInstance()->getLocalRef()->deleteLater();
         AnalysisWindowHandler::getInstance()->setLocalRef(nullptr);
     } else if (selectedItem->text() == "Local scale") {
