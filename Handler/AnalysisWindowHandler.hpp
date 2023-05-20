@@ -9,6 +9,7 @@
 #include <cmath>
 #include "../glViewTemplate/gltemplateoscillogram.h"
 #include "../graphtemplate.h"
+#include "../Transformation/TransformToFourierSpectrum.hpp"
 
 class AnalysisWindowHandler: public QWidget {
     AnalysisWindowHandler();
@@ -21,6 +22,8 @@ class AnalysisWindowHandler: public QWidget {
     void addWidInArr(glTemplateOscillogram* r);
 
     void removeWdFromArr(glTemplateOscillogram* r);
+
+    std::shared_ptr<Graph2DData> FourierData(std::shared_ptr<Graph2DData>, long long, int, int);
 
 public:
     static inline AnalysisWindowHandler* instance = nullptr;

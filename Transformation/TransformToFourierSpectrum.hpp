@@ -29,14 +29,14 @@ class TransformToFourierSpectrum {
 
     static void first_val_change(CArray& x, int mode);
 
-    static void amplitudeSpectrum(CArray&, QList<double>, long long, double);
+    static void amplitudeSpectrum(CArray&, QList<double>&, long long, double);
 
-    static void PSDSpectrum(CArray&, QList<double>, long long, double);
+    static void PSDSpectrum(CArray&, QList<double>&, long long, double);
 
     static void smoothing(QList<double>, const long long, size_t);
 
 public:
-    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<GeneralData> data, long long n, long long L, int mode, int, long long, long long);
+    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<Graph2DData>, long long, int, int);
 };
 
 #endif

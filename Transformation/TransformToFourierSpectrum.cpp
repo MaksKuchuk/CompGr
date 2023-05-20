@@ -69,13 +69,13 @@ void TransformToFourierSpectrum::smoothing(QList<double> data, long long L, size
     }
 }
 
-void TransformToFourierSpectrum::amplitudeSpectrum(CArray& FTvl, QList<double> new_data, long long size, double T) {
+void TransformToFourierSpectrum::amplitudeSpectrum(CArray& FTvl, QList<double>& new_data, long long size, double T) {
     for (size_t i = 0; i < size; ++i) {
         new_data[i] = T * abs(FTvl[i]);
     }
 }
 
-void TransformToFourierSpectrum::PSDSpectrum(CArray& FTvl, QList<double> new_data, long long size, double T) {
+void TransformToFourierSpectrum::PSDSpectrum(CArray& FTvl, QList<double>& new_data, long long size, double T) {
     for (size_t i = 0; i < size; ++i) {
         new_data[i] = std::pow(T, 2) * std::pow(abs(FTvl[i]), 2);
     }
@@ -111,20 +111,17 @@ void TransformToFourierSpectrum::FFTW(CArray& x) {
 
 std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     (
-        std::shared_ptr<GeneralData> data,
-        long long n,
+        std::shared_ptr<Graph2DData> data,
         long long L,
         int mode,
-        int first_val_mode,
-        long long lcur,
-        long long rcur
+        int first_val_mode
     )
 {
     //long long size = data->getAmountOfSamples();
     //long long new_size = std::pow(2, std::ceil(std::log2(size)));
-    long long new_size = rcur - lcur;
+    long long new_size = data->rcur - data->lcur;
 
-    QList<double> vals(data->getChannel(n));
+    QList<double> vals(data->samples);
     vals.resize(new_size);
     Complex* buf = new Complex[new_size];
     for (size_t i = 0; i < new_size; ++i) {
@@ -140,9 +137,9 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     QList<double> new_data(new_size);
 
     if (mode == AMPLITUDE_SPECTRUM)
-        amplitudeSpectrum(FTvl, new_data, new_size, 1 / data->getHz());
+        amplitudeSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
     else if (mode == PSD)
-        PSDSpectrum(FTvl, new_data, new_size, 1 / data->getHz());
+        PSDSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
 
     if (L)
         smoothing(new_data, L, new_size);
@@ -167,7 +164,7 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     data2d->samples = (new_data);
     data2d->lcur = 0;
     data2d->rcur = (new_size) - 1;
-    data2d->name = data->getChannelName(n) + QString::fromStdString( " Fourier transform" );
+    data2d->name = data->name + QString::fromStdString( " Fourier transform" );
     data2d->minVal = min;
     data2d->maxVal = max;
     data2d->minLoc = min;

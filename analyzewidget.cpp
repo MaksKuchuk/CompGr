@@ -21,7 +21,9 @@ AnalyzeWidget::AnalyzeWidget(QWidget *parent) :
     this->setLayout(layout);
 
     QScrollBar* scr = new QScrollBar(Qt::Horizontal, this);
+    //QLabel* counter = new QLabel();
 
+    //layout->addWidget(counter);
     layout->addWidget(scr);
 
     connect(scr, &QScrollBar::valueChanged,
