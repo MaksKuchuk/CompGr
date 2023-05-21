@@ -8,7 +8,8 @@
 
 class ParseData : public GeneralData {
 public:
-    char delimiter = ' ';
+    char delimiter_nums = ' ';
+    char delimiter_names = ';';
 
     virtual ~ParseData() = default;
 

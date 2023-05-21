@@ -61,8 +61,8 @@ void glOscillogram::drawGraph() {
         AnalysisWindowHandler::xrelease == -1 ||
         AnalysisWindowHandler::yrelease == -1) return;
 
-    std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
-              << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
+//    std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
+//              << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
 
     glColor3f(0, 0, 1);
     glLineWidth(1);

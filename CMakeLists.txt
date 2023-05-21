@@ -74,8 +74,9 @@ set(PROJECT_SOURCES
         Statistics/statisticswidget.cpp
 
         Parser/Parser.hpp
-        Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
+        Parser/ParseDataTxt.hpp
+        Parser/ParseDataTxt.cpp
         Parser/parsedatacsv.h
         Parser/parsedatacsv.cpp
 

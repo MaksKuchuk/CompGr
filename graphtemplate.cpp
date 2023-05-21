@@ -97,6 +97,11 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
     }
 }
 
+void GraphTemplate::resetCurs() {
+    if (gView != nullptr)
+        gView->setCurs(0, data->amountOfSamples);
+}
+
 GraphTemplate::~GraphTemplate()
 {
     delete ui;

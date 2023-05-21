@@ -2,11 +2,11 @@
 #include <thread>
 #include <memory>
 #include <algorithm>
+#include <ctime>
 
 #include <QtMath>
 
-
-//#include "ui_mainwindow.h"
+#include <QDebug>
 
 void Statistics::calcMean(double& mean, const QList<double>& samples) {
     double sum = 0;
@@ -52,16 +52,19 @@ void Statistics::Recalc(const size_t k) {
 }
 
 void Statistics::CalcStatistics(std::shared_ptr<Graph2DData> data, const size_t k) {
+
+    auto s = std::chrono::high_resolution_clock().now();
+
     histDivs = k;
     size_t amountOfSamples = data->rcur - data->lcur + 1;
     slicedSamples = data->samples.sliced(data->lcur, amountOfSamples);
 
-    auto sortT = std::make_shared<std::thread>(sortSamples, this);
+    auto sortT = std::make_unique<std::thread>(sortSamples, this);
     calcMean(mean, slicedSamples);
 
-    auto dispT = std::make_shared<std::thread>(calcPowDiff, &dispersion, slicedSamples, mean, 2);
-    auto asymmT = std::make_shared<std::thread>(calcPowDiff, &asymmetricCoefficient, slicedSamples, mean, 3);
-    auto kurtT = std::make_shared<std::thread>(calcPowDiff, &kurtosisCoefficient, slicedSamples, mean, 4);
+    auto dispT = std::make_unique<std::thread>(calcPowDiff, &dispersion, slicedSamples, mean, 2);
+    auto asymmT = std::make_unique<std::thread>(calcPowDiff, &asymmetricCoefficient, slicedSamples, mean, 3);
+    auto kurtT = std::make_unique<std::thread>(calcPowDiff, &kurtosisCoefficient, slicedSamples, mean, 4);
 
     dispT->join();
     standardDeviation = qSqrt(dispersion);
@@ -82,4 +85,6 @@ void Statistics::CalcStatistics(std::shared_ptr<Graph2DData> data, const size_t 
     median = sortedSamples[ size_t(amountOfSamples / 2) ];
 
     calcHistogramm();
+
+    qDebug() << duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock().now() - s).count() << " ms: Statistics calc";
 }

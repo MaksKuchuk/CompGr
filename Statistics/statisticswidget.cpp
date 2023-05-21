@@ -84,6 +84,8 @@ StatisticsWidget::StatisticsWidget(QWidget *parent, const std::shared_ptr<Graph2
 
 
     setLayout(layout);
+    setWindowTitle("Statistics");
+
     isCorrect = true;
 }
 
@@ -114,7 +116,6 @@ void StatisticsWidget::recalcualte() {
         *histChart.set << x;
         maxInHist = std::max(maxInHist, x);
     }
-    qDebug() << statistics->histDivs;
 
     histChart.series = new QBarSeries();
     histChart.series->append(histChart.set);

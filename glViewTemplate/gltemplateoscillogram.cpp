@@ -133,8 +133,8 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
         if (AnalysisWindowHandler::getInstance()->getLocalRef() == nullptr) return;
         data->lcur = 0;
         data->rcur = data->amountOfSamples-1;
-        if (templ != nullptr && templ->gView != nullptr)
-            templ->gView->setCurs(data->lcur, data->rcur);
+        if (templ != nullptr)
+            templ->resetCurs();
 
         AnalysisWindowHandler::getInstance()->getLocalRef()->deleteLater();
         AnalysisWindowHandler::getInstance()->setLocalRef(nullptr);
@@ -316,34 +316,34 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
         AnalysisWindowHandler::xrelease = event->pos().x() - gView->geometry().x();
         AnalysisWindowHandler::yrelease = event->pos().y() - gView->geometry().y();
 
-        std::cout << gView->geometry().x() << ' '
-                  << gView->geometry().y() << "\n"
-                  << gView->geometry().width() << ' '
-                  << gView->geometry().height() << "\n";
+//        std::cout << gView->geometry().x() << ' '
+//                  << gView->geometry().y() << "\n"
+//                  << gView->geometry().width() << ' '
+//                  << gView->geometry().height() << "\n";
 
-        std::cout << AnalysisWindowHandler::xpress
-                  << ' '
-                  << AnalysisWindowHandler::ypress
-                  << '\n'
-                  << AnalysisWindowHandler::xrelease
-                  << ' '
-                  << AnalysisWindowHandler::yrelease
-                  << "\n\n" << std::endl;
+//        std::cout << AnalysisWindowHandler::xpress
+//                  << ' '
+//                  << AnalysisWindowHandler::ypress
+//                  << '\n'
+//                  << AnalysisWindowHandler::xrelease
+//                  << ' '
+//                  << AnalysisWindowHandler::yrelease
+//                  << "\n\n" << std::endl;
 
         AnalysisWindowHandler::xleft = std::min(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
         AnalysisWindowHandler::xright = std::max(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
         AnalysisWindowHandler::ybottom = 1 - std::max(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
         AnalysisWindowHandler::ytop = 1 - std::min(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
 
-        std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
-                  << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
+//        std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
+//                  << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
 
         double newmaxLoc = AnalysisWindowHandler::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
         double newminLoc = AnalysisWindowHandler::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
         qint64 newlcur = AnalysisWindowHandler::xleft * (data->rcur - data->lcur) + data->lcur;
         qint64 newrcur = AnalysisWindowHandler::xright * (data->rcur - data->lcur) + data->lcur;
 
-        std::cout << newmaxLoc << ' ' << newminLoc << ' ' << newlcur << ' ' << newrcur << std::endl;
+//        std::cout << newmaxLoc << ' ' << newminLoc << ' ' << newlcur << ' ' << newrcur << std::endl;
 
         if (data == nullptr || newmaxLoc > data->maxVal || newminLoc < data->minVal
             || newlcur < 0 || newrcur >= data->amountOfSamples) {

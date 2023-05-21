@@ -3,11 +3,21 @@
 #include <QByteArray>
 
 ParseDataCsv::ParseDataCsv() {
-    delimiter = ';';
+    setDelimiters(';');
+}
+
+void ParseDataCsv::setDelimiters(char newDelim) {
+    delimiter_names = delimiter_nums = newDelim;
 }
 
 void ParseDataCsv::parseHeader(QList<QByteArray>& list) {
-    amountOfChannels = list[0].count(delimiter) + 1;
+    for (auto delim : delimiters)
+        if (list[0].contains(delim)) {
+            setDelimiters(delim);
+            break;
+        }
+
+    amountOfChannels = list[0].count(delimiter_names) + 1;
     amountOfSamples = list.size() - 1;
 
     channels_names.resize(amountOfChannels);

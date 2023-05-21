@@ -2,9 +2,12 @@
 #define PARSEDATACSV_H
 
 #include "ParseDataTxt.hpp"
+#include <vector>
 
 class ParseDataCsv : public ParseDataTxt
 {
+    std::vector<char> delimiters = {'\t', ';', ','};
+    void setDelimiters(char);
 public:
     ParseDataCsv();
 
