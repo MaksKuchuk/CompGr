@@ -5,6 +5,7 @@
 #include "../GraphGlData/Graph2DData.hpp"
 #include "../glViewType/glOscillogram.hpp"
 #include "../graphtemplate.h"
+#include "../glViewType/glType.hpp"
 
 namespace Ui {
 class glTemplateOscillogram;
@@ -20,6 +21,8 @@ public:
     glOscillogram* gView = nullptr;
 
     QPointer<GraphTemplate> templ = nullptr;
+    QPointer<QLabel> infoLabel;
+    glType type = glType::Oscillogram;
 
     explicit glTemplateOscillogram(QWidget *parent = nullptr,
                                    std::shared_ptr<Graph2DData> data = nullptr,

@@ -3,6 +3,7 @@
 
 #include "ParseDataTxt.hpp"
 #include "ParseDataWav.hpp"
+#include "parsedatacsv.h"
 #include <QString>
 #include <QFile>
 #include <filesystem>
@@ -27,6 +28,12 @@ class Parser {
             auto pd = std::make_shared<ParseDataWav>();
             pd->parse(path_to_file);
             return static_cast<std::shared_ptr<ParseData>>(pd);
+        }
+        else if (path_to_file_str.endsWith("csv")) {
+            auto pd = std::make_shared<ParseDataCsv>();
+            pd->parse(path_to_file);
+            return static_cast<std::shared_ptr<ParseData>>(pd);
+
         }
         return nullptr;
     }

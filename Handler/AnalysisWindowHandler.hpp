@@ -23,7 +23,7 @@ class AnalysisWindowHandler: public QWidget {
 
     void removeWdFromArr(glTemplateOscillogram* r);
 
-    std::shared_ptr<Graph2DData> FourierData(std::shared_ptr<Graph2DData>, long long, int, int);
+    std::shared_ptr<Graph2DData> FourierData(std::shared_ptr<Graph2DData>, long long smooth, SpectrumModes smode, FourierModes fmode);
 
 public:
     static inline AnalysisWindowHandler* instance = nullptr;

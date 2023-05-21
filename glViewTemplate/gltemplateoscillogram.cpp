@@ -56,6 +56,8 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
                          .horizontalAdvance(yTickLabel),
                          y + painter.fontMetrics().height() / 2, yTickLabel);
     }
+
+    infoLabel->setText("Samples: "+QString::number(data->rcur - data->lcur+1));
 }
 
 glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ_) :
@@ -76,13 +78,18 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     label->setFont(font);
 
     label->setAlignment(Qt::AlignCenter);
-    label->setFixedHeight(22);
+    label->setFixedHeight(20);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(65, 5, 35, 5);
 
+    infoLabel = new QLabel("Samples: "+QString::number(data->rcur - data->lcur+1),this);
+    infoLabel->setAlignment(Qt::AlignCenter);
+    infoLabel->setFixedHeight(14);
+
     layout->addWidget(gView);
-    layout->setSpacing(15);
+    layout->setSpacing(14);
+    layout->addWidget(infoLabel);
     layout->addWidget(label);
 
     this->setLayout(layout);
@@ -126,10 +133,9 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
         if (AnalysisWindowHandler::getInstance()->getLocalRef() == nullptr) return;
         data->lcur = 0;
         data->rcur = data->amountOfSamples-1;
-        templ->gView->setCurs(data->lcur, data->rcur);
-//        AnalysisWindowHandler::updateGraphs(this);
-//        gView->updateGraph();
-//        repaint();
+        if (templ != nullptr && templ->gView != nullptr)
+            templ->gView->setCurs(data->lcur, data->rcur);
+
         AnalysisWindowHandler::getInstance()->getLocalRef()->deleteLater();
         AnalysisWindowHandler::getInstance()->setLocalRef(nullptr);
     } else if (selectedItem->text() == "Local scale") {

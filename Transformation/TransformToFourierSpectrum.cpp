@@ -59,7 +59,7 @@
      delete []Tmvl;
 }*/
 
-void TransformToFourierSpectrum::smoothing(QList<double> data, long long L, size_t size) {
+void TransformToFourierSpectrum::smoothing(QList<double>& data, long long L, size_t size) {
     for (size_t i = 0; i < size; ++i) {
         long long sum = 0;
         for (size_t j = -L; j <= L; ++j) {
@@ -81,10 +81,10 @@ void TransformToFourierSpectrum::PSDSpectrum(CArray& FTvl, QList<double>& new_da
     }
 }
 
-void TransformToFourierSpectrum::first_val_change(CArray& x, int mode) {
-    if (mode == EQUALIZE_WITH_ADJ)
+void TransformToFourierSpectrum::first_val_change(CArray& x, FourierModes mode) {
+    if (mode == FourierModes::EQUALIZE_WITH_ADJ)
         x[0] = abs(x[1]);
-    else if (mode == ZERO_FIRST_VAL)
+    else if (mode == FourierModes::ZERO_FIRST_VAL)
         x[0] = 0;
 }
 
@@ -113,8 +113,8 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     (
         std::shared_ptr<Graph2DData> data,
         long long L,
-        int mode,
-        int first_val_mode
+        SpectrumModes mode,
+        FourierModes first_val_mode
     )
 {
     //long long size = data->getAmountOfSamples();
@@ -131,14 +131,14 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     delete[] buf;
 
     FFTW(FTvl);
-    if (first_val_mode != KEEP_FIRST_VAL)
+    if (first_val_mode != FourierModes::KEEP_FIRST_VAL)
         first_val_change(FTvl, first_val_mode);
 
     QList<double> new_data(new_size);
 
-    if (mode == AMPLITUDE_SPECTRUM)
+    if (mode == SpectrumModes::AMPLITUDE_SPECTRUM)
         amplitudeSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
-    else if (mode == PSD)
+    else if (mode == SpectrumModes::PSD)
         PSDSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
 
     if (L)

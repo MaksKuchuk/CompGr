@@ -76,6 +76,8 @@ set(PROJECT_SOURCES
         Parser/Parser.hpp
         Parser/ParseDataTxt.hpp
         Parser/ParseData.hpp
+        Parser/parsedatacsv.h
+        Parser/parsedatacsv.cpp
 
         Saver/Saver.hpp
         Saver/Saver.cpp

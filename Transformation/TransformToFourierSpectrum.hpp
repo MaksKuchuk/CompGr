@@ -14,29 +14,33 @@ typedef std::valarray<Complex> CArray;
 const double PI = 3.141592653589793238460;
 
 // First val modes
-const int KEEP_FIRST_VAL = 0;
-const int ZERO_FIRST_VAL = 1;
-const int EQUALIZE_WITH_ADJ = 2;
+enum class FourierModes {
+    KEEP_FIRST_VAL,
+    ZERO_FIRST_VAL,
+    EQUALIZE_WITH_ADJ
+};
 
 // Spectrum analysis modes
-const int AMPLITUDE_SPECTRUM = 0;
-const int PSD = 1;
+enum class SpectrumModes {
+    AMPLITUDE_SPECTRUM,
+    PSD
+};
 
 class TransformToFourierSpectrum {
     static void FFTAnalysis(QList<double>& AVal, QList<double>& FTvl, int Nvl, int Nft);
 
     static void FFTW(CArray& x);
 
-    static void first_val_change(CArray& x, int mode);
+    static void first_val_change(CArray& x, FourierModes mode);
 
     static void amplitudeSpectrum(CArray&, QList<double>&, long long, double);
 
     static void PSDSpectrum(CArray&, QList<double>&, long long, double);
 
-    static void smoothing(QList<double>, const long long, size_t);
+    static void smoothing(QList<double>&, const long long, size_t);
 
 public:
-    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<Graph2DData>, long long, int, int);
+    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<Graph2DData> data, long long smooth, SpectrumModes mode, FourierModes fmode);
 };
 
 #endif

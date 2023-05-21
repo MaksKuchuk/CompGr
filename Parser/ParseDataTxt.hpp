@@ -17,6 +17,7 @@
 #include <QDebug>
 
 class ParseDataTxt : public ParseData {
+protected:
     void setChannelsNames(const QString &string_names) {
 
         auto list_names = string_names.split(';');
@@ -55,8 +56,9 @@ class ParseDataTxt : public ParseData {
 
     static void setChannels(ParseDataTxt *data, const QList<QByteArray>& list,
                             qint64 first, qint64 last, QList<std::pair<double, double>>* sub_extr) {
+        auto delim = data->delimiter;
         for (qint64 p = first; p < last; ++p) {
-            auto nums = list[p].split(' ');
+            auto nums = list[p].split(delim);
             for (qint64 i = 0; i < data->amountOfChannels; ++i) {
                 data->channels[i][p] = nums[i].toDouble();
 

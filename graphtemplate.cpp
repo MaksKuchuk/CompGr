@@ -67,10 +67,8 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
     QMenu *menu = new QMenu();
 
     menu->addAction(new QAction(QString::fromUtf8("Oscillogram"), this));
-//    menu->addSeparator();
     menu->addAction(new QAction(QString::fromUtf8("Fourier spectrum"), this));
-//    menu->addSeparator();
-    menu->addAction(new QAction(QString::fromUtf8("Waveletogram"), this));
+//    menu->addAction(new QAction(QString::fromUtf8("Waveletogram"), this));
     menu->addSeparator();
     menu->addAction(new QAction(QString::fromUtf8("Statistics"), this));
 

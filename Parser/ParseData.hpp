@@ -8,6 +8,8 @@
 
 class ParseData : public GeneralData {
 public:
+    char delimiter = ' ';
+
     virtual ~ParseData() = default;
 
     virtual void parse(const std::filesystem::path &path_to_file) {};
