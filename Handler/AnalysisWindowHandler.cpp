@@ -2,6 +2,7 @@
 #include "../glViewTemplate/gltemplateoscillogram.h"
 #include "../Transformation/TransformToOscillogram.hpp"
 #include "../Transformation/TransformToFourierSpectrum.hpp"
+#include "../Transformation/TransformToWaveletogram.hpp"
 #include "../mainwindow.h"
 #include "../glview.h"
 #include "../graphtemplate.h"
@@ -37,6 +38,14 @@ void AnalysisWindowHandler::analyze2DBy(std::shared_ptr<Graph2DData> data, glTyp
         AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
         //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
         gView->show();
+    } else if (t == glType::Waveletogram) {
+        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, TransformToWaveletogram::transform(data), templ);
+        gView->resize(300, 60);
+
+        AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
+        //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
+        gView->show();
+
     }
 
     changeScrollBar(data->amountOfSamples, data->lcur, data->rcur);

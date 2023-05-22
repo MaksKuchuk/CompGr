@@ -68,7 +68,7 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
 
     menu->addAction(new QAction(QString::fromUtf8("Oscillogram"), this));
     menu->addAction(new QAction(QString::fromUtf8("Fourier spectrum"), this));
-//    menu->addAction(new QAction(QString::fromUtf8("Waveletogram"), this));
+    menu->addAction(new QAction(QString::fromUtf8("Waveletogram"), this));
     menu->addSeparator();
     menu->addAction(new QAction(QString::fromUtf8("Statistics"), this));
 
@@ -90,6 +90,9 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
             data, glType::FourierSpectrum, this);
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();
+
+        AnalysisWindowHandler::getInstance()->analyze2DBy(
+            data, glType::Waveletogram, this);
     } else if (selectedItem->text() == "Statistics") {
         statsWid = new StatisticsWidget(this, data);
         if (statsWid->isCorrect)

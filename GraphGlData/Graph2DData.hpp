@@ -18,9 +18,9 @@ public:
 
     long long lcur, rcur;
 
-    double Hz;
+    double Hz = 1;
 
-    QString startDate{};
+    QString startDate = "01-01-2000 00:00:00.000";
     double totalSeconds;
 
     QList<double> samples;
