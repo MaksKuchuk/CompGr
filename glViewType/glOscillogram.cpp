@@ -1,5 +1,5 @@
 #include "glOscillogram.hpp"
-#include "../mainwindow.h"
+#include "../Utility/config.h"
 #include "../Handler/AnalysisWindowHandler.hpp"
 #include <iostream>
 
@@ -24,7 +24,7 @@ void glOscillogram::resizeGL(int w, int h) {
 }
 
 void glOscillogram::paintGL() {
-    if (MainWindow::isDarkTheme) {
+    if (Config::isDarkTheme) {
         glClearColor(0, 0, 0, 1);
         glColor3f(1, 1, 1);
     } else {

@@ -1,6 +1,7 @@
 #include "TransformToWaveletogram.hpp"
 #include <memory>
 #include "../GraphGlData/Graph2DData.hpp"
+#include "../Utility/config.h"
 
 void TransformToWaveletogram::DirectTransform(QList<double>& wavelet, QList<double>& toTranform) {
     if (toTranform.size() == 1) {
@@ -22,11 +23,14 @@ std::shared_ptr<Graph2DData> TransformToWaveletogram::transform(const std::share
     auto newData = std::make_shared<Graph2DData>();
 
     QList<double> samples = data->samples;
-    size_t size = samples.size();
-    size_t newLogSize = std::log2(size);
-    if (std::pow(2, newLogSize) < size)
-        ++newLogSize;
-    samples.resize((size_t)std::pow(2, newLogSize));
+
+    if (Config::waveletFill) {
+        size_t size = samples.size();
+        size_t newLogSize = std::log2(size);
+        if (std::pow(2, newLogSize) < size)
+            ++newLogSize;
+        samples.resize((size_t)std::pow(2, newLogSize));
+    }
 
     DirectTransform(newData->samples, samples);
 

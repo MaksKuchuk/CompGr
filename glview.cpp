@@ -1,5 +1,6 @@
 #include "glview.h"
 #include "mainwindow.h"
+#include "Utility/config.h"
 #include <iostream>
 
 glView::glView(QWidget *parent, long long parNum, const QList<double>& data, double maxVal, double minVal) :
@@ -23,7 +24,7 @@ void glView::resizeGL(int w, int h) {
 }
 
 void glView::paintGL() {
-    if (MainWindow::isDarkTheme) {
+    if (Config::isDarkTheme) {
         glClearColor(0, 0, 0, 1);
         glColor3f(1, 1, 1);
     } else {

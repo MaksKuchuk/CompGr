@@ -66,6 +66,9 @@ set(PROJECT_SOURCES
         Utility/utility.h
         Utility/utility.cpp
 
+        Utility/config.h
+        Utility/config.cpp
+
         Statistics/statistics.h
         Statistics/statistics.cpp
         Statistics/statisticswindow.h

@@ -26,8 +26,6 @@ public:
 
     static inline void openAnalysisWindow();
 
-    static inline bool isDarkTheme = true;
-
     static inline QPointer<GraphWidget> grWid = nullptr;
     static inline QPointer<QMdiSubWindow> grWindow = nullptr;
 
@@ -49,7 +47,9 @@ private slots:
 
     void on_actionInformation_triggered();
 
-    void on_actionTheme_triggered();
+    void on_actionDarkTheme_triggered();
+
+    void on_actionWaveletFill_triggered();
 
     void on_actionCreate_new_model_triggered();
 

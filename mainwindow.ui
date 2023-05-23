@@ -69,7 +69,8 @@
     <property name="title">
      <string>Settings</string>
     </property>
-    <addaction name="actionTheme"/>
+    <addaction name="actionDarkTheme"/>
+    <addaction name="actionWaveletFill"/>
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="title">
@@ -114,9 +115,15 @@
     <string>Information</string>
    </property>
   </action>
-  <action name="actionTheme">
+  <action name="actionDarkTheme">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Theme</string>
+    <string>Dark Theme</string>
    </property>
   </action>
   <action name="actionSave_file">
@@ -132,6 +139,14 @@
   <action name="actionCreate_superposition">
    <property name="text">
     <string>Create superposition</string>
+   </property>
+  </action>
+  <action name="actionWaveletFill">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Wavelet Fill</string>
    </property>
   </action>
  </widget>

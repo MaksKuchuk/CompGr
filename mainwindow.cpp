@@ -4,8 +4,7 @@
 #include "graphwidget.h"
 #include "aboutwidget.h"
 #include "graphinfo.h"
-#include "glview.h"
-#include "graphtemplate.h"
+#include "Utility/config.h"
 #include "modellingwidget.h"
 #include "Handler/AnalysisWindowHandler.hpp"
 
@@ -158,9 +157,14 @@ void MainWindow::on_actionInformation_triggered() {
 }
 
 
-void MainWindow::on_actionTheme_triggered()
+void MainWindow::on_actionDarkTheme_triggered()
 {
-    isDarkTheme = !isDarkTheme;
+    Config::isDarkTheme = ui->actionDarkTheme->isChecked();
+}
+
+void MainWindow::on_actionWaveletFill_triggered()
+{
+    Config::waveletFill = ui->actionWaveletFill->isChecked();
 }
 
 void MainWindow::on_actionCreate_new_model_triggered() {
