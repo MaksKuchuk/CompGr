@@ -60,13 +60,16 @@
 }*/
 
 void TransformToFourierSpectrum::smoothing(QList<double>& data, long long L, size_t size) {
+    QList<double> buf(size);
     for (size_t i = 0; i < size; ++i) {
-        long long sum = 0;
-        for (size_t j = -L; j <= L; ++j) {
+        double sum = 0;
+        for (qint64 j = -L; j <= L; ++j) {
+            if (0 <= i + j && i + j < size)
             sum += data[i + j];
         }
-        data[i] = sum / (2*L + 1);
+        buf[i] = sum / (2.*L + 1);
     }
+    data = buf;
 }
 
 void TransformToFourierSpectrum::amplitudeSpectrum(CArray& FTvl, QList<double>& new_data, long long size, double T) {
@@ -158,7 +161,7 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
 
     auto data2d = std::make_shared<Graph2DData>();
 
-    data2d->Hz = 1 / (new_size);
+    data2d->Hz = 1;// / (new_size);
     data2d->totalSeconds = 1;
     data2d->amountOfSamples = new_size;
     data2d->samples = (new_data);

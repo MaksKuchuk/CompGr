@@ -45,8 +45,9 @@ void MainWindow::on_actionNew_file_triggered()
         this,
         "Select file",
         "",
-        "Text files (*.txt);; DAT files (*.dat);; Sound files (*.wav);; TSF files (*.tsf);; All files (*.*);"
+        "All files (*.*);; Text files (*.txt);; Sound files (*.wav);; CSV (*.csv);"
         );
+    // DAT files (*.dat);; TSF files (*.tsf);;
 
     if (str == nullptr || str == "") return;
 

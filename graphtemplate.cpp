@@ -29,8 +29,9 @@ GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<Graph2DData>
                        data->samples,
                        data->maxVal,
                        data->minVal);
-    gView->setFixedHeight(60);
-    gView->setFixedWidth(300);
+    gView->setMinimumWidth(300);
+    gView->setMinimumHeight(60);
+//    gView->resize(300, 60);
     int height = 60;
 
     QVBoxLayout *layout = new QVBoxLayout();
@@ -42,19 +43,20 @@ GraphTemplate::GraphTemplate(QWidget *parent, const std::shared_ptr<Graph2DData>
         label->setText(data->name);
 
         QFont font = label->font();
-        font.setPixelSize(20);
+        font.setPixelSize(18);
         label->setFont(font);
 
-        label->setAlignment(Qt::AlignCenter);
+        label->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
         label->setFixedHeight(18);
-        layout->setSpacing(3);
+//        layout->setSpacing(3);
         layout->addWidget(label);
         height += 21;
     }
 
     this->setLayout(layout);
 
-    this->setFixedSize(300, height);
+//    this->setFixedSize(300, height);
+    resize(300, height);
 }
 
 void GraphTemplate::mousePressEvent(QMouseEvent *event) {

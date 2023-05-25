@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QCloseEvent>
 #include <QCheckBox>
+#include <QPushButton>
 
 namespace Ui {
 class ModellingWidget;
@@ -38,54 +39,35 @@ class ModellingWidget : public QWidget
         QPointer<QLineEdit> _freq2;
         QPointer<QLineEdit> _line1;
         QPointer<QLineEdit> _line2;
+        QPointer<QPushButton> _ARMA_button;
 
-        void Hide() {
-            _amountOfSamples->setVisible(false);
-            _timeStep->setVisible(false);
-            _timeFreq->setVisible(false);
-            _delay->setVisible(false);
-            _scale1->setVisible(false);
-            _scale2->setVisible(false);
-            _phase->setVisible(false);
-            _freq1->setVisible(false);
-            _freq2->setVisible(false);
-            _line1->setVisible(false);
-            _line2->setVisible(false);
-        }
+        QList<QString> _ARMA_inputs = {
+            "0.68, 0.088",
+            "-1.656, 0.888",
+            "-1.944, 0.976",
+            "0.744, 0.96",
+            "1.613, 0.787",
 
-        size_t samples() {
-            return _amountOfSamples->text().toULongLong();
-        }
-        double timeStep() {
-            return _timeStep->text().toDouble();
-        }
-        double timeFreq() {
-            return _timeFreq->text().toDouble();
-        }
-        size_t delay() {
-            return _delay->text().toULongLong();
-        }
-        double scale1() {
-            return _scale1->text().toDouble();
-        }
-        double scale2() {
-            return _scale2->text().toDouble();
-        }
-        double phase() {
-            return _phase->text().toDouble();
-        }
-        double freq1() {
-            return _freq1->text().toDouble();
-        }
-        double freq2() {
-            return _freq2->text().toDouble();
-        }
-        QString line1() {
-            return _line1->text();
-        }
-        QString line2() {
-            return _line2->text();
-        }
+            "-2.34, 2.733, -2.148, 0.863",
+            "-1.12, 0.592",
+
+            "-4.167, 7.940, -9.397, 7.515, -3.752, 0.862",
+            "-2.28, 1.77, -0.472"
+        };
+
+        void Hide();
+
+        size_t samples();
+        double timeStep();
+        double timeFreq();
+        size_t delay();
+        double scale1();
+        double scale2();
+        double phase();
+        double freq1();
+        double freq2();
+        QString line1();
+        QString line2();
     };
 
     size_t amoutOfSamples = 100;
@@ -131,6 +113,8 @@ private:
 
     void newRow(QString str, QPointer<QLineEdit> line);
     void inputFormRemoveRows();
+
+    void ARMA_Choose();
 };
 
 #endif // MODELLINGWIDGET_H

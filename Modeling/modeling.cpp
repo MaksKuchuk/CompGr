@@ -12,7 +12,7 @@
     T - sampling step
     n - parameter
 */
-std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, const long long n) {
+std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, const double T, const long long n) {
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Model_1_";
     data2D->source = "Delayed Single Impulse n = " + QString::number(n);
@@ -27,7 +27,7 @@ std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, c
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
 
-    data2D->Hz = 1;
+    data2D->Hz = 1/T;
 
     data2D->totalSeconds = (N - 1);
 
@@ -43,7 +43,7 @@ std::shared_ptr<Graph2DData> Modeling::delayedSingleImpulse(const long long N, c
     T - sampling step
     n - parameter
 */
-std::shared_ptr<Graph2DData> Modeling::delayedSingleHop(const long long N, const long long n) {
+std::shared_ptr<Graph2DData> Modeling::delayedSingleHop(const long long N, const double T, const long long n) {
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Model_2_";
     data2D->source = "Delayed Single Hop n = " + QString::number(n);
@@ -58,7 +58,7 @@ std::shared_ptr<Graph2DData> Modeling::delayedSingleHop(const long long N, const
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
 
-    data2D->Hz = 1;
+    data2D->Hz = 1/T;
 
     data2D->totalSeconds = (N - 1);
 
@@ -78,7 +78,7 @@ std::shared_ptr<Graph2DData> Modeling::delayedSingleHop(const long long N, const
 */
 std::shared_ptr<Graph2DData> Modeling::sampledDecreasingExponent
         (
-                const long long N, const double a
+                const long long N, const double T, const double a
         ) {
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Model_3_";
@@ -89,7 +89,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledDecreasingExponent
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
 
-    data2D->Hz = 1;
+    data2D->Hz = 1/T;
 
     data2D->totalSeconds = (N - 1);
 
@@ -118,7 +118,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledDecreasingExponent
 */
 std::shared_ptr<Graph2DData> Modeling::sampledSineWave
         (
-                const long long N,
+                const long long N, const double T,
                 const double a, const double circFreq, const double initPhase
         ) {
     auto data2D = std::make_shared<Graph2DData>();
@@ -132,7 +132,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledSineWave
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
 
-    data2D->Hz = 1;
+    data2D->Hz = 1/T;
 
     data2D->totalSeconds = (N - 1);
 
@@ -154,7 +154,7 @@ std::shared_ptr<Graph2DData> Modeling::sampledSineWave
     return data2D;
 }
 
-std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const long long L) {
+std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const double T, const long long L) {
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Model_5_";
     data2D->source = "Meander period = " + QString::number(L);
@@ -164,7 +164,7 @@ std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const long lon
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
 
-    data2D->Hz = 1;
+    data2D->Hz = 1/T;
 
     data2D->totalSeconds = (N - 1);
 
@@ -188,7 +188,7 @@ std::shared_ptr<Graph2DData> Modeling::meander(const long long N, const long lon
     return data2D;
 }
 
-std::shared_ptr<Graph2DData> Modeling::saw(const long long N, const long long L) {
+std::shared_ptr<Graph2DData> Modeling::saw(const long long N, const double T, const long long L) {
     auto data2D = std::make_shared<Graph2DData>();
     data2D->name = "Model_6_";
     data2D->source = "Saw period = " + QString::number(L);
@@ -198,7 +198,7 @@ std::shared_ptr<Graph2DData> Modeling::saw(const long long N, const long long L)
     data2D->lcur = 0;
     data2D->rcur = (N - 1);
 
-    data2D->Hz = 1;
+    data2D->Hz = 1 /T;
 
     data2D->totalSeconds = (N - 1);
 

@@ -31,7 +31,7 @@ void AnalysisWindowHandler::analyze2DBy(std::shared_ptr<Graph2DData> data, glTyp
         //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
         gView->show();
     } else if (t == glType::FourierSpectrum) {
-        std::shared_ptr<Graph2DData> fourier_data = FourierData(data, 0, SpectrumModes::PSD, FourierModes::KEEP_FIRST_VAL);
+        std::shared_ptr<Graph2DData> fourier_data = FourierData(data, 1, SpectrumModes::PSD, FourierModes::KEEP_FIRST_VAL);
         glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, fourier_data, templ);
         gView->resize(300, 60);
 
@@ -77,6 +77,13 @@ AnalyzeWidget* AnalysisWindowHandler::getAnalyzeWidget() {
 }
 
 void AnalysisWindowHandler::destroyWidget() {
+    for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
+        glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
+                (analyzeWidget->layout->itemAt(i)->widget());
+
+        glTemp->templ->resetCurs();
+    }
+
     analyzeWidget = nullptr;
     ref = nullptr;
 }

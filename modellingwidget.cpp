@@ -12,6 +12,8 @@
 #include <QLayoutItem>
 #include <QTextItem>
 #include <QMdiSubWindow>
+#include <QButtonGroup>
+#include <QRadioButton>
 
 #include "Modeling/modeling.h"
 #include "Modeling/randommodeling.h"
@@ -72,6 +74,7 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
     form->addItem(inputForm);
 
 
+    form->addWidget(inputLines._ARMA_button);
     QDialogButtonBox *btn_box = new QDialogButtonBox(this);
     btn_box->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     form->addWidget(btn_box);
@@ -101,6 +104,8 @@ ModellingWidget::ModellingWidget(QWidget *parent, std::shared_ptr<GeneralData> g
 
     connect(inputLines._line1, &QLineEdit::editingFinished, this, &ModellingWidget::DrawGraph);
     connect(inputLines._line2, &QLineEdit::editingFinished, this, &ModellingWidget::DrawGraph);
+
+    connect(inputLines._ARMA_button, &QPushButton::clicked, this, &ModellingWidget::ARMA_Choose);
 }
 
 void ModellingWidget::ChangedModel() {
@@ -175,6 +180,7 @@ void ModellingWidget::ChangedModel() {
         newRow("Dispersion (d^2)", inputLines._scale1);
         newRow("Array a", inputLines._line1);
         newRow("Array b", inputLines._line2);
+        inputLines._ARMA_button->setVisible(true);
         break;
     }
     default:
@@ -191,27 +197,27 @@ void ModellingWidget::ChangedModel() {
 void ModellingWidget::DrawGraph() {
     switch (currentType) {
     case Modeling::Type::SingleImpulse: {
-        data = Modeling::delayedSingleImpulse(inputLines.samples(), inputLines.delay());
+        data = Modeling::delayedSingleImpulse(inputLines.samples(), inputLines.timeStep(), inputLines.delay());
         break;
     }
     case Modeling::Type::SingleHop: {
-        data = Modeling::delayedSingleHop(inputLines.samples(), inputLines.delay());
+        data = Modeling::delayedSingleHop(inputLines.samples(), inputLines.timeStep(), inputLines.delay());
         break;
     }
     case Modeling::Type::DecreasingExponent: {
-        data = Modeling::sampledDecreasingExponent(inputLines.samples(), inputLines.scale1());
+        data = Modeling::sampledDecreasingExponent(inputLines.samples(), inputLines.timeStep(), inputLines.scale1());
         break;
     }
     case Modeling::Type::SineWave: {
-        data = Modeling::sampledSineWave(inputLines.samples(), inputLines.scale1(), inputLines.scale2(), inputLines.phase());
+        data = Modeling::sampledSineWave(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(), inputLines.scale2(), inputLines.phase());
         break;
     }
     case Modeling::Type::Meander: {
-        data = Modeling::meander(inputLines.samples(), inputLines.delay());
+        data = Modeling::meander(inputLines.samples(), inputLines.timeStep(), inputLines.delay());
         break;
     }
     case Modeling::Type::Saw: {
-        data = Modeling::saw(inputLines.samples(), inputLines.delay());
+        data = Modeling::saw(inputLines.samples(), inputLines.timeStep(), inputLines.delay());
         break;
     }
     case Modeling::Type::ExponentialEnvelope: {
@@ -316,10 +322,55 @@ void ModellingWidget::TimeFreqChanged() {
     DrawGraph();
 }
 
+void ModellingWidget::ARMA_Choose() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Choose"));
+
+    QFormLayout *layout = new QFormLayout();
+
+    QPointer<QButtonGroup> group = new QButtonGroup(&dlg);
+    QList<QString> lines = {"a", "b"};
+    for (qint64 i = 0; i < lines.size(); ++i) {
+        auto radio = new QRadioButton(lines[i], &dlg);
+        if (i == 0)
+            radio->setChecked(true);
+        group->addButton(radio, i);
+        layout->addWidget(radio);
+    }
+
+    qint64 out = -1;
+    for (qint64 i = 0; i < inputLines._ARMA_inputs.size(); ++i) {
+        auto button = new QPushButton(inputLines._ARMA_inputs[i], &dlg);
+        layout->addWidget(button);
+        connect(button, &QPushButton::clicked, [&out, i]() { out = i; });
+        connect(button, &QPushButton::clicked, &dlg, &QDialog::accept);
+    }
+
+    dlg.setLayout(layout);
+
+    if (dlg.exec() != QDialog::Accepted || group->checkedId() < 0 || out < 0)
+        return;
+
+    qDebug() << lines[group->checkedId()] << " " << out;
+    auto line = lines[group->checkedId()];
+    if (line == lines[0]) {
+        inputLines._line1->setText(inputLines._ARMA_inputs[out]);
+    } else if (line == lines[1]) {
+        inputLines._line2->setText(inputLines._ARMA_inputs[out]);
+    }
+    DrawGraph();
+}
+
+
+
+
+
+
 ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<GeneralData> data, Modeling::Type type) {
     _amountOfSamples = new QLineEdit(QString::number( data == nullptr ? 1000 : data->amountOfSamples), parent);
     _timeStep = new QLineEdit(QString::number( data == nullptr ? 1 : 1/data->Hz), parent);
     _timeFreq = new QLineEdit(QString::number( data == nullptr ? 1 : data->Hz), parent);
+    _ARMA_button = new QPushButton("Choose model", parent);
 
     size_t delay = 1;
     double scale1 = 1;
@@ -340,55 +391,41 @@ ModellingWidget::InputLines::InputLines(QWidget* parent, std::shared_ptr<General
     }
     case Modeling::Type::SineWave: {
         scale2 = 20 * M_PI / samples();
-//        data = Modeling::sampledSineWave(inputLines.samples(), inputLines.scale1(), inputLines.scale2(), inputLines.phase());
         break;
     }
     case Modeling::Type::Meander: {
         delay = samples()/10;
-//        data = Modeling::meander(inputLines.samples(), inputLines.delay());
         break;
     }
     case Modeling::Type::Saw: {
         delay = samples()/10;
-//        data = Modeling::saw(inputLines.samples(), inputLines.delay());
         break;
     }
     case Modeling::Type::ExponentialEnvelope: {
         scale2 = samples() / (2.0 * qLn(10) * timeFreq());
         freq1 = 20 * timeFreq() / samples(); // 20 periods
-//        data = Modeling::exponentialEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
-//                                             inputLines.scale2(), inputLines.freq1(), inputLines.phase());
         break;
     }
     case Modeling::Type::BalanceEnvelope: {
         freq1 = 2 * timeFreq() / samples();
         freq2 = 50 * timeFreq() / samples();
-//        data = Modeling::balanceEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
-//                                         inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;
     }
     case Modeling::Type::TonalEnvelope: {
         freq1 = 3 * timeFreq() / samples();
         freq2 = 50 * timeFreq() / samples();
         scale2 = 0.5;
-//        data = Modeling::tonalEnvelope(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
-//                                       inputLines.freq1(), inputLines.freq2(), inputLines.phase(),
-//                                       inputLines.scale2());
         break;
     }
     case Modeling::Type::LFM: {
         freq1 = 0;
         freq2 = (20.0 * timeFreq()) / samples();
-//        data = Modeling::LFM(inputLines.samples(), inputLines.timeStep(), inputLines.scale1(),
-//                             inputLines.freq1(), inputLines.freq2(), inputLines.phase());
         break;
     }
     case Modeling::Type::UniformWhiteNoise:
     case Modeling::Type::NormalWhiteNoise: {
         scale1 = 0;
         scale2 = 1;
-//        data = randomModeling::whiteNoise(inputLines.samples(), inputLines.timeStep(),
-//                                          inputLines.scale1(), inputLines.scale2());
         break;
     }
     default:
@@ -451,4 +488,53 @@ void ModellingWidget::saveModel() {
     isAddToCurrent->setChecked(true);
 
 //    closeWidget();
+}
+
+void ModellingWidget::InputLines::Hide() {
+    _amountOfSamples->setVisible(false);
+    _timeStep->setVisible(false);
+    _timeFreq->setVisible(false);
+    _delay->setVisible(false);
+    _scale1->setVisible(false);
+    _scale2->setVisible(false);
+    _phase->setVisible(false);
+    _freq1->setVisible(false);
+    _freq2->setVisible(false);
+    _line1->setVisible(false);
+    _line2->setVisible(false);
+    _ARMA_button->setVisible(false);
+}
+
+size_t ModellingWidget::InputLines::samples() {
+    return _amountOfSamples->text().toULongLong();
+}
+double ModellingWidget::InputLines::timeStep() {
+    return _timeStep->text().toDouble();
+}
+double ModellingWidget::InputLines::timeFreq() {
+    return _timeFreq->text().toDouble();
+}
+size_t ModellingWidget::InputLines::delay() {
+    return _delay->text().toULongLong();
+}
+double ModellingWidget::InputLines::scale1() {
+    return _scale1->text().toDouble();
+}
+double ModellingWidget::InputLines::scale2() {
+    return _scale2->text().toDouble();
+}
+double ModellingWidget::InputLines::phase() {
+    return _phase->text().toDouble();
+}
+double ModellingWidget::InputLines::freq1() {
+    return _freq1->text().toDouble();
+}
+double ModellingWidget::InputLines::freq2() {
+    return _freq2->text().toDouble();
+}
+QString ModellingWidget::InputLines::line1() {
+    return _line1->text();
+}
+QString ModellingWidget::InputLines::line2() {
+    return _line2->text();
 }

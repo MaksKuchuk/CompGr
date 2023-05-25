@@ -77,8 +77,9 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     font.setPixelSize(24);
     label->setFont(font);
 
-    label->setAlignment(Qt::AlignCenter);
-    label->setFixedHeight(20);
+    label->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    label->setFixedHeight(24);
+    label->setContentsMargins(0,0,0,0);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(65, 5, 35, 5);
@@ -90,6 +91,7 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     layout->addWidget(gView);
     layout->setSpacing(14);
     layout->addWidget(infoLabel);
+    layout->setSpacing(0);
     layout->addWidget(label);
 
     this->setLayout(layout);

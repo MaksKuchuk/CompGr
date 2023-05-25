@@ -48,6 +48,8 @@ public:
         auto name = path_to_file.sliced(namePos+1);
         pd->setName(name);
 
+        pd->rcur = pd->amountOfSamples - 1;
+
         auto e = std::chrono::high_resolution_clock().now();
         qDebug() << name << duration_cast<std::chrono::milliseconds>(e - s).count() << " ms";
 

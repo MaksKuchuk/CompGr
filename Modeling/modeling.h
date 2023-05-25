@@ -9,24 +9,24 @@
 class Modeling {
 public:
 
-    static std::shared_ptr<Graph2DData> delayedSingleImpulse(const long long N, const long long n);
+    static std::shared_ptr<Graph2DData> delayedSingleImpulse(const long long N, const double T, const long long n);
 
-    static std::shared_ptr<Graph2DData> delayedSingleHop(const long long N, const long long n);
+    static std::shared_ptr<Graph2DData> delayedSingleHop(const long long N, const double T, const long long n);
 
     static std::shared_ptr<Graph2DData> sampledDecreasingExponent
             (
-                    const long long N, const double a
+                    const long long N, const double T, const double a
             );
 
     static std::shared_ptr<Graph2DData> sampledSineWave
             (
-                    const long long N, const double a,
+                    const long long N, const double T, const double a,
                     const double omega, const double phi
             );
 
-    static std::shared_ptr<Graph2DData> meander(const long long N, const long long L);
+    static std::shared_ptr<Graph2DData> meander(const long long N, const double T, const long long L);
 
-    static std::shared_ptr<Graph2DData> saw(const long long N, const long long L);
+    static std::shared_ptr<Graph2DData> saw(const long long N, const double T, const long long L);
 
     static std::shared_ptr<Graph2DData> exponentialEnvelope
     (
