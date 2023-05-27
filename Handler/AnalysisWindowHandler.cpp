@@ -22,31 +22,36 @@ void AnalysisWindowHandler::analyze2DBy(std::shared_ptr<Graph2DData> data, glTyp
     if (analyzeWidget == nullptr) return;
 
     long long layoutSize = AnalysisWindowHandler::getAnalyzeWidget()->layout->count();
+    QPointer<glTemplateOscillogram> gView;
 
     if (t == glType::Oscillogram) {
-        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, data, templ);
-        gView->resize(300, 60);
+        gView = new glTemplateOscillogram(nullptr, data, templ);
+        connect(gView, &glTemplateOscillogram::BiasChanged, templ->gView, &glView::setCurs);
+//        connect(gView, &glTemplateOscillogram::BiasChanged, [](qint64 a,qint64 b) {qDebug() << a << " " << b;});
 
         AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
         //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
-        gView->show();
     } else if (t == glType::FourierSpectrum) {
         std::shared_ptr<Graph2DData> fourier_data = FourierData(data, 1, SpectrumModes::PSD, FourierModes::KEEP_FIRST_VAL);
-        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, fourier_data, templ);
-        gView->resize(300, 60);
+        gView = new glTemplateOscillogram(nullptr, fourier_data, templ);
 
         AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
         //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
-        gView->show();
     } else if (t == glType::Waveletogram) {
-        glTemplateOscillogram *gView = new glTemplateOscillogram(nullptr, TransformToWaveletogram::transform(data), templ);
-        gView->resize(300, 60);
+        gView = new glTemplateOscillogram(nullptr, TransformToWaveletogram::transform(data), templ);
 
         AnalysisWindowHandler::getAnalyzeWidget()->layout->insertWidget(layoutSize - 1, gView);
         //AnalysisWindowHandler::getAnalyzeWidget()->layout->addWidget(gView);
-        gView->show();
 
     }
+    connect(gView,  &glTemplateOscillogram::BiasChanged, gView->gView, &glOscillogram::updateGraph);
+    connect(gView,  &glTemplateOscillogram::BiasChanged,
+            [&](qint64 l,qint64 r){ changeScrollBar(data->amountOfSamples, l, r); });
+
+    gView->resize(300, 60);
+
+    gView->show();
+
 
     changeScrollBar(data->amountOfSamples, data->lcur, data->rcur);
 }
@@ -100,72 +105,13 @@ glTemplateOscillogram* AnalysisWindowHandler::getLocalRef() {
     return ref;
 }
 
-double AnalysisWindowHandler::scrollF(long long x) {
-    const double e = 2.718281828459045;
-    //return pow(log(x + 3) / log(2), 2) + 1;
-    return x / 16 + 1;
-}
 
-void AnalysisWindowHandler::scrollGraph(long long y) {
-    if (analyzeWidget == nullptr) return;
-    if (ref == nullptr) return;
-
-    if ((y > 0) && (ref->data->rcur - ref->data->lcur < 10)) return;
-
-    ref->data->lcur += 0.01 * y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
-    ref->data->rcur -= 0.01 * y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
-
-    if (ref->data->lcur < 0) ref->data->lcur = 0;
-    if (ref->data->rcur < 0) ref->data->rcur = 0;
-    if (ref->data->lcur >= ref->data->amountOfSamples)
-        ref->data->lcur = ref->data->amountOfSamples - 1;
-    if (ref->data->rcur >= ref->data->amountOfSamples)
-        ref->data->rcur = ref->data->amountOfSamples - 1;
-
-    if (ref->data->rcur - ref->data->lcur < 10) {
-        if (ref->data->lcur + 10 < ref->data->amountOfSamples) {
-            ref->data->rcur = ref->data->lcur + 9;
-        } else if (ref->data->rcur - 10 >= 0) {
-            ref->data->lcur = ref->data->rcur - 9;
-        } else {
-            ref->data->lcur = 0;
-            ref->data->rcur = ref->data->amountOfSamples - 1;
-        }
-    }
-
-    ref->gView->updateGraph();
-
-    updateGraphs(ref);
-    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
-}
-
-void AnalysisWindowHandler::moveGraph(long long y) {
-    if (analyzeWidget == nullptr) return;
-    if (ref == nullptr) return;
-
-    long long ch = y * scrollF(static_cast<double>(ref->data->rcur - ref->data->lcur));
-
-    if (ref->data->lcur + ch < 0) {
-        ch = -ref->data->lcur;
-    }
-    if (ref->data->rcur + ch >= ref->data->amountOfSamples) {
-        ch = ref->data->amountOfSamples - ref->data->rcur - 1;
-    }
-
-    ref->data->lcur += ch;
-    ref->data->rcur += ch;
-
-    ref->gView->updateGraph();
-
-    updateGraphs(ref);
-    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
-}
 
 void AnalysisWindowHandler::changeLocalScale(double lmin, double lmax) {
     if (analyzeWidget == nullptr) return;
     if (ref == nullptr) return;
 
-    double ch = 5 * scrollF(static_cast<double>(ref->data->maxLoc - ref->data->minLoc));
+    double ch = 5;// * scrollF(static_cast<double>(ref->data->maxLoc - ref->data->minLoc));
 
     if (ref->data->minLoc + lmin * ch >= ref->data->maxLoc + lmax * ch) return;
 
@@ -243,6 +189,7 @@ void AnalysisWindowHandler::changeScrollBar(long long amount, long long lcur, lo
 }
 
 void AnalysisWindowHandler::updateGraphs(glTemplateOscillogram* rf) {
+    return;
     for (long long i = 0; i < analyzeWidget->layout->count() - 1; i++) {
         glTemplateOscillogram* glTemp = static_cast<glTemplateOscillogram*>
                 (analyzeWidget->layout->itemAt(i)->widget());

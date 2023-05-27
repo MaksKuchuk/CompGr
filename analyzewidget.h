@@ -22,12 +22,6 @@ public:
 
     void closeEvent(QCloseEvent *event) override;
 
-protected:
-    void wheelEvent(QWheelEvent *event) override;
-    bool eventFilter(QObject *obj, QEvent *event) override;
-    void keyPressEvent(QKeyEvent* event) override;
-    void keyReleaseEvent(QKeyEvent* event) override;
-
 private:
     Ui::AnalyzeWidget *ui;
 

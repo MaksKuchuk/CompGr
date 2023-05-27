@@ -50,7 +50,7 @@ public:
 
     glTemplateOscillogram* getLocalRef();
 
-    void scrollGraph(long long x);
+//    void scrollGraph(long long x);
 
     void moveGraph(long long x);
 

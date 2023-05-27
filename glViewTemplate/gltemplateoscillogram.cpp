@@ -56,9 +56,12 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
                          .horizontalAdvance(yTickLabel),
                          y + painter.fontMetrics().height() / 2, yTickLabel);
     }
+}
 
+void glTemplateOscillogram::ChangeInfoLabel() {
     infoLabel->setText("Samples: "+QString::number(data->rcur - data->lcur+1));
 }
+
 
 glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ_) :
     QWidget(parent),
@@ -94,6 +97,9 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     layout->addWidget(label);
 
     this->setLayout(layout);
+
+    MainWindow::instance->installEventFilter(this);
+    connect(this, &glTemplateOscillogram::BiasChanged, this, &glTemplateOscillogram::ChangeInfoLabel);
 }
 
 void glTemplateOscillogram::drawMenu(QPoint globalPos) {
@@ -160,6 +166,18 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     }
 }
 
+void glTemplateOscillogram::SetBias(long long lcur, long long rcur) {
+    data->lcur = lcur;
+    data->rcur = rcur;
+    emit BiasChanged(lcur, rcur);
+}
+
+void glTemplateOscillogram::SetScale(double bottom, double top) {
+    data->minLoc = bottom;
+    data->maxLoc = top;
+    emit ScaleChanged(bottom, top);
+}
+
 void glTemplateOscillogram::setDefaultScale(){
     AnalysisWindowHandler::setDefaultScale();
 }
@@ -179,6 +197,8 @@ void glTemplateOscillogram::selectSingleLocalScale() {
         if (lmi > data->samples[i]) lmi = data->samples[i];
         if (lma < data->samples[i]) lma = data->samples[i];
     }
+
+    SetScale(lmi, lma);
 
     AnalysisWindowHandler::changeSingleLocalScale(lmi, lma);
 }
@@ -210,8 +230,7 @@ void glTemplateOscillogram::selectScale() {
     if(dlg.exec() == QDialog::Accepted) {
         if (data == nullptr) return;
 
-        data->maxLoc = ledit1->text().toDouble();
-        data->minLoc = ledit2->text().toDouble();
+        SetScale(ledit2->text().toDouble(), ledit1->text().toDouble());
 
         gView->updateGraph();
         this->repaint();
@@ -248,6 +267,8 @@ void glTemplateOscillogram::selectBias() {
 
         data->lcur = lx;
         data->rcur = rx;
+
+        SetBias(lx, rx);
 
         AnalysisWindowHandler::updateGraphs(this);
 
@@ -391,4 +412,118 @@ void glTemplateOscillogram::mouseMoveEvent(QMouseEvent* event) {
 glTemplateOscillogram::~glTemplateOscillogram()
 {
     delete ui;
+}
+
+bool glTemplateOscillogram::eventFilter(QObject *obj, QEvent *event) {
+    QKeyEvent *keyEvent = NULL;//event data, if this is a keystroke event
+    QMouseEvent *mouseEvent = NULL;
+    bool result = false;//return true to consume the keystroke
+
+    if (event->type() == QEvent::KeyPress) {
+         keyEvent = dynamic_cast<QKeyEvent*>(event);
+         this->keyPressEvent(keyEvent);
+         result = true;
+    } else if (event->type() == QEvent::KeyRelease) {
+         keyEvent = dynamic_cast<QKeyEvent*>(event);
+         this->keyReleaseEvent(keyEvent);
+         result = true;
+    }
+
+    //### Standard event processing ###
+    else
+        result = QObject::eventFilter(obj, event);
+
+    return result;
+}
+
+double glTemplateOscillogram::scrollF(long long x) {
+    const double e = 2.718281828459045;
+    //return pow(log(x + 3) / log(2), 2) + 1;
+    return x / 16 + 1;
+}
+
+void glTemplateOscillogram::scrollGraph(long long y) {
+    if ((y > 0) && (data->rcur - data->lcur < 10)) return;
+
+    auto lcur = data->lcur;
+    auto rcur = data->rcur;
+    auto amountOfSamples = data->amountOfSamples;
+
+    lcur += 0.01 * y * scrollF(static_cast<double>(rcur - lcur));
+    rcur -= 0.01 * y * scrollF(static_cast<double>(rcur - lcur));
+
+    if (lcur < 0) lcur = 0;
+    if (rcur < 0) rcur = 0;
+    if (lcur >= amountOfSamples)
+        lcur = amountOfSamples - 1;
+    if (rcur >= amountOfSamples)
+        rcur = amountOfSamples - 1;
+
+    if (rcur - lcur < 10) {
+        if (lcur + 10 < amountOfSamples) {
+            rcur = lcur + 9;
+        } else if (rcur - 10 >= 0) {
+            lcur = rcur - 9;
+        } else {
+            lcur = 0;
+            rcur = amountOfSamples - 1;
+        }
+    }
+
+    SetBias(lcur, rcur);
+    gView->updateGraph();
+
+//    updateGraphs(ref);
+//    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
+}
+
+void glTemplateOscillogram::moveGraph(long long y) {
+
+    auto lcur = data->lcur;
+    auto rcur = data->rcur;
+    auto amountOfSamples = data->amountOfSamples;
+
+    long long ch = y * scrollF(static_cast<double>(rcur - lcur));
+
+    if (lcur + ch < 0) {
+        ch = -lcur;
+    }
+    if (rcur + ch >= amountOfSamples) {
+        ch = amountOfSamples - rcur - 1;
+    }
+
+    lcur += ch;
+    rcur += ch;
+
+    SetBias(lcur, rcur);
+    gView->updateGraph();
+
+//    updateGraphs(ref);
+//    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
+}
+
+void glTemplateOscillogram::keyPressEvent(QKeyEvent* event) {
+    auto code = event->nativeScanCode();
+    //38 - a, 40 - d
+    if (code == 30 || code == 32
+            || code == 38 || code == 40) {
+        long long x = (code == 38 || code == 30) ? -1 : 1;
+
+        moveGraph(x);
+    }
+
+    if (event->key() == Qt::Key_Alt) {
+        AnalysisWindowHandler::scaleMod = true;
+    }
+}
+
+void glTemplateOscillogram::keyReleaseEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Alt) {
+        AnalysisWindowHandler::scaleMod = false;
+    }
+}
+
+void glTemplateOscillogram::wheelEvent(QWheelEvent *event) {
+//    qDebug() << (event->angleDelta().y());
+    scrollGraph(event->angleDelta().y());
 }

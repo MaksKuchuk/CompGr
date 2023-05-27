@@ -16,9 +16,13 @@ class glView : public QOpenGLWidget
     double minVal;
     long long lcur, rcur;
 
-public:
+signals:
+    void cursChanged(long long lcur, long long rcur);
+
+public slots:
     void setCurs(long long lcur, long long rcur);
 
+public:
     glView(QWidget *parent = nullptr,
            long long parNum = 0,
            const QList<double>& data = _ref,
