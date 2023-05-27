@@ -89,9 +89,8 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     infoLabel->setFixedHeight(14);
 
     layout->addWidget(gView);
-    layout->setSpacing(14);
+    layout->addSpacing(12);
     layout->addWidget(infoLabel);
-    layout->setSpacing(0);
     layout->addWidget(label);
 
     this->setLayout(layout);

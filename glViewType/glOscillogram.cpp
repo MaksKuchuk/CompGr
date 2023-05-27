@@ -44,7 +44,7 @@ void glOscillogram::drawGraph() {
 
     double parNum = rcur - lcur + 1;
 
-    double dotsNumber = parNum > 2000 ? 2000 : parNum;
+    double dotsNumber = parNum > 50000 ? 50000 : parNum;
     //double dotsNumber = parNum;
     double diff = data->maxLoc - data->minLoc;
 
