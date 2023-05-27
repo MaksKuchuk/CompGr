@@ -6,7 +6,7 @@
 #include "graphinfo.h"
 #include "Utility/config.h"
 #include "modellingwidget.h"
-#include "Handler/AnalysisWindowHandler.hpp"
+#include "analyzewidget.h"
 
 #include "Parser/Parser.hpp"
 #include "Parser/ParseData.hpp"
@@ -113,35 +113,31 @@ void MainWindow::on_actionAbout_triggered()
 }
 
 void MainWindow::on_actionAnalysis_triggered() {
-    if (!AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget() || grWid == nullptr) return;
-
-    QMdiSubWindow *activeWidget = ui->mdiArea->activeSubWindow();
+    if (AnalyzeWidget::instance != nullptr || grWid == nullptr) return;
 
     openAnalysisWindow();
 
-    AnalysisWindowHandler *instanceAn = AnalysisWindowHandler::getInstance();
+    auto instanceAn = AnalyzeWidget::getInstance();
 
-    if (activeWidget != nullptr) {
-        GraphWidget* grWi = static_cast<GraphWidget*>(activeWidget->widget());
-
-        if (grWi->nm == "GraphWidget") {
-            instanceAn->addWidget(grWi->graphData);
+    if (grWid != nullptr) {
+        for (size_t i = 0; i < grWid->graphData->getAmountOfChannels(); ++i) {
+            instanceAn->analyze2DBy(grWid->graphData->channelTo2D(i),
+                    static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget()));
         }
     }
 }
 
 void MainWindow::openAnalysisWindow() {
-    if (!AnalysisWindowHandler::getInstance()->isNullAnalyzeWidget()) return;
+    if (AnalyzeWidget::instance != nullptr) return;
 
-    AnalysisWindowHandler *instanceAn = AnalysisWindowHandler::getInstance();
-    AnalyzeWidget* w = instanceAn->getAnalyzeWidget();
+    AnalyzeWidget *instanceAn = AnalyzeWidget::getInstance();
 
-    instance->ui->mdiArea->addSubWindow(w);
-    instanceAn->getAnalyzeWidget()->setWindowTitle("Analyze");
+    instance->ui->mdiArea->addSubWindow(instanceAn);
+    instanceAn->setWindowTitle("Analyze");
 
     instance->ui->mdiArea->subWindowList().last()->resize(600, 450);
 
-    instanceAn->getAnalyzeWidget()->show();
+    instanceAn->show();
 }
 
 void MainWindow::on_actionInformation_triggered() {

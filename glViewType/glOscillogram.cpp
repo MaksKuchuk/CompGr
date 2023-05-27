@@ -1,6 +1,6 @@
 #include "glOscillogram.hpp"
 #include "../Utility/config.h"
-#include "../Handler/AnalysisWindowHandler.hpp"
+#include "../analyzewidget.h"
 #include <iostream>
 
 glOscillogram::glOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data) :
@@ -56,10 +56,10 @@ void glOscillogram::drawGraph() {
         }
     glEnd();
 
-    if (AnalysisWindowHandler::xpress == -1 ||
-        AnalysisWindowHandler::ypress == -1 ||
-        AnalysisWindowHandler::xrelease == -1 ||
-        AnalysisWindowHandler::yrelease == -1) return;
+    if (AnalyzeWidget::xpress == -1 ||
+        AnalyzeWidget::ypress == -1 ||
+        AnalyzeWidget::xrelease == -1 ||
+        AnalyzeWidget::yrelease == -1) return;
 
 //    std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
 //              << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
@@ -67,10 +67,10 @@ void glOscillogram::drawGraph() {
     glColor3f(0, 0, 1);
     glLineWidth(1);
     glBegin(GL_LINES);
-        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), -1);
-        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), 1);
-        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), -1);
-        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), 1);
+        glVertex2d(((AnalyzeWidget::xleft * 2) - 1), -1);
+        glVertex2d(((AnalyzeWidget::xleft * 2) - 1), 1);
+        glVertex2d(((AnalyzeWidget::xright * 2) - 1), -1);
+        glVertex2d(((AnalyzeWidget::xright * 2) - 1), 1);
     glEnd();
 }
 

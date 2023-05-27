@@ -2,6 +2,7 @@
 #define GLTEMPLATEOSCILLOGRAM_H
 
 #include <QWidget>
+#include <QScrollBar>
 #include "../GraphGlData/Graph2DData.hpp"
 #include "../glViewType/glOscillogram.hpp"
 #include "../graphtemplate.h"
@@ -22,7 +23,6 @@ public:
     glOscillogram* gView = nullptr;
 
     QPointer<GraphTemplate> templ = nullptr;
-    QPointer<QLabel> infoLabel;
     glType type = glType::Oscillogram;
 
     explicit glTemplateOscillogram(QWidget *parent = nullptr,
@@ -84,10 +84,18 @@ protected:
 
     void ChangeInfoLabel();
 
+    void ChangeScrollBar();
+    void ScrollBarChanged();
+
 private:
+    QPointer<QScrollBar> scrollBar;
+    QPointer<QLabel> infoLabel;
+
     Ui::glTemplateOscillogram *ui;
 
-    friend class AnalysisWindowHandler;
+    friend class QWidget;
+
+    void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // GLTEMPLATEOSCILLOGRAM_H

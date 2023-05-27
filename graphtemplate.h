@@ -27,10 +27,6 @@ public:
     explicit GraphTemplate(QWidget *parent = nullptr, const std::shared_ptr<Graph2DData> gData = nullptr, bool showName = true);
     ~GraphTemplate();
 
-
-public slots:
-    void resetCurs();
-
 protected:
     void mousePressEvent(QMouseEvent *event) override;
 

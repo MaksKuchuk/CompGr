@@ -4,10 +4,10 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QPainter>
-#include "../Handler/AnalysisWindowHandler.hpp"
+#include "../analyzewidget.h"
 #include "../mainwindow.h"
 #include "../graphtemplate.h"
-#include "../glview.h"
+
 
 #include <QMenu>
 #include <QDialog>
@@ -31,7 +31,7 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
     int numTicksX = gView->width() / xTickSpacing + 1;
     int numTicksY = gView->height() / yTickSpacing + 1;
 
-    for (int i = 0; i < numTicksX; i++) {
+    for (int i = 0; i <= numTicksX; i++) {
         // draw tick on x-axis
         int x = (yAxisX + i * gView->width() / numTicksX);
         painter.drawLine(x, xAxisY, x, xAxisY + tickLength);
@@ -43,7 +43,7 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
         painter.drawText(x - tickLength / 2, xAxisY + tickLength + 10, xTickLabel);
     }
 
-    for (int i = 0; i < numTicksY; i++) {
+    for (int i = 0; i <= numTicksY; i++) {
         // draw tick on y-axis
         int y = xAxisY - i * gView->height() / numTicksY;
         painter.drawLine(yAxisX - tickLength, y, yAxisX, y);
@@ -96,10 +96,30 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     layout->addWidget(infoLabel);
     layout->addWidget(label);
 
-    this->setLayout(layout);
+    scrollBar = new QScrollBar(Qt::Horizontal, this);
+    layout->addWidget(scrollBar);
+    ChangeScrollBar();
+
+
+    setLayout(layout);
 
     MainWindow::instance->installEventFilter(this);
+
+    connect(scrollBar, &QScrollBar::valueChanged, this, &glTemplateOscillogram::ScrollBarChanged);
+
+    connect(this, &glTemplateOscillogram::BiasChanged, this, &glTemplateOscillogram::ChangeScrollBar);
+
     connect(this, &glTemplateOscillogram::BiasChanged, this, &glTemplateOscillogram::ChangeInfoLabel);
+
+    connect(this, &glTemplateOscillogram::BiasChanged, gView, &glOscillogram::updateGraph);
+    connect(this, &glTemplateOscillogram::BiasChanged, [&](){ repaint(); });
+
+    connect(this, &glTemplateOscillogram::ScaleChanged, gView, &glOscillogram::updateGraph);
+    connect(this, &glTemplateOscillogram::ScaleChanged, [&](){ repaint(); });
+
+    connect(AnalyzeWidget::getInstance(), &QWidget::destroyed, this, &QWidget::close);
+
+//    connect(this, &QWidget::keyPressEvent, [](){ qDebug() << "asd"; });
 }
 
 void glTemplateOscillogram::drawMenu(QPoint globalPos) {
@@ -137,14 +157,7 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
 
     if (selectedItem == nullptr) return;
     if (selectedItem->text() == "Close") {
-        if (AnalysisWindowHandler::getInstance()->getLocalRef() == nullptr) return;
-        data->lcur = 0;
-        data->rcur = data->amountOfSamples-1;
-        if (templ != nullptr)
-            templ->resetCurs();
-
-        AnalysisWindowHandler::getInstance()->getLocalRef()->deleteLater();
-        AnalysisWindowHandler::getInstance()->setLocalRef(nullptr);
+        close();
     } else if (selectedItem->text() == "Local scale") {
         setLocalScale();
     } else if (selectedItem->text() == "Global scale") {
@@ -179,11 +192,11 @@ void glTemplateOscillogram::SetScale(double bottom, double top) {
 }
 
 void glTemplateOscillogram::setDefaultScale(){
-    AnalysisWindowHandler::setDefaultScale();
+//    AnalysisWindowHandler::setDefaultScale();
 }
 
 void glTemplateOscillogram::setDefaultBias() {
-    AnalysisWindowHandler::setDefaultBias();
+//    AnalysisWindowHandler::setDefaultBias();
 }
 
 void glTemplateOscillogram::selectSingleLocalScale() {
@@ -200,11 +213,11 @@ void glTemplateOscillogram::selectSingleLocalScale() {
 
     SetScale(lmi, lma);
 
-    AnalysisWindowHandler::changeSingleLocalScale(lmi, lma);
+//    AnalysisWindowHandler::changeSingleLocalScale(lmi, lma);
 }
 
 void glTemplateOscillogram::selectSingleGlobalScale() {
-    AnalysisWindowHandler::setSingleGlobalScale();
+//    AnalysisWindowHandler::setSingleGlobalScale();
 }
 
 void glTemplateOscillogram::selectScale() {
@@ -232,8 +245,6 @@ void glTemplateOscillogram::selectScale() {
 
         SetScale(ledit2->text().toDouble(), ledit1->text().toDouble());
 
-        gView->updateGraph();
-        this->repaint();
     }
 }
 
@@ -265,32 +276,15 @@ void glTemplateOscillogram::selectBias() {
 
         if (lx < 0 || rx >= data->amountOfSamples) return;
 
-        data->lcur = lx;
-        data->rcur = rx;
-
         SetBias(lx, rx);
-
-        AnalysisWindowHandler::updateGraphs(this);
-
-        gView->updateGraph();
-        this->repaint();
     }
 }
 
 void glTemplateOscillogram::setGlobalBias() {
-    if (data == nullptr) return;
-
-    data->lcur = 0;
-    data->rcur = data->amountOfSamples - 1;
-
-    AnalysisWindowHandler::updateGraphs(this);
-
-    gView->updateGraph();
-    this->repaint();
+    SetBias(0, data->amountOfSamples - 1);
 }
 
 void glTemplateOscillogram::setLocalScale() {
-    if (data == nullptr) return;
 
     double lmi, lma;
 
@@ -301,42 +295,29 @@ void glTemplateOscillogram::setLocalScale() {
         if (lma < data->samples[i]) lma = data->samples[i];
     }
 
-    data->minLoc = lmi;
-    data->maxLoc = lma;
-
-    gView->updateGraph();
-    this->repaint();
+    SetScale(lmi, lma);
 }
 
 void glTemplateOscillogram::setGlobalScale() {
-    if (data == nullptr) return;
-
-    data->maxLoc = data->maxVal;
-    data->minLoc = data->minVal;
-
-    gView->updateGraph();
-    this->repaint();
+    SetScale(data->minVal, data->maxVal);
 }
 
 void glTemplateOscillogram::mousePressEvent(QMouseEvent *event) {
-    AnalysisWindowHandler::getInstance()->setLocalRef(this);
-
     if (event->button() == Qt::RightButton) {
         drawMenu(QCursor::pos());
-    } else if (event->button() == Qt::LeftButton && AnalysisWindowHandler::scaleMod) {
-        AnalysisWindowHandler::xpress = event->pos().x() - gView->geometry().x();
-        AnalysisWindowHandler::ypress = event->pos().y() - gView->geometry().y();
+    } else if (event->button() == Qt::LeftButton && AnalyzeWidget::scaleMod) {
+        AnalyzeWidget::xpress = event->pos().x() - gView->geometry().x();
+        AnalyzeWidget::ypress = event->pos().y() - gView->geometry().y();
     }
 }
 
 void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
-    AnalysisWindowHandler::getInstance()->setLocalRef(this);
-    if (event->button() == Qt::LeftButton && AnalysisWindowHandler::scaleMod) {
-        if (AnalysisWindowHandler::xpress == -1 ||
-            AnalysisWindowHandler::ypress == -1) return;
+    if (event->button() == Qt::LeftButton && AnalyzeWidget::scaleMod) {
+        if (AnalyzeWidget::xpress == -1 ||
+            AnalyzeWidget::ypress == -1) return;
 
-        AnalysisWindowHandler::xrelease = event->pos().x() - gView->geometry().x();
-        AnalysisWindowHandler::yrelease = event->pos().y() - gView->geometry().y();
+        AnalyzeWidget::xrelease = event->pos().x() - gView->geometry().x();
+        AnalyzeWidget::yrelease = event->pos().y() - gView->geometry().y();
 
 //        std::cout << gView->geometry().x() << ' '
 //                  << gView->geometry().y() << "\n"
@@ -352,27 +333,27 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
 //                  << AnalysisWindowHandler::yrelease
 //                  << "\n\n" << std::endl;
 
-        AnalysisWindowHandler::xleft = std::min(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
-        AnalysisWindowHandler::xright = std::max(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
-        AnalysisWindowHandler::ybottom = 1 - std::max(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
-        AnalysisWindowHandler::ytop = 1 - std::min(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
+        AnalyzeWidget::xleft = std::min(AnalyzeWidget::xpress, AnalyzeWidget::xrelease) / (double)gView->geometry().width();
+        AnalyzeWidget::xright = std::max(AnalyzeWidget::xpress, AnalyzeWidget::xrelease) / (double)gView->geometry().width();
+        AnalyzeWidget::ybottom = 1 - std::max(AnalyzeWidget::ypress, AnalyzeWidget::yrelease) / (double)gView->geometry().height();
+        AnalyzeWidget::ytop = 1 - std::min(AnalyzeWidget::ypress, AnalyzeWidget::yrelease) / (double)gView->geometry().height();
 
 //        std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
 //                  << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
 
-        double newmaxLoc = AnalysisWindowHandler::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
-        double newminLoc = AnalysisWindowHandler::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
-        qint64 newlcur = AnalysisWindowHandler::xleft * (data->rcur - data->lcur) + data->lcur;
-        qint64 newrcur = AnalysisWindowHandler::xright * (data->rcur - data->lcur) + data->lcur;
+        double newmaxLoc = AnalyzeWidget::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
+        double newminLoc = AnalyzeWidget::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
+        qint64 newlcur = AnalyzeWidget::xleft * (data->rcur - data->lcur) + data->lcur;
+        qint64 newrcur = AnalyzeWidget::xright * (data->rcur - data->lcur) + data->lcur;
 
 //        std::cout << newmaxLoc << ' ' << newminLoc << ' ' << newlcur << ' ' << newrcur << std::endl;
 
         if (data == nullptr || newmaxLoc > data->maxVal || newminLoc < data->minVal
             || newlcur < 0 || newrcur >= data->amountOfSamples) {
-            AnalysisWindowHandler::xpress = -1;
-            AnalysisWindowHandler::ypress = -1;
-            AnalysisWindowHandler::xrelease = -1;
-            AnalysisWindowHandler::yrelease = -1;
+            AnalyzeWidget::xpress = -1;
+            AnalyzeWidget::ypress = -1;
+            AnalyzeWidget::xrelease = -1;
+            AnalyzeWidget::yrelease = -1;
             gView->updateGraph();
             this->repaint();
             return;
@@ -380,38 +361,61 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
 
         //data->maxLoc = newmaxLoc;
         //data->minLoc = newminLoc;
-        data->lcur = newlcur;
-        data->rcur = newrcur;
+//        data->lcur = newlcur;
+//        data->rcur = newrcur;
+        SetBias(newlcur, newrcur);
 
-        AnalysisWindowHandler::updateGraphs(this);
+//        AnalysisWindowHandler::updateGraphs(this);
 
-        gView->updateGraph();
-        this->repaint();
+//        gView->updateGraph();
+//        this->repaint();
 
-        AnalysisWindowHandler::xpress = -1;
-        AnalysisWindowHandler::ypress = -1;
-        AnalysisWindowHandler::xrelease = -1;
-        AnalysisWindowHandler::yrelease = -1;
+        AnalyzeWidget::xpress = -1;
+        AnalyzeWidget::ypress = -1;
+        AnalyzeWidget::xrelease = -1;
+        AnalyzeWidget::yrelease = -1;
     }
 }
 
 void glTemplateOscillogram::mouseMoveEvent(QMouseEvent* event) {
-    if (AnalysisWindowHandler::scaleMod) {
-        AnalysisWindowHandler::xrelease = event->pos().x() - gView->geometry().x();
-        AnalysisWindowHandler::yrelease = event->pos().y() - gView->geometry().y();
+    if (AnalyzeWidget::scaleMod) {
+        AnalyzeWidget::xrelease = event->pos().x() - gView->geometry().x();
+        AnalyzeWidget::yrelease = event->pos().y() - gView->geometry().y();
 
-        AnalysisWindowHandler::xleft = std::min(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
-        AnalysisWindowHandler::xright = std::max(AnalysisWindowHandler::xpress, AnalysisWindowHandler::xrelease) / (double)gView->geometry().width();
-        AnalysisWindowHandler::ybottom = 1 - std::max(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
-        AnalysisWindowHandler::ytop = 1 - std::min(AnalysisWindowHandler::ypress, AnalysisWindowHandler::yrelease) / (double)gView->geometry().height();
+        AnalyzeWidget::xleft = std::min(AnalyzeWidget::xpress, AnalyzeWidget::xrelease) / (double)gView->geometry().width();
+        AnalyzeWidget::xright = std::max(AnalyzeWidget::xpress, AnalyzeWidget::xrelease) / (double)gView->geometry().width();
+        AnalyzeWidget::ybottom = 1 - std::max(AnalyzeWidget::ypress, AnalyzeWidget::yrelease) / (double)gView->geometry().height();
+        AnalyzeWidget::ytop = 1 - std::min(AnalyzeWidget::ypress, AnalyzeWidget::yrelease) / (double)gView->geometry().height();
 
-        AnalysisWindowHandler::changeScaleByMouse();
+        gView->updateGraph();
+        repaint();
     }
 }
 
 glTemplateOscillogram::~glTemplateOscillogram()
 {
     delete ui;
+}
+
+void glTemplateOscillogram::ChangeScrollBar() {
+    scrollBar->setRange(0, data->amountOfSamples - (data->rcur - data->lcur) - 1);
+    scrollBar->setValue(data->lcur);
+}
+
+void glTemplateOscillogram::ScrollBarChanged() {
+    long long lc = scrollBar->value();
+
+    long long diff = data->rcur - data->lcur;
+
+    long long rc = lc + diff;
+
+    if (rc >= data->amountOfSamples) {
+        auto diff = rc - data->amountOfSamples + 1;
+        lc -= diff;
+        rc -= diff;
+    }
+
+    SetBias(lc, rc);
 }
 
 bool glTemplateOscillogram::eventFilter(QObject *obj, QEvent *event) {
@@ -471,10 +475,6 @@ void glTemplateOscillogram::scrollGraph(long long y) {
     }
 
     SetBias(lcur, rcur);
-    gView->updateGraph();
-
-//    updateGraphs(ref);
-//    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
 }
 
 void glTemplateOscillogram::moveGraph(long long y) {
@@ -496,10 +496,6 @@ void glTemplateOscillogram::moveGraph(long long y) {
     rcur += ch;
 
     SetBias(lcur, rcur);
-    gView->updateGraph();
-
-//    updateGraphs(ref);
-//    changeScrollBar(ref->data->amountOfSamples, ref->data->lcur, ref->data->rcur);
 }
 
 void glTemplateOscillogram::keyPressEvent(QKeyEvent* event) {
@@ -513,13 +509,13 @@ void glTemplateOscillogram::keyPressEvent(QKeyEvent* event) {
     }
 
     if (event->key() == Qt::Key_Alt) {
-        AnalysisWindowHandler::scaleMod = true;
+        AnalyzeWidget::scaleMod = true;
     }
 }
 
 void glTemplateOscillogram::keyReleaseEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Alt) {
-        AnalysisWindowHandler::scaleMod = false;
+        AnalyzeWidget::scaleMod = false;
     }
 }
 
@@ -527,3 +523,10 @@ void glTemplateOscillogram::wheelEvent(QWheelEvent *event) {
 //    qDebug() << (event->angleDelta().y());
     scrollGraph(event->angleDelta().y());
 }
+
+
+void glTemplateOscillogram::closeEvent(QCloseEvent *event)
+{
+    SetBias(0, data->amountOfSamples-1);
+}
+
