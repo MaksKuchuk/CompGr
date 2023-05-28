@@ -33,6 +33,7 @@ public:
     void analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t = glType::Oscillogram);
     void analyze3DBy(std::shared_ptr<Graph2DData> data);
 
+    static inline bool isMultipleBiasStarted = false;
 
     static inline bool scaleMod;
 
@@ -46,10 +47,20 @@ public:
     static inline double ybottom;
     static inline double ytop;
 
+public slots:
+    void multipleBiasStart(qint64 l, qint64 r);
+
+signals:
+    void multipleBiasStartSignal(qint64 l, qint64 r);
+
 private:
     Ui::AnalyzeWidget *ui;
 
-    friend class AnalysisWindowHandler;
+private slots:
+
+    void on_actionSimultaneous_moving_triggered();
+    void on_actionLog_Scale_X_triggered();
+    void on_actionLog_Scale_Y_triggered();
 };
 
 #endif // ANALYZEWIDGET_H

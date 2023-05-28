@@ -5,7 +5,8 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include "../analyzewidget.h"
-#include "../mainwindow.h"
+#include "../Utility/config.h"
+#include "../Utility/utility.h"
 #include "../graphtemplate.h"
 
 
@@ -31,14 +32,23 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
     int numTicksX = gView->width() / xTickSpacing + 1;
     int numTicksY = gView->height() / yTickSpacing + 1;
 
+    auto xScaler = &Utility::LinearScale;
+    if (Config::xLogScale)
+        xScaler = &Utility::ExpScale;
+
+    auto yScaler = &Utility::LinearScale;
+    if (Config::yLogScale)
+        yScaler = &Utility::ExpScale;
+
     for (int i = 0; i <= numTicksX; i++) {
         // draw tick on x-axis
         int x = (yAxisX + i * gView->width() / numTicksX);
         painter.drawLine(x, xAxisY, x, xAxisY + tickLength);
 
         // add tick labels
+        auto num = xScaler(i, numTicksX, data->lcur, data->rcur);
         QString xTickLabel = QString::number(
-                    (long long)(100*((data->lcur + i*(data->rcur - data->lcur) / numTicksX) / data->Hz)) / 100.0
+                    (long long)(100*(num / data->Hz)) / 100.0
                     );
         painter.drawText(x - tickLength / 2, xAxisY + tickLength + 10, xTickLabel);
     }
@@ -49,8 +59,9 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
         painter.drawLine(yAxisX - tickLength, y, yAxisX, y);
 
         // add tick labels
+        auto num = yScaler(i, numTicksY, data->minLoc, data->maxLoc);
         QString yTickLabel = QString::number(
-                    (long long)(100*(data->minLoc + i * (data->maxLoc - data->minLoc) / numTicksY)) / 100.0
+                    (long long)(100*(num)) / 100.0
                     );
         painter.drawText(yAxisX - tickLength - 5 - painter.fontMetrics()
                          .horizontalAdvance(yTickLabel),
@@ -70,6 +81,7 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     templ(templ_)
 {
     ui->setupUi(this);
+    setFocusPolicy(Qt::StrongFocus);
 
     gView = new glOscillogram(this, data);
 
@@ -100,10 +112,8 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     layout->addWidget(scrollBar);
     ChangeScrollBar();
 
-
     setLayout(layout);
 
-    MainWindow::instance->installEventFilter(this);
 
     connect(scrollBar, &QScrollBar::valueChanged, this, &glTemplateOscillogram::ScrollBarChanged);
 
@@ -119,7 +129,6 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
 
     connect(AnalyzeWidget::getInstance(), &QWidget::destroyed, this, &QWidget::close);
 
-//    connect(this, &QWidget::keyPressEvent, [](){ qDebug() << "asd"; });
 }
 
 void glTemplateOscillogram::drawMenu(QPoint globalPos) {
@@ -365,11 +374,6 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
 //        data->rcur = newrcur;
         SetBias(newlcur, newrcur);
 
-//        AnalysisWindowHandler::updateGraphs(this);
-
-//        gView->updateGraph();
-//        this->repaint();
-
         AnalyzeWidget::xpress = -1;
         AnalyzeWidget::ypress = -1;
         AnalyzeWidget::xrelease = -1;
@@ -418,27 +422,6 @@ void glTemplateOscillogram::ScrollBarChanged() {
     SetBias(lc, rc);
 }
 
-bool glTemplateOscillogram::eventFilter(QObject *obj, QEvent *event) {
-    QKeyEvent *keyEvent = NULL;//event data, if this is a keystroke event
-    QMouseEvent *mouseEvent = NULL;
-    bool result = false;//return true to consume the keystroke
-
-    if (event->type() == QEvent::KeyPress) {
-         keyEvent = dynamic_cast<QKeyEvent*>(event);
-         this->keyPressEvent(keyEvent);
-         result = true;
-    } else if (event->type() == QEvent::KeyRelease) {
-         keyEvent = dynamic_cast<QKeyEvent*>(event);
-         this->keyReleaseEvent(keyEvent);
-         result = true;
-    }
-
-    //### Standard event processing ###
-    else
-        result = QObject::eventFilter(obj, event);
-
-    return result;
-}
 
 double glTemplateOscillogram::scrollF(long long x) {
     const double e = 2.718281828459045;
@@ -520,13 +503,17 @@ void glTemplateOscillogram::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void glTemplateOscillogram::wheelEvent(QWheelEvent *event) {
-//    qDebug() << (event->angleDelta().y());
     scrollGraph(event->angleDelta().y());
 }
 
 
 void glTemplateOscillogram::closeEvent(QCloseEvent *event)
 {
+    AnalyzeWidget::isMultipleBiasStarted = true;
     SetBias(0, data->amountOfSamples-1);
+    AnalyzeWidget::isMultipleBiasStarted = false;
+
+    if (templ != nullptr && templ->gView != nullptr)
+        disconnect(this, &glTemplateOscillogram::BiasChanged, templ->gView, &glView::setCurs);
 }
 

@@ -1,7 +1,9 @@
 #include "glOscillogram.hpp"
 #include "../Utility/config.h"
+#include "../Utility/utility.h"
 #include "../analyzewidget.h"
 #include <iostream>
+#include <cmath>
 
 glOscillogram::glOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data) :
     QOpenGLWidget(parent),
@@ -48,10 +50,18 @@ void glOscillogram::drawGraph() {
     //double dotsNumber = parNum;
     double diff = data->maxLoc - data->minLoc;
 
+    auto xScaler = &Utility::LinearScale;
+    if (Config::xLogScale)
+        xScaler = &Utility::LogScale;
+
+    auto yScaler = &Utility::LinearScale;
+    if (Config::yLogScale)
+        yScaler = &Utility::LogScale;
+
     glBegin(GL_LINE_STRIP);
         for (long long i = 0; i < dotsNumber; i++) {
-            x = (2 * (double)(i) / (dotsNumber - 1)) - 1;
-            y = (2 * (data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc) / diff) - 1;
+            x = xScaler(i, dotsNumber - 1, -1, 1);
+            y = yScaler(data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc, diff, -1, 1);
             glVertex2d(x, y);
         }
     glEnd();
