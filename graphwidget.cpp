@@ -61,3 +61,7 @@ GraphWidget::~GraphWidget()
     delete ui;
 }
 
+void GraphWidget::setCurs(long long lcur, long long rcur) {
+    graphData->lcur = lcur;
+    graphData->rcur = rcur;
+}

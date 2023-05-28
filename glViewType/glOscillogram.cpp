@@ -1,7 +1,9 @@
 #include "glOscillogram.hpp"
 #include "../Utility/config.h"
-#include "../Handler/AnalysisWindowHandler.hpp"
+#include "../Utility/utility.h"
+#include "../analyzewidget.h"
 #include <iostream>
+#include <cmath>
 
 glOscillogram::glOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data) :
     QOpenGLWidget(parent),
@@ -48,18 +50,26 @@ void glOscillogram::drawGraph() {
     //double dotsNumber = parNum;
     double diff = data->maxLoc - data->minLoc;
 
+    auto xScaler = &Utility::LinearScale;
+    if (Config::xLogScale)
+        xScaler = &Utility::LogScale;
+
+    auto yScaler = &Utility::LinearScale;
+    if (Config::yLogScale)
+        yScaler = &Utility::LogScale;
+
     glBegin(GL_LINE_STRIP);
         for (long long i = 0; i < dotsNumber; i++) {
-            x = (2 * (double)(i) / (dotsNumber - 1)) - 1;
-            y = (2 * (data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc) / diff) - 1;
+            x = xScaler(i, dotsNumber - 1, -1, 1);
+            y = yScaler(data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc, diff, -1, 1);
             glVertex2d(x, y);
         }
     glEnd();
 
-    if (AnalysisWindowHandler::xpress == -1 ||
-        AnalysisWindowHandler::ypress == -1 ||
-        AnalysisWindowHandler::xrelease == -1 ||
-        AnalysisWindowHandler::yrelease == -1) return;
+    if (AnalyzeWidget::xpress == -1 ||
+        AnalyzeWidget::ypress == -1 ||
+        AnalyzeWidget::xrelease == -1 ||
+        AnalyzeWidget::yrelease == -1) return;
 
 //    std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
 //              << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
@@ -67,10 +77,10 @@ void glOscillogram::drawGraph() {
     glColor3f(0, 0, 1);
     glLineWidth(1);
     glBegin(GL_LINES);
-        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), -1);
-        glVertex2d(((AnalysisWindowHandler::xleft * 2) - 1), 1);
-        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), -1);
-        glVertex2d(((AnalysisWindowHandler::xright * 2) - 1), 1);
+        glVertex2d(((AnalyzeWidget::xleft * 2) - 1), -1);
+        glVertex2d(((AnalyzeWidget::xleft * 2) - 1), 1);
+        glVertex2d(((AnalyzeWidget::xright * 2) - 1), -1);
+        glVertex2d(((AnalyzeWidget::xright * 2) - 1), 1);
     glEnd();
 }
 

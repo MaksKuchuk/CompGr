@@ -6,6 +6,11 @@
 #include <QWheelEvent>
 #include <QKeyEvent>
 
+#include "GraphGlData/Graph2DData.hpp"
+#include "graphtemplate.h"
+#include "glViewType/glType.hpp"
+
+
 namespace Ui {
 class AnalyzeWidget;
 }
@@ -15,6 +20,9 @@ class AnalyzeWidget : public QWidget
     Q_OBJECT
 
 public:
+    static inline QPointer<AnalyzeWidget> instance = nullptr;
+    static QPointer<AnalyzeWidget> getInstance();
+
     QVBoxLayout *layout;
 
     explicit AnalyzeWidget(QWidget *parent = nullptr);
@@ -22,16 +30,37 @@ public:
 
     void closeEvent(QCloseEvent *event) override;
 
-protected:
-    void wheelEvent(QWheelEvent *event) override;
-    bool eventFilter(QObject *obj, QEvent *event) override;
-    void keyPressEvent(QKeyEvent* event) override;
-    void keyReleaseEvent(QKeyEvent* event) override;
+    void analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t = glType::Oscillogram);
+    void analyze3DBy(std::shared_ptr<Graph2DData> data);
+
+    static inline bool isMultipleBiasStarted = false;
+
+    static inline bool scaleMod;
+
+    static inline int xpress;
+    static inline int ypress;
+    static inline int xrelease;
+    static inline int yrelease;
+
+    static inline double xleft;
+    static inline double xright;
+    static inline double ybottom;
+    static inline double ytop;
+
+public slots:
+    void multipleBiasStart(qint64 l, qint64 r);
+
+signals:
+    void multipleBiasStartSignal(qint64 l, qint64 r);
 
 private:
     Ui::AnalyzeWidget *ui;
 
-    friend class AnalysisWindowHandler;
+private slots:
+
+    void on_actionSimultaneous_moving_triggered();
+    void on_actionLog_Scale_X_triggered();
+    void on_actionLog_Scale_Y_triggered();
 };
 
 #endif // ANALYZEWIDGET_H

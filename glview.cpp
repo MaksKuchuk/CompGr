@@ -17,6 +17,8 @@ void glView::initializeGL() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1, 1, -1, 1, -1, 1);
+
+    connect(this, &glView::cursChanged, MainWindow::grWid, &GraphWidget::setCurs);
 }
 
 void glView::resizeGL(int w, int h) {
@@ -63,10 +65,7 @@ void glView::drawGraph() {
 void glView::setCurs(long long lcur, long long rcur) {
     this->lcur = lcur;
     this->rcur = rcur;
-    if (MainWindow::modelWid == nullptr && MainWindow::grWid != nullptr) {
-        MainWindow::grWid->graphData->lcur = lcur;
-        MainWindow::grWid->graphData->rcur = rcur;
-    }
+    emit cursChanged(lcur, rcur);
     update();
 }
 
