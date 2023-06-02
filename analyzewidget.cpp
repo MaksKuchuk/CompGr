@@ -10,6 +10,8 @@
 #include "Transformation/TransformToFourierSpectrum.hpp"
 #include "Transformation/TransformToWaveletogram.hpp"
 #include "Utility/config.h"
+#include "ui_fourier.h"
+#include "fourier.h"
 
 AnalyzeWidget::AnalyzeWidget(QWidget *parent) :
     QWidget(parent),
