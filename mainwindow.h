@@ -24,7 +24,7 @@ public:
 
     static inline QPointer<MainWindow> instance = nullptr;
 
-    static inline void openAnalysisWindow();
+    static void openAnalysisWindow();
 
     static inline QPointer<GraphWidget> grWid = nullptr;
     static inline QPointer<QMdiSubWindow> grWindow = nullptr;

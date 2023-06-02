@@ -2,10 +2,12 @@
 #define GLTEMPLATEOSCILLOGRAM_H
 
 #include <QWidget>
+#include <QScrollBar>
 #include "../GraphGlData/Graph2DData.hpp"
 #include "../glViewType/glOscillogram.hpp"
 #include "../graphtemplate.h"
 #include "../glViewType/glType.hpp"
+
 
 namespace Ui {
 class glTemplateOscillogram;
@@ -21,7 +23,6 @@ public:
     glOscillogram* gView = nullptr;
 
     QPointer<GraphTemplate> templ = nullptr;
-    QPointer<QLabel> infoLabel;
     glType type = glType::Oscillogram;
 
     explicit glTemplateOscillogram(QWidget *parent = nullptr,
@@ -49,6 +50,18 @@ public:
 
     void setDefaultBias();
 
+    void scrollGraph(long long delta_y);
+    void moveGraph(long long y);
+
+
+public slots:
+    void SetBias(long long lcur, long long rcur);
+    void SetScale(double bottom, double top);
+
+signals:
+    void BiasChanged(long long lcur, long long rcur);
+    void ScaleChanged(double top, double bottom);
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
 
@@ -58,10 +71,30 @@ protected:
 
     void paintEvent(QPaintEvent *event) override;
 
+
+    void wheelEvent(QWheelEvent *event) override;
+
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+
+
+    double scrollF(long long x);
+
+
+    void ChangeInfoLabel();
+
+    void ChangeScrollBar();
+    void ScrollBarChanged();
+
 private:
+    QPointer<QScrollBar> scrollBar;
+    QPointer<QLabel> infoLabel;
+
     Ui::glTemplateOscillogram *ui;
 
-    friend class AnalysisWindowHandler;
+    friend class QWidget;
+
+    void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // GLTEMPLATEOSCILLOGRAM_H

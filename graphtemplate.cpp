@@ -2,7 +2,7 @@
 #include "ui_graphtemplate.h"
 #include "glview.h"
 #include "GraphGlData/generaldata.h"
-#include "Handler/AnalysisWindowHandler.hpp"
+#include "analyzewidget.h"
 #include "Transformation/TransformToOscillogram.hpp"
 #include "Transformation/TransformToFourierSpectrum.hpp"
 #include "Statistics/statistics.h"
@@ -83,28 +83,23 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
     if (selectedItem->text() == "Oscillogram") {
         MainWindow::openAnalysisWindow();
 
-        AnalysisWindowHandler::getInstance()->analyze2DBy(
-            data, glType::Oscillogram, this);
+        AnalyzeWidget::getInstance()->analyze2DBy(
+            data, this, glType::Oscillogram);
     } else if (selectedItem->text() == "Fourier spectrum") {
         MainWindow::openAnalysisWindow();
 
-        AnalysisWindowHandler::getInstance()->analyze2DBy(
-            data, glType::FourierSpectrum, this);
+        AnalyzeWidget::getInstance()->analyze2DBy(
+            data, this, glType::FourierSpectrum);
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();
 
-        AnalysisWindowHandler::getInstance()->analyze2DBy(
-            data, glType::Waveletogram, this);
+        AnalyzeWidget::getInstance()->analyze2DBy(
+            data, this, glType::Waveletogram);
     } else if (selectedItem->text() == "Statistics") {
         statsWid = new StatisticsWidget(this, data);
         if (statsWid->isCorrect)
             MainWindow::AddWidget(statsWid);
     }
-}
-
-void GraphTemplate::resetCurs() {
-    if (gView != nullptr)
-        gView->setCurs(0, data->amountOfSamples);
 }
 
 GraphTemplate::~GraphTemplate()

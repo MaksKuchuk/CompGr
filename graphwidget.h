@@ -27,6 +27,8 @@ public:
 
     void closeEvent(QCloseEvent *event);
 
+    void setCurs(long long lcur, long long rcur);
+
 private:
     Ui::GraphWidget *ui;
 
