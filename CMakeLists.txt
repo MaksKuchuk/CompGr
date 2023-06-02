@@ -130,6 +130,9 @@ set(PROJECT_SOURCES
 
         glViewType/glType.hpp
 
+         glViewType/glspectrogram.h
+         glViewType/glspectrogram.cpp
+
         glViewTemplate/gltemplateoscillogram.h
         glViewTemplate/gltemplateoscillogram.cpp
         gltemplateoscillogram.ui

@@ -121,7 +121,7 @@ void MainWindow::on_actionAnalysis_triggered() {
 
     if (grWid != nullptr) {
         for (size_t i = 0; i < grWid->graphData->getAmountOfChannels(); ++i) {
-            instanceAn->analyze2DBy(grWid->graphData->channelTo2D(i),
+            instanceAn->analyze(grWid->graphData->channelTo2D(i),
                     static_cast<GraphTemplate*>(MainWindow::grWid->layout()->itemAt(i)->widget()));
         }
     }
