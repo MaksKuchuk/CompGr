@@ -86,11 +86,13 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
         MainWindow::openAnalysisWindow();
 
         AnalyzeWidget::getInstance()->analyze(
+
             data, this, glType::Oscillogram);
     } else if (selectedItem->text() == "Fourier spectrum") {
         MainWindow::openAnalysisWindow();
 
         AnalyzeWidget::getInstance()->analyze(
+
             data, this, glType::FourierSpectrum);
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();

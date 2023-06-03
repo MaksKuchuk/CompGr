@@ -114,8 +114,6 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
 
     setLayout(layout);
 
-
-
     connect(scrollBar, &QScrollBar::valueChanged, this, &glTemplateOscillogram::ScrollBarChanged);
 
     connect(this, &glTemplateOscillogram::BiasChanged, this, &glTemplateOscillogram::ChangeScrollBar);

@@ -37,6 +37,7 @@ QPointer<AnalyzeWidget> AnalyzeWidget::getInstance() {
 }
 
 void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t) {
+
     QPointer<glTemplateOscillogram> gView;
 
     if (t == glType::Oscillogram) {
