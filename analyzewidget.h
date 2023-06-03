@@ -30,8 +30,8 @@ public:
 
     void closeEvent(QCloseEvent *event) override;
 
-    void analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t = glType::Oscillogram);
-    void analyze3DBy(std::shared_ptr<Graph2DData> data);
+    void analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t = glType::Oscillogram);
+
 
     static inline bool isMultipleBiasStarted = false;
 

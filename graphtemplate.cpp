@@ -2,6 +2,7 @@
 #include "ui_graphtemplate.h"
 #include "glview.h"
 #include "GraphGlData/generaldata.h"
+#include "GraphGlData/Graph3DData.hpp"
 #include "analyzewidget.h"
 #include "Transformation/TransformToOscillogram.hpp"
 #include "Transformation/TransformToFourierSpectrum.hpp"
@@ -71,6 +72,7 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
     menu->addAction(new QAction(QString::fromUtf8("Oscillogram"), this));
     menu->addAction(new QAction(QString::fromUtf8("Fourier spectrum"), this));
     menu->addAction(new QAction(QString::fromUtf8("Waveletogram"), this));
+    menu->addAction(new QAction(QString::fromUtf8("Spectrogram"), this));
     menu->addSeparator();
     menu->addAction(new QAction(QString::fromUtf8("Statistics"), this));
 
@@ -83,18 +85,25 @@ void GraphTemplate::drawMenu(QPoint globalPos) {
     if (selectedItem->text() == "Oscillogram") {
         MainWindow::openAnalysisWindow();
 
-        AnalyzeWidget::getInstance()->analyze2DBy(
+        AnalyzeWidget::getInstance()->analyze(
+
             data, this, glType::Oscillogram);
     } else if (selectedItem->text() == "Fourier spectrum") {
         MainWindow::openAnalysisWindow();
 
-        AnalyzeWidget::getInstance()->analyze2DBy(
+        AnalyzeWidget::getInstance()->analyze(
+
             data, this, glType::FourierSpectrum);
     } else if (selectedItem->text() == "Waveletogram") {
         MainWindow::openAnalysisWindow();
 
-        AnalyzeWidget::getInstance()->analyze2DBy(
+        AnalyzeWidget::getInstance()->analyze(
             data, this, glType::Waveletogram);
+    } else if (selectedItem->text() == "Spectrogram") {
+        MainWindow::openAnalysisWindow();
+
+        AnalyzeWidget::getInstance()->analyze(
+            data, this, glType::Spectrogram);
     } else if (selectedItem->text() == "Statistics") {
         statsWid = new StatisticsWidget(this, data);
         if (statsWid->isCorrect)
