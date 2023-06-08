@@ -49,6 +49,8 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
         connect(this, &AnalyzeWidget::multipleBiasStartSignal, gView, &glTemplateOscillogram::SetBias);
 
     } else if (t == glType::FourierSpectrum) {
+
+
         gView = new glTemplateOscillogram(nullptr,
                                           TransformToFourierSpectrum::transform(data, 1,
                                                 SpectrumModes::PSD, FourierModes::KEEP_FIRST_VAL), templ);

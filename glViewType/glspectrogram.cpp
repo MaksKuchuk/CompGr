@@ -59,31 +59,37 @@ void glSpectrogram::drawGraph() {
         yScaler = &Utility::LogScale;
 
     glBegin(GL_QUAD_STRIP);
-//        for (qint64 i = 0; i < data->depth; i++) {
-//            for (qint64 j = 0; j < data->amountOfSamples; ++j) {
-////                x = xScaler(i, dotsNumber - 1, -1, 1);
-////                y = yScaler(data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc, diff, -1, 1);
-//                x = xScaler(i, data->depth - 1, -1, 1);
-//                y = xScaler(j, data->amountOfSamples - 1, -1, 1);
-//                glVertex2d(x, y);
-//                glVertex2d(x, y + 1.0/data->amountOfSamples );
-//            }
-//        }
+        for (qint64 i = 0; i < data->depth- 1; i++) {
+            for (qint64 j = 0; j < data->amountOfSamples-1; ++j) {
+
+                y = yScaler(i, data->depth - 1, -1, 1);
+                x = xScaler(j, data->amountOfSamples - 2, -1, 1);
+                auto x_1 = xScaler(j+1, data->amountOfSamples - 2, -1, 1);
+                auto y_1 = yScaler(j+1, data->amountOfSamples - 2, -1, 1);
 
 
-        glVertex2d(-1, -1);
-        glVertex2d(-1, 1);
+                auto asd = 1.0*i/ data->depth;
+                glColor3f(asd , asd, asd);
 
-        glColor3f(0.3, 0.3, 0.3);
+                glVertex2d(x, y);
+                glVertex2d(x, y + 1.0/data->amountOfSamples );
+            }
+        }
 
-        glVertex2d(0, -1);
-        glVertex2d(0, 1);
+
+//        glVertex2d(-1, -1);
+//        glVertex2d(-1, 1);
+
+//        glColor3f(0.3, 0.3, 0.3);
+
+//        glVertex2d(0, -1);
+//        glVertex2d(0, 1);
 
 
-        glColor3f(0.6, 0.6, 0.6);
+//        glColor3f(0.6, 0.6, 0.6);
 
-        glVertex2d(1, -1);
-        glVertex2d(1, 1);
+//        glVertex2d(1, -1);
+//        glVertex2d(1, 1);
     glEnd();
 
     if (AnalyzeWidget::xpress == -1 ||

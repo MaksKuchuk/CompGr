@@ -111,7 +111,7 @@ void TransformToFourierSpectrum::FFTW(CArray& x) {
         x[k+N/2] = even[k] - t;
     }
 }
-
+#include <QDebug>
 std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     (
         std::shared_ptr<Graph2DData> data,
@@ -139,10 +139,13 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
 
     QList<double> new_data(new_size);
 
+
     if (mode == SpectrumModes::AMPLITUDE_SPECTRUM)
         amplitudeSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
     else if (mode == SpectrumModes::PSD)
         PSDSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
+
+    new_data[0]=0;
 
     if (L)
         smoothing(new_data, L, new_size);

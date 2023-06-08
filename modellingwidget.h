@@ -95,6 +95,8 @@ public:
 
     void DisableToggle();
 
+    static inline bool OpeningModels = false;
+
 private:
     void ChangedModel();
     void DrawGraph();
