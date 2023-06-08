@@ -57,6 +57,8 @@ public:
 public slots:
     void SetBias(long long lcur, long long rcur);
     void SetScale(double bottom, double top);
+    void ResetBias();
+    void ResetScale();
 
 signals:
     void BiasChanged(long long lcur, long long rcur);

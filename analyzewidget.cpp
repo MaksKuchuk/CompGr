@@ -47,6 +47,10 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
                 [&](qint64 a, qint64 b){ if (this != nullptr) multipleBiasStart(a,b);}
         );
         connect(this, &AnalyzeWidget::multipleBiasStartSignal, gView, &glTemplateOscillogram::SetBias);
+        connect(this, &AnalyzeWidget::setGlobalScaleSignal, gView, &glTemplateOscillogram::SetScale);
+        connect(this, &AnalyzeWidget::ResetBiasSignal, gView, &glTemplateOscillogram::ResetBias);
+        connect(this, &AnalyzeWidget::ResetScaleSignal, gView, &glTemplateOscillogram::ResetScale);
+        connect(this, &AnalyzeWidget::SetSingleScaleSignal, gView, &glTemplateOscillogram::setLocalScale);
 
     } else if (t == glType::FourierSpectrum) {
 
@@ -91,6 +95,31 @@ void AnalyzeWidget::multipleBiasStart(qint64 l, qint64 r) {
         AnalyzeWidget::isMultipleBiasStarted = false;
     }
 }
+
+void AnalyzeWidget::SetSingleScale() {
+    emit SetSingleScaleSignal();
+}
+
+void AnalyzeWidget::SetGlobalScale() {
+    double min = std::numeric_limits<double>::max();
+    double max = -std::numeric_limits<double>::max();
+    for (qint64 i = 0; i < layout->count(); ++i) {
+       auto osc = qobject_cast<glTemplateOscillogram*>( layout->itemAt(i)->widget());
+       min = std::min(min, osc->gView->data->minLoc);
+       max = std::max(max, osc->gView->data->maxLoc);
+    }
+
+    emit setGlobalScaleSignal(min, max);
+}
+
+void AnalyzeWidget::ResetBias() {
+    emit ResetBiasSignal();
+}
+
+void AnalyzeWidget::ResetScale() {
+    emit ResetScaleSignal();
+}
+
 
 AnalyzeWidget::~AnalyzeWidget()
 {
