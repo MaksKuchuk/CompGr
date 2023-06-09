@@ -47,7 +47,18 @@
      </widget>
     </item>
     <item>
-     <widget class="QComboBox" name="spectrum_mode_cb"/>
+     <widget class="QComboBox" name="spectrum_mode_cb">
+      <item>
+       <property name="text">
+        <string>Amplitude spectrum</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PSD</string>
+       </property>
+      </item>
+     </widget>
     </item>
     <item>
      <widget class="QLabel" name="first_val_label">
@@ -57,7 +68,23 @@
      </widget>
     </item>
     <item>
-     <widget class="QComboBox" name="first_val_cb"/>
+     <widget class="QComboBox" name="first_val_cb">
+      <item>
+       <property name="text">
+        <string>Keep first val</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Zero first val</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Equal to adj</string>
+       </property>
+      </item>
+     </widget>
     </item>
     <item>
      <widget class="QLabel" name="smooth_label">

@@ -134,9 +134,9 @@ set(PROJECT_SOURCES
         glViewTemplate/gltemplateoscillogram.cpp
         gltemplateoscillogram.ui
 
-        fourier.cpp
-        fourier.h
         fourier.ui
+        fourierDialog.h
+        fourierDialog.cpp
 
         ${TS_FILES}
         )
