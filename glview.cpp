@@ -18,7 +18,8 @@ void glView::initializeGL() {
     glLoadIdentity();
     glOrtho(-1, 1, -1, 1, -1, 1);
 
-    connect(this, &glView::cursChanged, MainWindow::grWid, &GraphWidget::setCurs);
+    if (!ModellingWidget::OpeningModels)
+        connect(this, &glView::cursChanged, MainWindow::grWid, &GraphWidget::setCurs);
 }
 
 void glView::resizeGL(int w, int h) {

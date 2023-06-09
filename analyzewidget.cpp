@@ -3,6 +3,8 @@
 #include <QVBoxLayout>
 #include <QEvent>
 #include "glViewTemplate/gltemplateoscillogram.h"
+#include "glViewType/glspectrogram.h"
+#include "GraphGlData/Graph3DData.hpp"
 #include <QScrollBar>
 
 #include <iostream>
@@ -35,7 +37,8 @@ QPointer<AnalyzeWidget> AnalyzeWidget::getInstance() {
     return instance;
 }
 
-void AnalyzeWidget::analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t) {
+void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t) {
+
     QPointer<glTemplateOscillogram> gView;
 
     if (t == glType::Oscillogram) {
@@ -45,8 +48,13 @@ void AnalyzeWidget::analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<Grap
                 [&](qint64 a, qint64 b){ if (this != nullptr) multipleBiasStart(a,b);}
         );
         connect(this, &AnalyzeWidget::multipleBiasStartSignal, gView, &glTemplateOscillogram::SetBias);
+        connect(this, &AnalyzeWidget::setGlobalScaleSignal, gView, &glTemplateOscillogram::SetScale);
+        connect(this, &AnalyzeWidget::ResetBiasSignal, gView, &glTemplateOscillogram::ResetBias);
+        connect(this, &AnalyzeWidget::ResetScaleSignal, gView, &glTemplateOscillogram::ResetScale);
+        connect(this, &AnalyzeWidget::SetSingleScaleSignal, gView, &glTemplateOscillogram::setLocalScale);
 
     } else if (t == glType::FourierSpectrum) {
+
         long long smoothing;
         SpectrumModes mode;
         FourierModes first_val;
@@ -74,9 +82,25 @@ void AnalyzeWidget::analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<Grap
                                                 mode, first_val), templ);
         }
 
+
     } else if (t == glType::Waveletogram) {
         gView = new glTemplateOscillogram(nullptr, TransformToWaveletogram::transform(data), templ);
 
+
+    } else if (t == glType::Spectrogram) {
+        auto data3d = std::make_shared<Graph3DData>();
+        data3d->amountOfSamples = 10;
+        data3d->depth = 10;
+        data3d->lcur = 0;
+        data3d->lcur = 9;
+        data3d->minLoc = 0;
+        data3d->maxLoc = 1;
+
+        auto spect = new glSpectrogram(nullptr, data3d);
+
+        layout->addWidget(spect);
+        spect->show();
+        return;
 
     }
 //    ui->verticalLayout->addWidget(gView);
@@ -84,10 +108,6 @@ void AnalyzeWidget::analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<Grap
     gView->resize(300, 60);
 
     gView->show();
-}
-
-void AnalyzeWidget::analyze3DBy(std::shared_ptr<Graph2DData> data) {
-    return;
 }
 
 void AnalyzeWidget::multipleBiasStart(qint64 l, qint64 r) {
@@ -99,6 +119,31 @@ void AnalyzeWidget::multipleBiasStart(qint64 l, qint64 r) {
         AnalyzeWidget::isMultipleBiasStarted = false;
     }
 }
+
+void AnalyzeWidget::SetSingleScale() {
+    emit SetSingleScaleSignal();
+}
+
+void AnalyzeWidget::SetGlobalScale() {
+    double min = std::numeric_limits<double>::max();
+    double max = -std::numeric_limits<double>::max();
+    for (qint64 i = 0; i < layout->count(); ++i) {
+       auto osc = qobject_cast<glTemplateOscillogram*>( layout->itemAt(i)->widget());
+       min = std::min(min, osc->gView->data->minLoc);
+       max = std::max(max, osc->gView->data->maxLoc);
+    }
+
+    emit setGlobalScaleSignal(min, max);
+}
+
+void AnalyzeWidget::ResetBias() {
+    emit ResetBiasSignal();
+}
+
+void AnalyzeWidget::ResetScale() {
+    emit ResetScaleSignal();
+}
+
 
 AnalyzeWidget::~AnalyzeWidget()
 {

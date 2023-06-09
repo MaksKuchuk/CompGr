@@ -10,7 +10,7 @@ public:
     // cfg
     static inline bool isDarkTheme = true;
     static inline bool waveletFill = false;
-    static inline bool multipleBias = false;
+    static inline bool multipleBias = true;
     static inline bool xLogScale = false;
     static inline bool yLogScale = false;
 };

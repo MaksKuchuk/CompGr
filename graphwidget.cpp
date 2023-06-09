@@ -15,12 +15,14 @@ GraphWidget::GraphWidget(QWidget *parent, std::shared_ptr<GeneralData> pData) :
     ui->setupUi(this);
     if (pData == nullptr) return;
 
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout *layout = ui->verticalLayout;
+//    layout->setContentsMargins(0, 0, 0, 0);
 //    layout->setSpacing(0);
 
     for (int i = 0; i < graphData->amountOfChannels; i++) {
         GraphTemplate* gTemp = new GraphTemplate(this, graphData, i);
+
+        connect(gTemp->gView, &glView::cursChanged, this, &GraphWidget::setCurs);
 
         layout->addWidget(gTemp);
 

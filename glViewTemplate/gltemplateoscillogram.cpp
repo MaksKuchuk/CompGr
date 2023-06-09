@@ -114,7 +114,6 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
 
     setLayout(layout);
 
-
     connect(scrollBar, &QScrollBar::valueChanged, this, &glTemplateOscillogram::ScrollBarChanged);
 
     connect(this, &glTemplateOscillogram::BiasChanged, this, &glTemplateOscillogram::ChangeScrollBar);
@@ -128,7 +127,6 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     connect(this, &glTemplateOscillogram::ScaleChanged, [&](){ repaint(); });
 
     connect(AnalyzeWidget::getInstance(), &QWidget::destroyed, this, &QWidget::close);
-
 }
 
 void glTemplateOscillogram::drawMenu(QPoint globalPos) {
@@ -200,33 +198,31 @@ void glTemplateOscillogram::SetScale(double bottom, double top) {
     emit ScaleChanged(bottom, top);
 }
 
+void glTemplateOscillogram::ResetBias() {
+    data->lcur = 0;
+    data->rcur = data->amountOfSamples - 1;
+    emit BiasChanged(data->lcur, data->rcur);
+}
+void glTemplateOscillogram::ResetScale() {
+    data->minLoc = data->minVal;
+    data->maxLoc = data->maxVal;
+    emit ScaleChanged(data->minLoc, data->maxLoc);
+}
+
 void glTemplateOscillogram::setDefaultScale(){
-//    AnalysisWindowHandler::setDefaultScale();
+    AnalyzeWidget::getInstance()->ResetScale();
 }
 
 void glTemplateOscillogram::setDefaultBias() {
-//    AnalysisWindowHandler::setDefaultBias();
+    AnalyzeWidget::getInstance()->ResetBias();
 }
 
 void glTemplateOscillogram::selectSingleLocalScale() {
-    if (data == nullptr) return;
-
-    double lmi, lma;
-
-    lmi = data->samples[data->lcur];
-    lma = data->samples[data->lcur];
-    for (long long i = data->lcur; i <= data->rcur; i++) {
-        if (lmi > data->samples[i]) lmi = data->samples[i];
-        if (lma < data->samples[i]) lma = data->samples[i];
-    }
-
-    SetScale(lmi, lma);
-
-//    AnalysisWindowHandler::changeSingleLocalScale(lmi, lma);
+    AnalyzeWidget::getInstance()->SetSingleScale();
 }
 
 void glTemplateOscillogram::selectSingleGlobalScale() {
-//    AnalysisWindowHandler::setSingleGlobalScale();
+    AnalyzeWidget::getInstance()->SetGlobalScale();
 }
 
 void glTemplateOscillogram::selectScale() {

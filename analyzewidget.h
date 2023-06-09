@@ -30,8 +30,13 @@ public:
 
     void closeEvent(QCloseEvent *event) override;
 
-    void analyze2DBy(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t = glType::Oscillogram);
-    void analyze3DBy(std::shared_ptr<Graph2DData> data);
+    void analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t = glType::Oscillogram);
+
+    void SetSingleScale();
+    void SetGlobalScale();
+    void ResetBias();
+    void ResetScale();
+
 
     static inline bool isMultipleBiasStarted = false;
 
@@ -52,6 +57,10 @@ public slots:
 
 signals:
     void multipleBiasStartSignal(qint64 l, qint64 r);
+    void setGlobalScaleSignal(double min, double max);
+    void ResetBiasSignal();
+    void ResetScaleSignal();
+    void SetSingleScaleSignal();
 
 private:
     Ui::AnalyzeWidget *ui;

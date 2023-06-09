@@ -260,10 +260,13 @@ void ModellingWidget::DrawGraph() {
         break;
     }
     delete graphTemplate;
+    ModellingWidget::OpeningModels = true;
+
     graphTemplate = new GraphTemplate(this, data, false);
     formulaLabel->setText(Modeling::TypeToFormula(currentType));
     form->setWidget(2, QFormLayout::FieldRole, graphTemplate);
 
+    ModellingWidget::OpeningModels = true;
     this->update();
 }
 

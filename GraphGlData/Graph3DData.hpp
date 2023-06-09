@@ -1,28 +1,35 @@
 #ifndef GRAPH3DDATA_H
 #define GRAPH3DDATA_H
 
-#include <string>
+#include <QString>
+#include <QList>
+#include <QColor>
 
 class Graph3DData {
 public:
-    std::string name;
-    std::string source;
+    QString name;
+    QString source;
 
     double maxVal;
     double minVal;
 
     double minLoc;
     double maxLoc;
-    unsigned long long amountOfSamples;
+    size_t amountOfSamples;
+    size_t depth;
 
     long long lcur, rcur;
 
-    double Hz;
+    double Hz = 1;
 
+    QString startDate = "01-01-2000 00:00:00.000";
     double totalSeconds;
 
-    double* samples = nullptr;
-    double* depth = nullptr;
+    QList<QList<QColor>> samples;
+    QPair<double, double> x_range;
+    QPair<double, double> y_range;
+
+    Graph3DData() = default;
 };
 
 #endif

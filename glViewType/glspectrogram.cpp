@@ -1,33 +1,31 @@
-#include "glOscillogram.hpp"
+#include "glspectrogram.h"
+#include "../analyzewidget.h"
 #include "../Utility/config.h"
 #include "../Utility/utility.h"
-#include "../analyzewidget.h"
-#include <iostream>
-#include <cmath>
 
-glOscillogram::glOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data) :
-    QOpenGLWidget(parent),
-    data(data) {
+glSpectrogram::glSpectrogram(QWidget *parent, std::shared_ptr<Graph3DData> data)
+    : QOpenGLWidget{parent},
+      data(data)
+{
 
-    setMinimumSize(50, 25);
 }
 
-void glOscillogram::updateGraph() {
-    repaint();    
+void glSpectrogram::updateGraph() {
+    repaint();
 }
 
-void glOscillogram::initializeGL() {
+void glSpectrogram::initializeGL() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1, 1, -1, 1, -1, 1);
 }
 
-void glOscillogram::resizeGL(int w, int h) {
+void glSpectrogram::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
     drawGraph();
 }
 
-void glOscillogram::paintGL() {
+void glSpectrogram::paintGL() {
     if (Config::isDarkTheme) {
         glClearColor(0, 0, 0, 1);
         glColor3f(1, 1, 1);
@@ -38,7 +36,7 @@ void glOscillogram::paintGL() {
     drawGraph();
 }
 
-void glOscillogram::drawGraph() {
+void glSpectrogram::drawGraph() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLineWidth(1);
 
@@ -60,12 +58,38 @@ void glOscillogram::drawGraph() {
     if (Config::yLogScale)
         yScaler = &Utility::LogScale;
 
-    glBegin(GL_LINE_STRIP);
-        for (long long i = 0; i < dotsNumber; i++) {
-            x = xScaler(i, dotsNumber - 1, -1, 1);
-            y = yScaler(data->samples[static_cast<long long>(lcur + i * (parNum / dotsNumber))] - data->minLoc, diff, -1, 1);
-            glVertex2d(x, y);
+    glBegin(GL_QUAD_STRIP);
+        for (qint64 i = 0; i < data->depth- 1; i++) {
+            for (qint64 j = 0; j < data->amountOfSamples-1; ++j) {
+
+                y = yScaler(i, data->depth - 1, -1, 1);
+                x = xScaler(j, data->amountOfSamples - 2, -1, 1);
+                auto x_1 = xScaler(j+1, data->amountOfSamples - 2, -1, 1);
+                auto y_1 = yScaler(j+1, data->amountOfSamples - 2, -1, 1);
+
+
+                auto asd = 1.0*i/ data->depth;
+                glColor3f(asd , asd, asd);
+
+                glVertex2d(x, y);
+                glVertex2d(x, y + 1.0/data->amountOfSamples );
+            }
         }
+
+
+//        glVertex2d(-1, -1);
+//        glVertex2d(-1, 1);
+
+//        glColor3f(0.3, 0.3, 0.3);
+
+//        glVertex2d(0, -1);
+//        glVertex2d(0, 1);
+
+
+//        glColor3f(0.6, 0.6, 0.6);
+
+//        glVertex2d(1, -1);
+//        glVertex2d(1, 1);
     glEnd();
 
     if (AnalyzeWidget::xpress == -1 ||
@@ -85,18 +109,3 @@ void glOscillogram::drawGraph() {
         glVertex2d(((AnalyzeWidget::xright * 2) - 1), 1);
     glEnd();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
