@@ -59,7 +59,7 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
         SpectrumModes mode;
         FourierModes first_val;
 
-        auto dlg = new fourierDialog();
+        auto dlg = new fourierDialog(0, data->amountOfSamples / 2);
         if (dlg->exec()) {
             smoothing = dlg->smooth_spin->value();
 
