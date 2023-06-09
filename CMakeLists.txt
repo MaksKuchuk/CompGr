@@ -138,6 +138,8 @@ set(PROJECT_SOURCES
         gltemplateoscillogram.ui
 
         fourier.ui
+        fourierDialog.h
+        fourierDialog.cpp
 
         ${TS_FILES}
         )
