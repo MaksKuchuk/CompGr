@@ -92,13 +92,11 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     else if (mode == SpectrumModes::PSD)
         PSDSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
 
-    new_data[0]=0;
-
     if (L)
         smoothing(new_data, L, new_size);
 
     double min = 0;
-    double max = new_data[0];
+    double max = 0;
     for (long long i = 0; i < new_size; ++i) {        
         if (new_data[i] > max) {
             max = new_data[i];
@@ -111,7 +109,8 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
 
     auto data2d = std::make_shared<Graph2DData>();
 
-    data2d->Hz = 1;// / (new_size);
+    data2d->Hz = data->amountOfSamples/data->Hz; // for correct graph
+
     data2d->totalSeconds = 1;
     data2d->amountOfSamples = new_size;
     data2d->samples = (new_data);

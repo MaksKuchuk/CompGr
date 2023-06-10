@@ -7,97 +7,91 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>240</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>381</width>
-     <height>221</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="mode_label">
-      <property name="text">
-       <string>Spectrum mode</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="spectrum_mode_cb">
-      <item>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="mode_label">
        <property name="text">
-        <string>Amplitude spectrum</string>
+        <string>Spectrum mode</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="spectrum_mode_cb">
+       <item>
+        <property name="text">
+         <string>Amplitude spectrum</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>PSD</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="first_val_label">
        <property name="text">
-        <string>PSD</string>
+        <string>First value</string>
        </property>
-      </item>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="first_val_label">
-      <property name="text">
-       <string>First value</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="first_val_cb">
-      <item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="first_val_cb">
+       <item>
+        <property name="text">
+         <string>Zero first val</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Keep first val</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Equal to adj</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="smooth_label">
        <property name="text">
-        <string>Keep first val</string>
+        <string>Smoothing</string>
        </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Zero first val</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Equal to adj</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="smooth_label">
-      <property name="text">
-       <string>Smoothing</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QSpinBox" name="smooth_spin"/>
-    </item>
-   </layout>
-  </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="smooth_spin"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>

@@ -60,28 +60,28 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
         FourierModes first_val;
 
         auto dlg = new fourierDialog(0, data->amountOfSamples / 2);
-        if (dlg->exec()) {
-            smoothing = dlg->smooth_spin->value();
+        if (!dlg->exec())
+            return;
 
-            auto mode_string = dlg->spectrum_mode_cb->currentText();
-            if (mode_string == "Amplitude spectrum")
-                mode = SpectrumModes::AMPLITUDE_SPECTRUM;
-            else if (mode_string == "PSD")
-                mode = SpectrumModes::PSD;
+        smoothing = dlg->smooth_spin->value();
 
-            auto first_val_string = dlg->first_val_cb->currentText();
-            if (first_val_string == "Keep first val")
-                first_val = FourierModes::KEEP_FIRST_VAL;
-            else if (first_val_string == "Zero first val")
-                first_val = FourierModes::ZERO_FIRST_VAL;
-            else if (first_val_string == "Equal to adj")
-                first_val = FourierModes::EQUALIZE_WITH_ADJ;
+        auto mode_string = dlg->spectrum_mode_cb->currentText();
+        if (mode_string == "Amplitude spectrum")
+            mode = SpectrumModes::AMPLITUDE_SPECTRUM;
+        else if (mode_string == "PSD")
+            mode = SpectrumModes::PSD;
 
-            gView = new glTemplateOscillogram(nullptr,
-                                          TransformToFourierSpectrum::transform(data, smoothing,
-                                                mode, first_val), templ);
-        }
+        auto first_val_string = dlg->first_val_cb->currentText();
+        if (first_val_string == "Keep first val")
+            first_val = FourierModes::KEEP_FIRST_VAL;
+        else if (first_val_string == "Zero first val")
+            first_val = FourierModes::ZERO_FIRST_VAL;
+        else if (first_val_string == "Equal to adj")
+            first_val = FourierModes::EQUALIZE_WITH_ADJ;
 
+        gView = new glTemplateOscillogram(nullptr,
+                                      TransformToFourierSpectrum::transform(data, smoothing,
+                                            mode, first_val), templ);
 
     } else if (t == glType::Waveletogram) {
         gView = new glTemplateOscillogram(nullptr, TransformToWaveletogram::transform(data), templ);

@@ -47,9 +47,7 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
 
         // add tick labels
         auto num = xScaler(i, numTicksX, data->lcur, data->rcur);
-        QString xTickLabel = QString::number(
-                    (long long)(100*(num / data->Hz)) / 100.0
-                    );
+        QString xTickLabel = QString::number(num / data->Hz, 'g', 3);
         painter.drawText(x - tickLength / 2, xAxisY + tickLength + 10, xTickLabel);
     }
 
@@ -60,9 +58,7 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
 
         // add tick labels
         auto num = yScaler(i, numTicksY, data->minLoc, data->maxLoc);
-        QString yTickLabel = QString::number(
-                    (long long)(100*(num)) / 100.0
-                    );
+        QString yTickLabel = QString::number(num, 'g', 3);
         painter.drawText(yAxisX - tickLength - 5 - painter.fontMetrics()
                          .horizontalAdvance(yTickLabel),
                          y + painter.fontMetrics().height() / 2, yTickLabel);
