@@ -40,56 +40,44 @@ void glSpectrogram::drawGraph() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLineWidth(1);
 
-    double x, y;
-    long long lcur = data->lcur;
-    long long rcur = data->rcur;
+    double x, y, x_1, y_1;
+//    long long lcur = data->lcur;
+//    long long rcur = data->rcur;
 
-    double parNum = rcur - lcur + 1;
+//    double parNum = rcur - lcur + 1;
 
-    double dotsNumber = parNum > 50000 ? 50000 : parNum;
+//    double dotsNumber = parNum > 50000 ? 50000 : parNum;
     //double dotsNumber = parNum;
-    double diff = data->maxLoc - data->minLoc;
+//    double diff = data->maxLoc - data->minLoc;
 
     auto xScaler = &Utility::LinearScale;
-//    if (Config::xLogScale)
-//        xScaler = &Utility::LogScale;
+    if (0)
+        xScaler = &Utility::LogScale;
 
     auto yScaler = &Utility::LinearScale;
-//    if (Config::yLogScale)
-//        yScaler = &Utility::LogScale;
+    if (0)
+        yScaler = &Utility::LogScale;
 
-    glBegin(GL_QUAD_STRIP);
-        for (qint64 i = 0; i < data->depth- 1; i++) {
-            for (qint64 j = 0; j < data->amountOfSamples-1; ++j) {
+    // bottom -> top, left -> right
+    glBegin(GL_QUADS);
+        for (qint64 i = 0; i < data->depth; ++i) {
+            for (qint64 j = 0; j < data->amountOfSamples; ++j) {
 
-                y = yScaler(i, data->depth - 1, -1, 1);
-                x = xScaler(j, data->amountOfSamples - 2, -1, 1);
-                auto x_1 = xScaler(j+1, data->amountOfSamples - 2, -1, 1);
-                auto y_1 = yScaler(j+1, data->amountOfSamples - 2, -1, 1);
+                x = xScaler(j, data->amountOfSamples, -1, 1);
+                y = yScaler(i, data->depth, -1, 1);
+                x_1 = xScaler(j+1, data->amountOfSamples, -1, 1);
+                y_1 = yScaler(i+1, data->depth, -1, 1);
 
+                auto col = data->samples[i][j]/ data->maxVal;
 
-                auto asd = 1.0*i/ data->depth;
-                glColor3f(asd , asd, asd);
+                glColor3f(col, col, col);
 
                 glVertex2d(x, y);
-                glVertex2d(x, y + 1.0/data->amountOfSamples );
+                glVertex2d(x, y_1 );
+                glVertex2d(x_1, y_1 );
+                glVertex2d(x_1, y);
             }
         }
-
-
-//        glVertex2d(-1, -1);
-//        glVertex2d(-1, 1);
-
-//        glColor3f(0.3, 0.3, 0.3);
-
-//        glVertex2d(0, -1);
-//        glVertex2d(0, 1);
-
-
-//        glColor3f(0.6, 0.6, 0.6);
-
-//        glVertex2d(1, -1);
-//        glVertex2d(1, 1);
     glEnd();
 
     if (AnalyzeWidget::xpress == -1 ||

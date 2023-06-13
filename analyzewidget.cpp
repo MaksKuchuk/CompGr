@@ -101,12 +101,17 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
         }
         case glType::Spectrogram: {
             auto data3d = std::make_shared<Graph3DData>();
-            data3d->amountOfSamples = 10;
-            data3d->depth = 10;
+            data3d->samples = {{0.1,0.2,0.3},{0.4,0.5,0.6},{0.7,0.8,0.9}};
+
+            data3d->amountOfSamples = 3;
+            data3d->depth = 3;
             data3d->lcur = 0;
-            data3d->lcur = 9;
+            data3d->lcur = 2;
+            data3d->minVal = 0;
+            data3d->maxVal = 0.9;
             data3d->minLoc = 0;
-            data3d->maxLoc = 1;
+            data3d->maxLoc = 0.9;
+
 
             auto spect = new glSpectrogram(nullptr, data3d);
 

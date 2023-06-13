@@ -25,7 +25,7 @@ public:
     QString startDate = "01-01-2000 00:00:00.000";
     double totalSeconds;
 
-    QList<QList<QColor>> samples;
+    std::vector<std::vector<double>> samples;
     QPair<double, double> x_range;
     QPair<double, double> y_range;
 
