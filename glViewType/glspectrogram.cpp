@@ -51,12 +51,12 @@ void glSpectrogram::drawGraph() {
     double diff = data->maxLoc - data->minLoc;
 
     auto xScaler = &Utility::LinearScale;
-    if (Config::xLogScale)
-        xScaler = &Utility::LogScale;
+//    if (Config::xLogScale)
+//        xScaler = &Utility::LogScale;
 
     auto yScaler = &Utility::LinearScale;
-    if (Config::yLogScale)
-        yScaler = &Utility::LogScale;
+//    if (Config::yLogScale)
+//        yScaler = &Utility::LogScale;
 
     glBegin(GL_QUAD_STRIP);
         for (qint64 i = 0; i < data->depth- 1; i++) {

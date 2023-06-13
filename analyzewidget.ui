@@ -58,21 +58,13 @@
         <x>348</x>
         <y>120</y>
         <width>221</width>
-        <height>112</height>
+        <height>84</height>
        </rect>
       </property>
       <property name="title">
        <string>Settings</string>
       </property>
-      <widget class="QMenu" name="menuLog_Scale">
-       <property name="title">
-        <string>Select Log Scale</string>
-       </property>
-       <addaction name="actionLog_Scale_X"/>
-       <addaction name="actionLog_Scale_Y"/>
-      </widget>
       <addaction name="actionSimultaneous_moving"/>
-      <addaction name="menuLog_Scale"/>
      </widget>
      <addaction name="menuSettings"/>
     </widget>
@@ -94,22 +86,6 @@
    </property>
    <property name="text">
     <string>Simultaneous Moving</string>
-   </property>
-  </action>
-  <action name="actionLog_Scale_X">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Log Scale X</string>
-   </property>
-  </action>
-  <action name="actionLog_Scale_Y">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Log Scale Y</string>
    </property>
   </action>
  </widget>

@@ -33,11 +33,11 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
     int numTicksY = gView->height() / yTickSpacing + 1;
 
     auto xScaler = &Utility::LinearScale;
-    if (Config::xLogScale)
+    if (xLogScale)
         xScaler = &Utility::ExpScale;
 
     auto yScaler = &Utility::LinearScale;
-    if (Config::yLogScale)
+    if (yLogScale)
         yScaler = &Utility::ExpScale;
 
     for (int i = 0; i <= numTicksX; i++) {
@@ -47,7 +47,12 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
 
         // add tick labels
         auto num = xScaler(i, numTicksX, data->lcur, data->rcur);
-        QString xTickLabel = QString::number(num / data->Hz, 'g', 3);
+        QString xTickLabel;
+        if (isTimeStep)
+            xTickLabel = freqToTime(num / data->Hz);
+        else
+            xTickLabel = QString::number(num / data->Hz, 'g', 3);
+
         painter.drawText(x - tickLength / 2, xAxisY + tickLength + 10, xTickLabel);
     }
 
@@ -65,16 +70,46 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
     }
 }
 
+QString glTemplateOscillogram::freqToTime(double freq) {
+    if (freq <= 0)
+        return "-";
+
+    auto time = 1/freq;
+
+    constexpr double secInHour = 3600;
+    constexpr double secInDay = secInHour * 24;
+    constexpr double secInYear = secInDay * 365;
+
+    if (time > secInYear)
+        return QString::number(time / secInYear, 'g', 3)+" y";
+    if (time > 7 * secInDay)
+        return QString::number(time / secInDay, 'g', 3)+" d";
+    if (time > secInHour)
+        return QString::number(time / secInHour, 'g', 3)+" h";
+    if (time > 3 * 60)
+        return QString::number(time / 60, 'g', 3)+" m";
+
+    if (time > 1)
+        return QString::number(time, 'g', 3)+" s";
+    if (time > 1e-3)
+        return QString::number(time * 1e3, 'g', 3)+" ms";
+
+    return QString::number(time * 1e6, 'g', 3)+" mcs";
+
+}
+
 void glTemplateOscillogram::ChangeInfoLabel() {
     infoLabel->setText("Samples: "+QString::number(data->rcur - data->lcur+1));
 }
 
 
-glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ_) :
+glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data,
+                                             QPointer<GraphTemplate> templ_, glType oscType) :
     QWidget(parent),
     ui(new Ui::glTemplateOscillogram),
     data(data),
-    templ(templ_)
+    templ(templ_),
+    type(oscType)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
@@ -122,15 +157,18 @@ glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Gr
     connect(this, &glTemplateOscillogram::ScaleChanged, gView, &glOscillogram::updateGraph);
     connect(this, &glTemplateOscillogram::ScaleChanged, [&](){ repaint(); });
 
-    connect(AnalyzeWidget::getInstance(), &QWidget::destroyed, this, &QWidget::close);
+    if (parent != nullptr)
+        connect(parent, &QWidget::destroyed, this, &QWidget::close);
 }
 
 void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     QMenu *menu = new QMenu();
 
-    QAction* action1 = new QAction(QString::fromUtf8("Close"), this);
-    menu->addAction(action1);
-    menu->addSeparator();
+    if (type == glType::Oscillogram) {
+        QAction* action1 = new QAction(QString::fromUtf8("Close"), this);
+        menu->addAction(action1);
+        menu->addSeparator();
+    }
     QAction* action2 = new QAction(QString::fromUtf8("Local scale"), this);
     menu->addAction(action2);
     QAction* action3 = new QAction(QString::fromUtf8("Global scale"), this);
@@ -143,19 +181,39 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     QAction* action6 = new QAction(QString::fromUtf8("Set bias"), this);
     menu->addAction(action6);
     menu->addSeparator();
-    QAction* action7 = new QAction(QString::fromUtf8("Single local scale"), this);
-    menu->addAction(action7);
-    QAction* action8 = new QAction(QString::fromUtf8("Single global scale"), this);
-    menu->addAction(action8);
+
+    if (type == glType::Oscillogram) {
+        QAction* action7 = new QAction(QString::fromUtf8("Single local scale"), this);
+        menu->addAction(action7);
+        QAction* action8 = new QAction(QString::fromUtf8("Single global scale"), this);
+        menu->addAction(action8);
+        menu->addSeparator();
+        QAction* action9 = new QAction(QString::fromUtf8("Default scale for all"), this);
+        menu->addAction(action9);
+        QAction* action10 = new QAction(QString::fromUtf8("Default bias for all"), this);
+        menu->addAction(action10);
+        menu->addSeparator();
+    }
+
+    QAction* scalex = new QAction(QString::fromUtf8("Log Scale X"), this);
+    scalex->setCheckable(true);
+    scalex->setChecked(xLogScale);
+    menu->addAction(scalex);
+    QAction* scaley = new QAction(QString::fromUtf8("Log Scale Y"), this);
+    scaley->setCheckable(true);
+    scaley->setChecked(yLogScale);
+    menu->addAction(scaley);
     menu->addSeparator();
-    QAction* action9 = new QAction(QString::fromUtf8("Default scale for all"), this);
-    menu->addAction(action9);
-    QAction* action10 = new QAction(QString::fromUtf8("Default bias for all"), this);
-    menu->addAction(action10);
+
+    QAction* timestep = new QAction(QString::fromUtf8("Time Step"), this);
+    timestep->setCheckable(true);
+    timestep->setChecked(isTimeStep);
+    if (type == glType::FourierSpectrum) {
+        menu->addAction(timestep);
+    }
 
 
     QAction* selectedItem = menu->exec(globalPos);
-
     delete menu;
 
     if (selectedItem == nullptr) return;
@@ -179,7 +237,14 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
         setDefaultScale();
     } else if (selectedItem->text() == "Default bias for all") {
         setDefaultBias();
+    } else if (selectedItem->text() == "Log Scale X") {
+        xLogScale = scalex->isChecked();
+    } else if (selectedItem->text() == "Log Scale Y") {
+        yLogScale = scaley->isChecked();
+    } else if (selectedItem->text() == "Time Step") {
+        isTimeStep = timestep->isChecked();
     }
+    gView->updateGraph();
 }
 
 void glTemplateOscillogram::SetBias(long long lcur, long long rcur) {
@@ -342,15 +407,28 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
 //        std::cout << AnalysisWindowHandler::xleft << ' ' << AnalysisWindowHandler::xright
 //                  << ' ' << AnalysisWindowHandler::ybottom << ' ' << AnalysisWindowHandler::ytop << std::endl;
 
-        double newmaxLoc = AnalyzeWidget::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
-        double newminLoc = AnalyzeWidget::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
-        qint64 newlcur = AnalyzeWidget::xleft * (data->rcur - data->lcur) + data->lcur;
-        qint64 newrcur = AnalyzeWidget::xright * (data->rcur - data->lcur) + data->lcur;
+        auto xScaler = &Utility::LinearScale;
+        if (xLogScale)
+            xScaler = &Utility::ExpScale;
+
+        auto yScaler = &Utility::LinearScale;
+        if (yLogScale)
+            yScaler = &Utility::ExpScale;
+
+        double newmaxLoc = yScaler(AnalyzeWidget::ytop, 1.0, data->minLoc, data->maxLoc);
+        double newminLoc = yScaler(AnalyzeWidget::ybottom, 1.0, data->minLoc, data->maxLoc);
+        qint64 newlcur = xScaler(AnalyzeWidget::xleft, 1.0, data->lcur, data->rcur);
+        qint64 newrcur = xScaler(AnalyzeWidget::xright, 1.0, data->lcur, data->rcur);
+
+//        double newmaxLoc = AnalyzeWidget::ytop * (data->maxLoc - data->minLoc) + data->minLoc;
+//        double newminLoc = AnalyzeWidget::ybottom * (data->maxLoc - data->minLoc) + data->minLoc;
+//        qint64 newlcur = AnalyzeWidget::xleft * (data->rcur - data->lcur) + data->lcur;
+//        qint64 newrcur = AnalyzeWidget::xright * (data->rcur - data->lcur) + data->lcur;
 
 //        std::cout << newmaxLoc << ' ' << newminLoc << ' ' << newlcur << ' ' << newrcur << std::endl;
 
         if (data == nullptr || newmaxLoc > data->maxVal || newminLoc < data->minVal
-            || newlcur < 0 || newrcur >= data->amountOfSamples) {
+            || newlcur < 0 || newrcur >= data->amountOfSamples || (newrcur - newlcur < 10)) {
             AnalyzeWidget::xpress = -1;
             AnalyzeWidget::ypress = -1;
             AnalyzeWidget::xrelease = -1;
@@ -501,9 +579,11 @@ void glTemplateOscillogram::wheelEvent(QWheelEvent *event) {
 
 void glTemplateOscillogram::closeEvent(QCloseEvent *event)
 {
-    AnalyzeWidget::isMultipleBiasStarted = true;
-    SetBias(0, data->amountOfSamples-1);
-    AnalyzeWidget::isMultipleBiasStarted = false;
+    if (type == glType::Oscillogram) {
+        AnalyzeWidget::isMultipleBiasStarted = true;
+        SetBias(0, data->amountOfSamples-1);
+        AnalyzeWidget::isMultipleBiasStarted = false;
+    }
 
     if (templ != nullptr && templ->gView != nullptr)
         disconnect(this, &glTemplateOscillogram::BiasChanged, templ->gView, &glView::setCurs);

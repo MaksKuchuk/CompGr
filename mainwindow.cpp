@@ -129,8 +129,7 @@ void MainWindow::on_actionAnalysis_triggered() {
 }
 
 void MainWindow::openAnalysisWindow() {
-    if (AnalyzeWidget::instance != nullptr) return;
-
+    if (AnalyzeWidget::isOpened) return;
     AnalyzeWidget *instanceAn = AnalyzeWidget::getInstance();
 
     instance->ui->mdiArea->addSubWindow(instanceAn);
@@ -139,6 +138,7 @@ void MainWindow::openAnalysisWindow() {
     instance->ui->mdiArea->subWindowList().last()->resize(600, 450);
 
     instanceAn->show();
+    AnalyzeWidget::isOpened = true;
 }
 
 void MainWindow::on_actionInformation_triggered() {

@@ -22,6 +22,7 @@ class AnalyzeWidget : public QWidget
 public:
     static inline QPointer<AnalyzeWidget> instance = nullptr;
     static QPointer<AnalyzeWidget> getInstance();
+    static inline bool isOpened = false;
 
     QVBoxLayout *layout;
 
@@ -68,8 +69,6 @@ private:
 private slots:
 
     void on_actionSimultaneous_moving_triggered();
-    void on_actionLog_Scale_X_triggered();
-    void on_actionLog_Scale_Y_triggered();
 };
 
 #endif // ANALYZEWIDGET_H

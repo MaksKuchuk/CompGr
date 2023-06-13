@@ -1,4 +1,5 @@
 #include "glOscillogram.hpp"
+#include "../glViewTemplate/gltemplateoscillogram.h"
 #include "../Utility/config.h"
 #include "../Utility/utility.h"
 #include "../analyzewidget.h"
@@ -52,12 +53,14 @@ void glOscillogram::drawGraph() {
     //double dotsNumber = parNum;
     double diff = data->maxLoc - data->minLoc;
 
+    auto gtemp = qobject_cast<glTemplateOscillogram*>(parent());
+
     auto xScaler = &Utility::LinearScale;
-    if (Config::xLogScale)
+    if (gtemp->xLogScale)
         xScaler = &Utility::LogScale;
 
     auto yScaler = &Utility::LinearScale;
-    if (Config::yLogScale)
+    if (gtemp->yLogScale)
         yScaler = &Utility::LogScale;
 
     glBegin(GL_LINE_STRIP);
