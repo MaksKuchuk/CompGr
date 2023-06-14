@@ -1,4 +1,5 @@
 #include "glspectrogram.h"
+#include "../glViewTemplate/gltemplatespectrogram.h"
 #include "../analyzewidget.h"
 #include "../Utility/config.h"
 #include "../Utility/utility.h"
@@ -50,12 +51,15 @@ void glSpectrogram::drawGraph() {
     //double dotsNumber = parNum;
 //    double diff = data->maxLoc - data->minLoc;
 
+
+    auto gtemp = qobject_cast<glTemplateSpectrogram*>(parent());
+
     auto xScaler = &Utility::LinearScale;
-    if (0)
+    if (gtemp->xLogScale)
         xScaler = &Utility::LogScale;
 
     auto yScaler = &Utility::LinearScale;
-    if (0)
+    if (gtemp->yLogScale)
         yScaler = &Utility::LogScale;
 
     // bottom -> top, left -> right

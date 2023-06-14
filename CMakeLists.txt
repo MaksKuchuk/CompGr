@@ -137,6 +137,9 @@ set(PROJECT_SOURCES
         glViewTemplate/gltemplateoscillogram.cpp
         gltemplateoscillogram.ui
 
+        glViewTemplate/gltemplatespectrogram.h
+        glViewTemplate/gltemplatespectrogram.cpp
+
         fourier.ui
         fourierDialog.h
         fourierDialog.cpp

@@ -20,6 +20,9 @@ protected:
     void paintGL() override;
 
     void drawGraph();
+
+private:
+
 };
 
 #endif // GLSPECTROGRAM_H

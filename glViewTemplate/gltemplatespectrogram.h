@@ -1,40 +1,33 @@
-#ifndef GLTEMPLATEOSCILLOGRAM_H
-#define GLTEMPLATEOSCILLOGRAM_H
+#ifndef GLTEMPLATESPECTROGRAM_H
+#define GLTEMPLATESPECTROGRAM_H
 
+#include <QObject>
 #include <QWidget>
-#include <QScrollBar>
-#include <QString>
-#include "../GraphGlData/Graph2DData.hpp"
-#include "../glViewType/glOscillogram.hpp"
+#include "../GraphGlData/Graph3DData.hpp"
+#include "../glViewType/glspectrogram.h"
 #include "../graphtemplate.h"
 #include "../glViewType/glType.hpp"
-
+#include "../glViewTemplate/gltemplateoscillogram.h"
 
 namespace Ui {
 class glTemplateOscillogram;
 }
 
-class glTemplateOscillogram : public QWidget
+class glTemplateSpectrogram : public QWidget
 {
     Q_OBJECT
 
-    std::shared_ptr<Graph2DData> data;
-
+    std::shared_ptr<Graph3DData> data;
 public:
-    glOscillogram* gView = nullptr;
-
-    QPointer<GraphTemplate> templ = nullptr;
-    glType type = glType::Oscillogram;
+    QPointer<glSpectrogram> gSpec;
 
     bool xLogScale = false;
     bool yLogScale = false;
-    bool isTimeStep = false;
 
-    explicit glTemplateOscillogram(QWidget *parent = nullptr,
-                                   std::shared_ptr<Graph2DData> data = nullptr,
-                                   QPointer<GraphTemplate> templ_ = nullptr,
-                                   glType oscType = glType::Oscillogram);
-    ~glTemplateOscillogram();
+    explicit glTemplateSpectrogram(QWidget *parent = nullptr,
+                          std::shared_ptr<Graph3DData> data = nullptr);
+
+    ~glTemplateSpectrogram();
 
     void drawMenu(QPoint globalPos);
 
@@ -97,15 +90,12 @@ protected:
 
     QPointer<QScrollBar> scrollBar;
     QPointer<QLabel> infoLabel;
+
 private:
 
+    friend class QWidget;
     Ui::glTemplateOscillogram *ui;
 
-    friend class QWidget;
-
-    void closeEvent(QCloseEvent *event) override;
-
-    static QString freqToTime(double freq);
 };
 
-#endif // GLTEMPLATEOSCILLOGRAM_H
+#endif // GLTEMPLATESPECTROGRAM_H
