@@ -24,6 +24,8 @@ public:
     double totalSeconds;
 
     QList<double> samples;
+
+    std::shared_ptr<Graph2DData> GetSlice(qint64 l, qint64 r);
 };
 
 #endif

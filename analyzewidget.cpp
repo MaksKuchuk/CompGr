@@ -10,8 +10,9 @@
 #include <iostream>
 
 #include "Transformation/TransformToFourierSpectrum.hpp"
-#include "Transformation/TransformToWaveletogram.hpp"
+#include "Transformation/TransformToSpectrogram.hpp"
 #include "Utility/config.h"
+#include "Utility/generaldialog.h"
 #include "fourierDialog.h"
 #include "mainwindow.h"
 
@@ -99,17 +100,11 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
 //            auto gView = new glTemplateOscillogram(nullptr, TransformToWaveletogram::transform(data), templ);
             // Spectrogram test
 
-            auto data3d = std::make_shared<Graph3DData>();
+            auto data3d = std::make_shared<Graph3DData>(3, 3);
             data3d->samples = {{0.1,0.2,0.3},{0.4,0.5,0.6},{0.7,0.8,0.9}};
 
-            data3d->amountOfSamples = 3;
-            data3d->depth = 3;
-            data3d->lcur = 0;
-            data3d->rcur = 2;
             data3d->minVal = 0;
             data3d->maxVal = 0.9;
-            data3d->minLoc = 0;
-            data3d->maxLoc = 0.9;
 
 
             auto spect = new glTemplateSpectrogram(nullptr, data3d);
@@ -120,8 +115,17 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
             break;
         }
         case glType::Spectrogram: {
+        auto sizes = GeneralDialog::MultiInputDialog("Spectrogram", {"Width", "Height", "Overlap"}, {"1000", "100", "1.5"});
+        if (sizes[0] == "__REJECTED_INPUT__" || sizes[0].toULongLong() == 0 || sizes[1].toULongLong() == 0)
+            return;
+
+        auto spect = new glTemplateSpectrogram(nullptr,
+                                               TransformToSpectrogram::transform(data, sizes[0].toULongLong(),
+                                               sizes[1].toULongLong(), sizes[2].toDouble()));
 
 
+        spect->setMinimumSize(300, 100);
+        MainWindow::AddWidget(spect);
 
             break;
         }

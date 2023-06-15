@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QSlider>
 #include "../GraphGlData/Graph3DData.hpp"
 #include "../glViewType/glspectrogram.h"
 #include "../graphtemplate.h"
@@ -23,6 +24,7 @@ public:
 
     bool xLogScale = false;
     bool yLogScale = false;
+    double brightness = 1.0;
 
     explicit glTemplateSpectrogram(QWidget *parent = nullptr,
                           std::shared_ptr<Graph3DData> data = nullptr);
@@ -82,16 +84,14 @@ protected:
 
     double scrollF(long long x);
 
-
-    void ChangeInfoLabel();
-
     void ChangeScrollBar();
     void ScrollBarChanged();
 
-    QPointer<QScrollBar> scrollBar;
-    QPointer<QLabel> infoLabel;
 
 private:
+    QPointer<QScrollBar> scrollBar;
+    QPointer<QLabel> infoLabel;
+    QPointer<QSlider> slider;
 
     friend class QWidget;
     Ui::glTemplateOscillogram *ui;

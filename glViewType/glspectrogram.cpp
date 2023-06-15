@@ -62,17 +62,19 @@ void glSpectrogram::drawGraph() {
     if (gtemp->yLogScale)
         yScaler = &Utility::LogScale;
 
+    auto brightness = gtemp->brightness;
+
     // bottom -> top, left -> right
     glBegin(GL_QUADS);
-        for (qint64 i = 0; i < data->depth; ++i) {
-            for (qint64 j = 0; j < data->amountOfSamples; ++j) {
+        for (qint64 i = 0; i < data->width; ++i) {
+            for (qint64 j = 0; j < data->height; ++j) {
 
-                x = xScaler(j, data->amountOfSamples, -1, 1);
-                y = yScaler(i, data->depth, -1, 1);
-                x_1 = xScaler(j+1, data->amountOfSamples, -1, 1);
-                y_1 = yScaler(i+1, data->depth, -1, 1);
+                x = xScaler(i, data->width, -1, 1);
+                y = yScaler(j, data->height, -1, 1);
+                x_1 = xScaler(i+1, data->width, -1, 1);
+                y_1 = yScaler(j+1, data->height, -1, 1);
 
-                auto col = data->samples[i][j]/ data->maxVal;
+                auto col = data->samples[i][j]/(brightness *  data->maxVal);
 
                 glColor3f(col, col, col);
 

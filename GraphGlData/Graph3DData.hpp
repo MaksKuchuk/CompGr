@@ -15,8 +15,8 @@ public:
 
     double minLoc;
     double maxLoc;
-    size_t amountOfSamples;
-    size_t depth;
+    size_t width;
+    size_t height;
 
     long long lcur, rcur;
 
@@ -25,11 +25,11 @@ public:
     QString startDate = "01-01-2000 00:00:00.000";
     double totalSeconds;
 
-    std::vector<std::vector<double>> samples;
-    QPair<double, double> x_range;
-    QPair<double, double> y_range;
+    QList<QList<double>> samples;
 
-    Graph3DData() = default;
+    Graph3DData(qint64 wid, qint64 heig);
+
+    ~Graph3DData();
 };
 
 #endif

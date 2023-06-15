@@ -44,32 +44,42 @@ glTemplateSpectrogram::glTemplateSpectrogram(QWidget *parent,
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(65, 5, 35, 5);
 
-    infoLabel = new QLabel("Samples: "+QString::number(data->rcur - data->lcur+1),this);
-    infoLabel->setAlignment(Qt::AlignCenter);
-    infoLabel->setFixedHeight(14);
-
     layout->addWidget(gSpec);
-    layout->addSpacing(12);
-    layout->addWidget(infoLabel);
+    layout->addSpacing(10);
     layout->addWidget(label);
 
     scrollBar = new QScrollBar(Qt::Horizontal, this);
     layout->addWidget(scrollBar);
     ChangeScrollBar();
 
+    slider = new QSlider(Qt::Horizontal, this);
+    layout->addWidget(slider);
+    slider->setTracking(true);
+    slider->setRange(0,99);
+    slider->setValue(0);
+
+
     setLayout(layout);
+
+    auto grUpdate = [&](){
+        gSpec->updateGraph();
+        repaint();
+    };
+
+    connect(slider, &QSlider::valueChanged, [&](int pos){
+        brightness = 1 - pos / 100.;
+    });
+    connect(slider, &QSlider::valueChanged, grUpdate);
 
     connect(scrollBar, &QScrollBar::valueChanged, this, &glTemplateSpectrogram::ScrollBarChanged);
 
     connect(this, &glTemplateSpectrogram::BiasChanged, this, &glTemplateSpectrogram::ChangeScrollBar);
 
-    connect(this, &glTemplateSpectrogram::BiasChanged, this, &glTemplateSpectrogram::ChangeInfoLabel);
+    connect(this, &glTemplateSpectrogram::BiasChanged, grUpdate);
 
-    connect(this, &glTemplateSpectrogram::BiasChanged, gSpec, &glSpectrogram::updateGraph);
-    connect(this, &glTemplateSpectrogram::BiasChanged, [&](){ repaint(); });
+    connect(this, &glTemplateSpectrogram::ScaleChanged, grUpdate);
 
-    connect(this, &glTemplateSpectrogram::ScaleChanged, gSpec, &glSpectrogram::updateGraph);
-    connect(this, &glTemplateSpectrogram::ScaleChanged, [&](){ repaint(); });
+    connect(slider, &QSlider::sliderReleased, grUpdate);
 
     if (parent != nullptr)
         connect(parent, &QWidget::destroyed, this, &QWidget::close);
@@ -106,11 +116,7 @@ void glTemplateSpectrogram::paintEvent(QPaintEvent *event) {
 
         // add tick labels
         auto num = xScaler(i, numTicksX, data->lcur, data->rcur);
-        QString xTickLabel;
-//        if (isTimeStep)
-//            xTickLabel = freqToTime(num / data->Hz);
-//        else
-            xTickLabel = QString::number(num / data->Hz, 'g', 3);
+        QString xTickLabel = QString::number(num / data->Hz, 'g', 3);
 
         painter.drawText(x - tickLength / 2, xAxisY + tickLength + 10, xTickLabel);
     }
@@ -121,16 +127,12 @@ void glTemplateSpectrogram::paintEvent(QPaintEvent *event) {
         painter.drawLine(yAxisX - tickLength, y, yAxisX, y);
 
         // add tick labels
-        auto num = yScaler(i, numTicksY, data->minLoc, data->maxLoc);
+        auto num = yScaler(i, numTicksY, 0, data->height);
         QString yTickLabel = QString::number(num, 'g', 3);
         painter.drawText(yAxisX - tickLength - 5 - painter.fontMetrics()
                          .horizontalAdvance(yTickLabel),
                          y + painter.fontMetrics().height() / 2, yTickLabel);
     }
-}
-
-void glTemplateSpectrogram::ChangeInfoLabel() {
-    infoLabel->setText("Samples: "+QString::number(data->rcur - data->lcur+1));
 }
 
 void glTemplateSpectrogram::drawMenu(QPoint globalPos) {
@@ -207,7 +209,7 @@ void glTemplateSpectrogram::SetScale(double bottom, double top) {
 
 void glTemplateSpectrogram::ResetBias() {
     data->lcur = 0;
-    data->rcur = data->amountOfSamples - 1;
+    data->rcur = data->width - 1;
     emit BiasChanged(data->lcur, data->rcur);
 }
 void glTemplateSpectrogram::ResetScale() {
@@ -270,14 +272,14 @@ void glTemplateSpectrogram::selectBias() {
         long long lx = ledit1->text().toDouble() * data->Hz;
         long long rx = ledit2->text().toDouble() * data->Hz;
 
-        if (lx < 0 || rx >= data->amountOfSamples) return;
+        if (lx < 0 || rx >= data->width) return;
 
         SetBias(lx, rx);
     }
 }
 
 void glTemplateSpectrogram::setGlobalBias() {
-    SetBias(0, data->amountOfSamples - 1);
+    SetBias(0, data->width - 1);
 }
 
 void glTemplateSpectrogram::setLocalScale() {
@@ -359,7 +361,7 @@ void glTemplateSpectrogram::mouseReleaseEvent(QMouseEvent* event) {
 //        std::cout << newmaxLoc << ' ' << newminLoc << ' ' << newlcur << ' ' << newrcur << std::endl;
 
         if (data == nullptr || newmaxLoc > data->maxVal || newminLoc < data->minVal
-            || newlcur < 0 || newrcur >= data->amountOfSamples || (newrcur - newlcur < 10)) {
+            || newlcur < 0 || newrcur >= data->width || (newrcur - newlcur < 10)) {
             AnalyzeWidget::xpress = -1;
             AnalyzeWidget::ypress = -1;
             AnalyzeWidget::xrelease = -1;
@@ -403,7 +405,7 @@ glTemplateSpectrogram::~glTemplateSpectrogram()
 }
 
 void glTemplateSpectrogram::ChangeScrollBar() {
-    scrollBar->setRange(0, data->amountOfSamples - (data->rcur - data->lcur) - 1);
+    scrollBar->setRange(0, data->width - (data->rcur - data->lcur) - 1);
     scrollBar->setValue(data->lcur);
 }
 
@@ -414,8 +416,8 @@ void glTemplateSpectrogram::ScrollBarChanged() {
 
     long long rc = lc + diff;
 
-    if (rc >= data->amountOfSamples) {
-        auto diff = rc - data->amountOfSamples + 1;
+    if (rc >= data->width) {
+        auto diff = rc - data->width + 1;
         lc -= diff;
         rc -= diff;
     }
@@ -435,7 +437,7 @@ void glTemplateSpectrogram::scrollGraph(long long y) {
 
     auto lcur = data->lcur;
     auto rcur = data->rcur;
-    auto amountOfSamples = data->amountOfSamples;
+    auto amountOfSamples = data->width;
 
     lcur += 0.01 * y * scrollF(static_cast<double>(rcur - lcur));
     rcur -= 0.01 * y * scrollF(static_cast<double>(rcur - lcur));
@@ -465,7 +467,7 @@ void glTemplateSpectrogram::moveGraph(long long y) {
 
     auto lcur = data->lcur;
     auto rcur = data->rcur;
-    auto amountOfSamples = data->amountOfSamples;
+    auto amountOfSamples = data->width;
 
     long long ch = y * scrollF(static_cast<double>(rcur - lcur));
 

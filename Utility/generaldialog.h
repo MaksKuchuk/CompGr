@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QString>
+#include <QList>
 
 class GeneralDialog : public QWidget
 {
@@ -15,6 +16,7 @@ public:
     static QString InputDialog(const QString text, const QString defaultText = "");
     static qint64 ChooseDialog(const QString text, const QList<QString> texts);
     static qint64 ButtonDialog(const QString text, const QList<QString> texts);
+    static QList<QString> MultiInputDialog(const QString text, const QList<QString> labels, const QList<QString> defTexts);
 };
 
 #endif // GENERALDIALOG_H

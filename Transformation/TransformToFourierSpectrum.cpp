@@ -64,15 +64,19 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
         std::shared_ptr<Graph2DData> data,
         long long L,
         SpectrumModes mode,
-        FourierModes first_val_mode
+        FourierModes first_val_mode,
+        qint64 fill_zeros_to
     )
 {
-    //long long size = data->getAmountOfSamples();
-    //long long new_size = std::pow(2, std::ceil(std::log2(size)));
     long long new_size = data->rcur - data->lcur;
 
     QList<double> vals(data->samples);
+
+    vals.sliced(data->lcur, new_size);
+    if (fill_zeros_to > new_size)
+        new_size = fill_zeros_to;
     vals.resize(new_size);
+
     Complex* buf = new Complex[new_size];
     for (size_t i = 0; i < new_size; ++i) {
         buf[i] = vals[i];
@@ -95,6 +99,10 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     if (L)
         smoothing(new_data, L, new_size);
 
+    new_size = new_size / 2;
+    if (new_size == 0) new_size = 1;
+    new_data.resize(new_size);
+
     double min = 0;
     double max = 0;
     for (long long i = 0; i < new_size; ++i) {        
@@ -102,10 +110,6 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
             max = new_data[i];
         }
     }
-
-    new_size = new_size / 2;
-    if (new_size == 0) new_size = 1;
-    new_data.resize(new_size);
 
     auto data2d = std::make_shared<Graph2DData>();
 

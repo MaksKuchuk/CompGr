@@ -40,7 +40,8 @@ class TransformToFourierSpectrum {
     static void smoothing(QList<double>&, const long long, size_t);
 
 public:
-    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<Graph2DData> data, long long smooth, SpectrumModes mode, FourierModes fmode);
+    static std::shared_ptr<Graph2DData> transform(std::shared_ptr<Graph2DData> data, long long smooth,
+                                                  SpectrumModes mode, FourierModes fmode, qint64 fill_zeros_to = 0);
 };
 
 #endif

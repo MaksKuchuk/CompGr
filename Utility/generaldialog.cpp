@@ -136,3 +136,41 @@ qint64 GeneralDialog::ButtonDialog(const QString text, const QList<QString> text
 
     return -1;
 }
+
+QList<QString> GeneralDialog::MultiInputDialog(const QString text, const QList<QString> labels, const QList<QString> defTexts) {
+    QList<QString> out(defTexts.size());
+
+    QDialog dlg(MainWindow::instance);
+    dlg.setWindowTitle(tr("Select"));
+
+    QDialogButtonBox *btn_box = new QDialogButtonBox(&dlg);
+
+    btn_box->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(btn_box, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(btn_box, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    QFormLayout *layout = new QFormLayout();
+    layout->addWidget(new QLabel(text));
+
+    QList<QPointer<QLineEdit>> lines;
+    for (qint64 i = 0; i < defTexts.size(); ++i) {
+        auto label = new QLabel(labels[i], &dlg);
+        auto line = new QLineEdit(defTexts[i], &dlg);
+        lines.append(line);
+        layout->addRow(label, line);
+    }
+
+    layout->addWidget(btn_box);
+    dlg.setLayout(layout);
+
+    if (dlg.exec() == QDialog::Rejected) {
+        out[0] = "__REJECTED_INPUT__";
+    } else {
+        for (qint64 i = 0; i < defTexts.size(); ++i) {
+            out[i] = lines[i]->text();
+        }
+    }
+
+    return out;
+}
