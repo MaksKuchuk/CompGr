@@ -21,6 +21,7 @@ public:
     long long lcur, rcur;
 
     double Hz = 1;
+    double yHz = 1;
 
     QString startDate = "01-01-2000 00:00:00.000";
     double totalSeconds;

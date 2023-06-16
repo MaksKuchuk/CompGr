@@ -76,7 +76,7 @@ void glSpectrogram::drawGraph() {
 
                 auto col = data->samples[i][j]/(brightness *  data->maxVal);
 
-                glColor3f(col, col, col);
+                colorSchemeDarkHeat(col);
 
                 glVertex2d(x, y);
                 glVertex2d(x, y_1 );
@@ -102,4 +102,38 @@ void glSpectrogram::drawGraph() {
         glVertex2d(((AnalyzeWidget::xright * 2) - 1), -1);
         glVertex2d(((AnalyzeWidget::xright * 2) - 1), 1);
     glEnd();
+}
+
+void glSpectrogram::colorSchemeGrey(float t) {
+    glColor3f(t, t, t);
+}
+
+void glSpectrogram::colorSchemeHeat(float t) {
+    if (t < 0.5)
+        glColor3f(0, 2*t, 1 - 2*t);
+    else
+        glColor3f(2*t - 1, 2-2*t, 0);
+
+//    float R = t*t;
+//    float G = 2*t - 2*t*t;
+//    float B = 1 - 2*t + t*t;
+}
+
+void glSpectrogram::colorSchemeDarkHeat(float t) {
+    float R, G, B;
+    if (t > 1) {
+        R = 1;
+        G = 1;
+        B = 1;
+    } else {
+        R = 2*t-t*t;
+        G = 1 - 4*(t-1)*(t-1);
+        B = 1 - 16 *(t-1)*(t-1);
+    }
+
+    glColor3f(R, G > 0 ? G : 0, B > 0 ? B : 0);
+
+//    float R = t*t;
+//    float G = 2*t - 2*t*t;
+//    float B = 1 - 2*t + t*t;
 }

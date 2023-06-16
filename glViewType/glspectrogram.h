@@ -13,6 +13,10 @@ public:
 
     glSpectrogram(QWidget *parent = nullptr, std::shared_ptr<Graph3DData> data = nullptr);
 
+    static void colorSchemeGrey(float percent);
+    static void colorSchemeHeat(float percent);
+    static void colorSchemeDarkHeat(float percent);
+
     void updateGraph();
 protected:
     void initializeGL() override;

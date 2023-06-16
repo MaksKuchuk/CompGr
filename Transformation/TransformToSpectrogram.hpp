@@ -12,7 +12,6 @@ class TransformToSpectrogram {
 
 public:
     static std::shared_ptr<Graph3DData> transform(std::shared_ptr<Graph2DData> data, qint64 width, qint64 height, double coeff = 1);
-
 };
 
 #endif

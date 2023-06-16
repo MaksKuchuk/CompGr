@@ -44,8 +44,13 @@ glTemplateSpectrogram::glTemplateSpectrogram(QWidget *parent,
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(65, 5, 35, 5);
 
+    infoLabel = new QLabel("W x H: "+QString::number(data->width) + " x " + QString::number(data->height), this);
+    infoLabel->setAlignment(Qt::AlignCenter);
+    infoLabel->setFixedHeight(14);
+
     layout->addWidget(gSpec);
-    layout->addSpacing(10);
+    layout->addSpacing(12);
+    layout->addWidget(infoLabel);
     layout->addWidget(label);
 
     scrollBar = new QScrollBar(Qt::Horizontal, this);
@@ -128,7 +133,7 @@ void glTemplateSpectrogram::paintEvent(QPaintEvent *event) {
 
         // add tick labels
         auto num = yScaler(i, numTicksY, 0, data->height);
-        QString yTickLabel = QString::number(num, 'g', 3);
+        QString yTickLabel = QString::number(num / data->yHz, 'g', 3);
         painter.drawText(yAxisX - tickLength - 5 - painter.fontMetrics()
                          .horizontalAdvance(yTickLabel),
                          y + painter.fontMetrics().height() / 2, yTickLabel);

@@ -84,6 +84,7 @@ std::shared_ptr<Graph3DData> TransformToSpectrogram::transform(std::shared_ptr<G
     }
 
     spectrogram->Hz = data->Hz / section_base;
+    spectrogram->yHz = 2*height/data->Hz;
     spectrogram->name = data->name + " Spectrogram";
 
     return spectrogram;
