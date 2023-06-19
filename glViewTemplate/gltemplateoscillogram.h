@@ -3,10 +3,11 @@
 
 #include <QWidget>
 #include <QScrollBar>
+#include <QLabel>
+#include <QPointer>
 #include <QString>
 #include "../GraphGlData/Graph2DData.hpp"
 #include "../glViewType/glOscillogram.hpp"
-#include "../graphtemplate.h"
 #include "../glViewType/glType.hpp"
 
 
@@ -23,7 +24,6 @@ class glTemplateOscillogram : public QWidget
 public:
     glOscillogram* gView = nullptr;
 
-    QPointer<GraphTemplate> templ = nullptr;
     glType type = glType::Oscillogram;
 
     bool xLogScale = false;
@@ -32,7 +32,6 @@ public:
 
     explicit glTemplateOscillogram(QWidget *parent = nullptr,
                                    std::shared_ptr<Graph2DData> data = nullptr,
-                                   QPointer<GraphTemplate> templ_ = nullptr,
                                    glType oscType = glType::Oscillogram);
     ~glTemplateOscillogram();
 
@@ -104,8 +103,6 @@ private:
     friend class QWidget;
 
     void closeEvent(QCloseEvent *event) override;
-
-    static QString freqToTime(double freq);
 };
 
 #endif // GLTEMPLATEOSCILLOGRAM_H

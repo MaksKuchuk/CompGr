@@ -4,11 +4,16 @@
 #include "../Utility/config.h"
 #include "../Utility/utility.h"
 
+#include <QToolTip>
+#include <QList>
+
 glSpectrogram::glSpectrogram(QWidget *parent, std::shared_ptr<Graph3DData> data)
     : QOpenGLWidget{parent},
       data(data)
 {
-
+    setMouseTracking(true);
+    setToolTipDuration(1e6);
+    setAttribute(Qt::WA_Hover, true);
 }
 
 void glSpectrogram::updateGraph() {
@@ -22,8 +27,6 @@ void glSpectrogram::initializeGL() {
 }
 
 void glSpectrogram::resizeGL(int w, int h) {
-    glViewport(0, 0, w, h);
-    drawGraph();
 }
 
 void glSpectrogram::paintGL() {
@@ -42,15 +45,15 @@ void glSpectrogram::drawGraph() {
     glLineWidth(1);
 
     double x, y, x_1, y_1;
-//    long long lcur = data->lcur;
-//    long long rcur = data->rcur;
 
-//    double parNum = rcur - lcur + 1;
+    long long lcur = data->lcur;
+    long long rcur = data->rcur;
+
+    long long parNum = rcur - lcur + 1;
 
 //    double dotsNumber = parNum > 50000 ? 50000 : parNum;
     //double dotsNumber = parNum;
 //    double diff = data->maxLoc - data->minLoc;
-
 
     auto gtemp = qobject_cast<glTemplateSpectrogram*>(parent());
 
@@ -66,15 +69,15 @@ void glSpectrogram::drawGraph() {
 
     // bottom -> top, left -> right
     glBegin(GL_QUADS);
-        for (qint64 i = 0; i < data->width; ++i) {
+        for (qint64 i = 0; i < parNum; ++i) {
             for (qint64 j = 0; j < data->height; ++j) {
 
-                x = xScaler(i, data->width, -1, 1);
+                x = xScaler(i, parNum, -1, 1);
                 y = yScaler(j, data->height, -1, 1);
-                x_1 = xScaler(i+1, data->width, -1, 1);
+                x_1 = xScaler(i+1, parNum, -1, 1);
                 y_1 = yScaler(j+1, data->height, -1, 1);
 
-                auto col = data->samples[i][j]/(brightness *  data->maxVal);
+                auto col = data->samples[qint64(lcur + i)][j]/(brightness *  data->maxVal);
 
                 colorSchemeDarkHeat(col);
 
@@ -84,6 +87,15 @@ void glSpectrogram::drawGraph() {
                 glVertex2d(x_1, y);
             }
         }
+    glEnd();
+
+    glColor3f(0.2, 0.2, 0.2);
+    glLineWidth(1);
+    glBegin(GL_LINES);
+        glVertex2d(crossX, -1);
+        glVertex2d(crossX, 1);
+        glVertex2d(-1, crossY);
+        glVertex2d(1, crossY);
     glEnd();
 
     if (AnalyzeWidget::xpress == -1 ||
@@ -136,4 +148,39 @@ void glSpectrogram::colorSchemeDarkHeat(float t) {
 //    float R = t*t;
 //    float G = 2*t - 2*t*t;
 //    float B = 1 - 2*t + t*t;
+}
+
+void glSpectrogram::mouseMoveEvent(QMouseEvent *event) {
+    long long lcur = data->lcur;
+    long long rcur = data->rcur;
+
+    long long parNum = rcur - lcur + 1;
+
+    auto xScaler = &Utility::LinearScale;
+    auto yScaler = &Utility::LinearScale;
+
+    qint64 x = xScaler(event->position().x(), width(), lcur, rcur);
+    qint64 y = yScaler(event->position().y(), height(), data->height - 1, 0);
+    x = x < 0 ? 0 : x;
+
+    auto text = QString::number( x / data->Hz ) + " s\n" +
+                QString::number( y / data->yHz ) + " Hz (" +
+                Utility::freqToTime( y / data->yHz ) + ")\n" +
+                QString::number( data->samples[x][y] );
+
+    QToolTip::showText(event->globalPosition().toPoint(), text);
+
+    crossX = (double)event->position().x()/width() * 2 - 1;
+    crossY = 1 - (double)event->position().y()/height() * 2;
+
+    updateGraph();
+    QWidget::mouseMoveEvent(event);
+}
+
+void glSpectrogram::leaveEvent(QEvent* event) {
+    crossX = -1;
+    crossY = -1;
+
+    updateGraph();
+    QWidget::leaveEvent(event);
 }

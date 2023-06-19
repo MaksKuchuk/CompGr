@@ -313,6 +313,7 @@ void glTemplateSpectrogram::mousePressEvent(QMouseEvent *event) {
         AnalyzeWidget::xpress = event->pos().x() - gSpec->geometry().x();
         AnalyzeWidget::ypress = event->pos().y() - gSpec->geometry().y();
     }
+    QWidget::mousePressEvent(event);
 }
 
 void glTemplateSpectrogram::mouseReleaseEvent(QMouseEvent* event) {
@@ -387,6 +388,7 @@ void glTemplateSpectrogram::mouseReleaseEvent(QMouseEvent* event) {
         AnalyzeWidget::xrelease = -1;
         AnalyzeWidget::yrelease = -1;
     }
+    QWidget::mousePressEvent(event);
 }
 
 void glTemplateSpectrogram::mouseMoveEvent(QMouseEvent* event) {
@@ -402,6 +404,7 @@ void glTemplateSpectrogram::mouseMoveEvent(QMouseEvent* event) {
         gSpec->updateGraph();
         repaint();
     }
+    QWidget::mouseMoveEvent(event);
 }
 
 glTemplateSpectrogram::~glTemplateSpectrogram()
@@ -491,6 +494,7 @@ void glTemplateSpectrogram::moveGraph(long long y) {
 
 void glTemplateSpectrogram::keyPressEvent(QKeyEvent* event) {
     auto code = event->nativeScanCode();
+
     //38 - a, 40 - d
     if (code == 30 || code == 32
             || code == 38 || code == 40) {
@@ -502,14 +506,22 @@ void glTemplateSpectrogram::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Alt) {
         AnalyzeWidget::scaleMod = true;
     }
+    QWidget::keyPressEvent(event);
 }
 
 void glTemplateSpectrogram::keyReleaseEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Alt) {
         AnalyzeWidget::scaleMod = false;
     }
+    QWidget::keyReleaseEvent(event);
 }
 
 void glTemplateSpectrogram::wheelEvent(QWheelEvent *event) {
     scrollGraph(event->angleDelta().y());
+    QWidget::wheelEvent(event);
+}
+
+void glTemplateSpectrogram::closeEvent(QCloseEvent *event)
+{
+    deleteLater();
 }

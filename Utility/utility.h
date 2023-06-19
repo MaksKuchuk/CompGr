@@ -14,6 +14,9 @@ public:
     static double LinearScale(double current, double total, double min = -1, double max = 1);
     static double ExpScale(double current, double total, double min = -1, double max = 1);
     static double LogScale(double current, double total, double min = -1, double max = 1);
+
+    static QString freqToTime(double freq);
+    static QString timeToTime(double time);
 };
 
 #endif // UTILITY_H

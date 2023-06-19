@@ -49,7 +49,7 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
         auto num = xScaler(i, numTicksX, data->lcur, data->rcur);
         QString xTickLabel;
         if (isTimeStep)
-            xTickLabel = freqToTime(num / data->Hz);
+            xTickLabel = Utility::freqToTime(num / data->Hz);
         else
             xTickLabel = QString::number(num / data->Hz, 'g', 3);
 
@@ -70,44 +70,15 @@ void glTemplateOscillogram::paintEvent(QPaintEvent *event) {
     }
 }
 
-QString glTemplateOscillogram::freqToTime(double freq) {
-    if (freq <= 0)
-        return "-";
-
-    auto time = 1/freq;
-
-    constexpr double secInHour = 3600;
-    constexpr double secInDay = secInHour * 24;
-    constexpr double secInYear = secInDay * 365;
-
-    if (time > secInYear)
-        return QString::number(time / secInYear, 'g', 3)+" y";
-    if (time > 7 * secInDay)
-        return QString::number(time / secInDay, 'g', 3)+" d";
-    if (time > secInHour)
-        return QString::number(time / secInHour, 'g', 3)+" h";
-    if (time > 3 * 60)
-        return QString::number(time / 60, 'g', 3)+" m";
-
-    if (time > 1)
-        return QString::number(time, 'g', 3)+" s";
-    if (time > 1e-3)
-        return QString::number(time * 1e3, 'g', 3)+" ms";
-
-    return QString::number(time * 1e6, 'g', 3)+" mcs";
-
-}
-
 void glTemplateOscillogram::ChangeInfoLabel() {
     infoLabel->setText("Samples: "+QString::number(data->rcur - data->lcur+1));
 }
 
 glTemplateOscillogram::glTemplateOscillogram(QWidget *parent, std::shared_ptr<Graph2DData> data,
-                                             QPointer<GraphTemplate> templ_, glType oscType) :
+                                             glType oscType) :
     QWidget(parent),
     ui(new Ui::glTemplateOscillogram),
     data(data),
-    templ(templ_),
     type(oscType)
 {
     ui->setupUi(this);
@@ -448,6 +419,7 @@ void glTemplateOscillogram::mouseReleaseEvent(QMouseEvent* event) {
         AnalyzeWidget::xrelease = -1;
         AnalyzeWidget::yrelease = -1;
     }
+    QWidget::mousePressEvent(event);
 }
 
 void glTemplateOscillogram::mouseMoveEvent(QMouseEvent* event) {
@@ -463,6 +435,7 @@ void glTemplateOscillogram::mouseMoveEvent(QMouseEvent* event) {
         gView->updateGraph();
         repaint();
     }
+    QWidget::mouseMoveEvent(event);
 }
 
 glTemplateOscillogram::~glTemplateOscillogram()
@@ -563,16 +536,19 @@ void glTemplateOscillogram::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Alt) {
         AnalyzeWidget::scaleMod = true;
     }
+    QWidget::keyPressEvent(event);
 }
 
 void glTemplateOscillogram::keyReleaseEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Alt) {
         AnalyzeWidget::scaleMod = false;
     }
+    QWidget::keyReleaseEvent(event);
 }
 
 void glTemplateOscillogram::wheelEvent(QWheelEvent *event) {
     scrollGraph(event->angleDelta().y());
+    QWidget::wheelEvent(event);
 }
 
 
@@ -584,7 +560,7 @@ void glTemplateOscillogram::closeEvent(QCloseEvent *event)
         AnalyzeWidget::isMultipleBiasStarted = false;
     }
 
-    if (templ != nullptr && templ->gView != nullptr)
-        disconnect(this, &glTemplateOscillogram::BiasChanged, templ->gView, &glView::setCurs);
+    disconnect(this, &glTemplateOscillogram::BiasChanged, nullptr, nullptr);
+    deleteLater();
 }
 

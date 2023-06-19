@@ -6,6 +6,8 @@
 #include "GraphGlData/Graph2DData.hpp"
 #include "Statistics/statisticswidget.h"
 #include "glview.h"
+#include "glViewTemplate/gltemplateoscillogram.h"
+#include "glViewTemplate/gltemplatespectrogram.h"
 
 namespace Ui {
 class GraphTemplate;
@@ -22,6 +24,9 @@ public:
 
     QPointer<glView> gView = nullptr;
     QPointer<StatisticsWidget> statsWid;
+    QPointer<glTemplateOscillogram> oscilogram;
+    QPointer<glTemplateSpectrogram> spectrogram;
+
 
     explicit GraphTemplate(QWidget *parent = nullptr, const std::shared_ptr<GeneralData> gData = nullptr, long long ind = -1);
     explicit GraphTemplate(QWidget *parent = nullptr, const std::shared_ptr<Graph2DData> gData = nullptr, bool showName = true);

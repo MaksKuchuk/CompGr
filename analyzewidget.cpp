@@ -43,7 +43,7 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
         case glType::Oscillogram: {
             MainWindow::openAnalysisWindow();
 
-            auto gView = new glTemplateOscillogram(this, data, templ);
+            auto gView = new glTemplateOscillogram(this, data);
             connect(gView, &glTemplateOscillogram::BiasChanged, templ->gView, &glView::setCurs);
             connect(gView, &glTemplateOscillogram::BiasChanged,
                     [&](qint64 a, qint64 b){ if (this != nullptr) multipleBiasStart(a,b);}
@@ -54,9 +54,13 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
             connect(this, &AnalyzeWidget::ResetScaleSignal, gView, &glTemplateOscillogram::ResetScale);
             connect(this, &AnalyzeWidget::SetSingleScaleSignal, gView, &glTemplateOscillogram::setLocalScale);
 
+
             layout->addWidget(gView);
             gView->resize(300, 60);
             gView->show();
+
+            templ->oscilogram = gView;
+
             break;
         }
 
@@ -88,7 +92,7 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
 
             auto gView = new glTemplateOscillogram(nullptr,
                                           TransformToFourierSpectrum::transform(data, smoothing,
-                                                mode, first_val), templ, glType::FourierSpectrum);
+                                                mode, first_val), glType::FourierSpectrum);
 
 
             gView->setWindowTitle("Fourier Spectrum");
@@ -115,17 +119,36 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
             break;
         }
         case glType::Spectrogram: {
-        auto sizes = GeneralDialog::MultiInputDialog("Spectrogram", {"Width", "Height", "Overlap"}, {"1000", "100", "1.5"});
-        if (sizes[0] == "__REJECTED_INPUT__" || sizes[0].toULongLong() == 0 || sizes[1].toULongLong() == 0)
-            return;
-
-        auto spect = new glTemplateSpectrogram(nullptr,
-                                               TransformToSpectrogram::transform(data, sizes[0].toULongLong(),
-                                               sizes[1].toULongLong(), sizes[2].toDouble()));
+            auto size = 1000;
+            if (templ->oscilogram != nullptr)
+                size = templ->oscilogram->gView->width();
 
 
-        spect->setMinimumSize(300, 100);
-        MainWindow::AddWidget(spect);
+            auto sizes = GeneralDialog::MultiInputDialog("Spectrogram", {"Width", "Height", "Overlap"},
+                                                         {QString::number(size), "100", "1.5"});
+            if (sizes[0] == "__REJECTED_INPUT__" || sizes[0].toULongLong() == 0 || sizes[1].toULongLong() == 0)
+                return;
+
+            auto spect = new glTemplateSpectrogram(nullptr,
+                                                   TransformToSpectrogram::transform(data, sizes[0].toULongLong(),
+                                                   sizes[1].toULongLong(), sizes[2].toDouble()));
+
+
+            spect->setMinimumSize(300, 100);
+            spect->gSpec->setMinimumSize(size, 100);
+            MainWindow::AddWidget(spect);
+
+            templ->spectrogram = spect;
+            if (templ->oscilogram != nullptr) {
+                auto bias_func = [spect, data](qint64 l, qint64 r) {
+                    spect->SetBias(l * spect->data->width / data->amountOfSamples, r * spect->data->width / data->amountOfSamples);
+                };
+
+                auto conn = connect(templ->oscilogram, &glTemplateOscillogram::BiasChanged, bias_func);
+                connect(spect, &QWidget::destroyed, [=](){
+                    disconnect(conn);
+                });
+            }
 
             break;
         }

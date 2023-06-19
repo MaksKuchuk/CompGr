@@ -6,7 +6,6 @@
 #include <QSlider>
 #include "../GraphGlData/Graph3DData.hpp"
 #include "../glViewType/glspectrogram.h"
-#include "../graphtemplate.h"
 #include "../glViewType/glType.hpp"
 #include "../glViewTemplate/gltemplateoscillogram.h"
 
@@ -18,8 +17,8 @@ class glTemplateSpectrogram : public QWidget
 {
     Q_OBJECT
 
-    std::shared_ptr<Graph3DData> data;
 public:
+    std::shared_ptr<Graph3DData> data;
     QPointer<glSpectrogram> gSpec;
 
     bool xLogScale = false;
@@ -95,6 +94,8 @@ private:
 
     friend class QWidget;
     Ui::glTemplateOscillogram *ui;
+
+    void closeEvent(QCloseEvent *event) override;
 
 };
 

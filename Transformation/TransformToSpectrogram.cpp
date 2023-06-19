@@ -2,6 +2,7 @@
 #include "TransformToFourierSpectrum.hpp"
 #include <cmath>
 #include <thread>
+#include <QDebug>
 
 void TransformToSpectrogram::column(std::shared_ptr<Graph3DData> spectrogram, std::shared_ptr<Graph2DData> data,
                    qint64 i, qint64 height, qint64 N, qint64 krat,
@@ -67,6 +68,8 @@ std::shared_ptr<Graph3DData> TransformToSpectrogram::transform(std::shared_ptr<G
     if (krat * N != section_n) {
         ++krat;
     }
+
+    qDebug() << section_n << krat * N;
 
     std::vector<std::unique_ptr<std::thread>> threads;
 

@@ -20,6 +20,12 @@ protected:
     void paintGL() override;
 
     void drawGraph();
+
+private:
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void leaveEvent(QEvent* event) override;
+
+    double crossX = -1, crossY = -1;
 };
 
 #endif
