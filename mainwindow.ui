@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget" native="true">
+  <widget class="QWidget" name="centralwidget">
    <widget class="QMdiArea" name="mdiArea">
     <property name="enabled">
      <bool>true</bool>
@@ -70,7 +70,7 @@
      <string>Settings</string>
     </property>
     <addaction name="actionDarkTheme"/>
-    <addaction name="actionWaveletFill"/>
+    <addaction name="actionFourierFill"/>
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="title">
@@ -141,12 +141,12 @@
     <string>Create superposition</string>
    </property>
   </action>
-  <action name="actionWaveletFill">
+  <action name="actionFourierFill">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Wavelet Fill</string>
+    <string>Fourier Fill</string>
    </property>
   </action>
  </widget>

@@ -49,7 +49,7 @@ private slots:
 
     void on_actionDarkTheme_triggered();
 
-    void on_actionWaveletFill_triggered();
+    void on_actionFourierFill_triggered();
 
     void on_actionCreate_new_model_triggered();
 

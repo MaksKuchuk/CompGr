@@ -160,9 +160,9 @@ void MainWindow::on_actionDarkTheme_triggered()
     Config::isDarkTheme = ui->actionDarkTheme->isChecked();
 }
 
-void MainWindow::on_actionWaveletFill_triggered()
+void MainWindow::on_actionFourierFill_triggered()
 {
-    Config::waveletFill = ui->actionWaveletFill->isChecked();
+    Config::fourierFill = ui->actionFourierFill->isChecked();
 }
 
 void MainWindow::on_actionCreate_new_model_triggered() {

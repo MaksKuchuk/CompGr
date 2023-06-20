@@ -80,6 +80,8 @@ glTemplateSpectrogram::glTemplateSpectrogram(QWidget *parent,
 
     connect(this, &glTemplateSpectrogram::BiasChanged, this, &glTemplateSpectrogram::ChangeScrollBar);
 
+    connect(this, &glTemplateSpectrogram::BiasChanged, this, &glTemplateSpectrogram::ChangeInfoLabel);
+
     connect(this, &glTemplateSpectrogram::BiasChanged, grUpdate);
 
     connect(this, &glTemplateSpectrogram::ScaleChanged, grUpdate);
@@ -89,6 +91,10 @@ glTemplateSpectrogram::glTemplateSpectrogram(QWidget *parent,
     if (parent != nullptr)
         connect(parent, &QWidget::destroyed, this, &QWidget::close);
 
+}
+
+void glTemplateSpectrogram::ChangeInfoLabel() {
+    infoLabel->setText("W x H: "+QString::number(data->rcur - data->lcur + 1) + " x " + QString::number(data->height));
 }
 
 void glTemplateSpectrogram::paintEvent(QPaintEvent *event) {

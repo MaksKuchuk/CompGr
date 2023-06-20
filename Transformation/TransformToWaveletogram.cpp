@@ -24,7 +24,7 @@ std::shared_ptr<Graph2DData> TransformToWaveletogram::transform(const std::share
 
     QList<double> samples = data->samples;
 
-    if (Config::waveletFill) {
+    if (Config::fourierFill) {
         size_t size = samples.size();
         size_t newLogSize = std::log2(size);
         if (std::pow(2, newLogSize) < size)

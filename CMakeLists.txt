@@ -69,6 +69,9 @@ set(PROJECT_SOURCES
         Utility/config.h
         Utility/config.cpp
 
+        Utility/SGSmooth.hpp
+        Utility/SGSmooth.cpp
+
         Statistics/statistics.h
         Statistics/statistics.cpp
         Statistics/statisticswindow.h

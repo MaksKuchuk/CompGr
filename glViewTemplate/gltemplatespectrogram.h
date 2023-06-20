@@ -97,6 +97,8 @@ private:
 
     void closeEvent(QCloseEvent *event) override;
 
+    void ChangeInfoLabel();
+
 };
 
 #endif // GLTEMPLATESPECTROGRAM_H

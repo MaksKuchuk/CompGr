@@ -90,9 +90,18 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
             else if (first_val_string == "Equal to adj")
                 first_val = FourierModes::EQUALIZE_WITH_ADJ;
 
+            qint64 fill_zeroes = 0;
+            if (Config::fourierFill) {
+                auto diff = data->rcur - data->lcur;
+                fill_zeroes = std::pow(2, (qint64)std::log2(diff));
+                if (fill_zeroes != diff)
+                    fill_zeroes *= 2;
+            }
+
+
             auto gView = new glTemplateOscillogram(nullptr,
                                           TransformToFourierSpectrum::transform(data, smoothing,
-                                                mode, first_val), glType::FourierSpectrum);
+                                                mode, first_val, fill_zeroes), glType::FourierSpectrum);
 
 
             gView->setWindowTitle("Fourier Spectrum");
@@ -125,7 +134,7 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
 
 
             auto sizes = GeneralDialog::MultiInputDialog("Spectrogram", {"Width", "Height", "Overlap"},
-                                                         {QString::number(size), "100", "1.5"});
+                                                         {QString::number(size), "128", "1.5"});
             if (sizes[0] == "__REJECTED_INPUT__" || sizes[0].toULongLong() == 0 || sizes[1].toULongLong() == 0)
                 return;
 

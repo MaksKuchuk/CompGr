@@ -3,6 +3,7 @@
 #include <cmath>
 #include <thread>
 #include <QDebug>
+#include "../Utility/utility.h"
 
 void TransformToSpectrogram::column(std::shared_ptr<Graph3DData> spectrogram, std::shared_ptr<Graph2DData> data,
                    qint64 i, qint64 height, qint64 N, qint64 krat,
@@ -26,7 +27,18 @@ void TransformToSpectrogram::column(std::shared_ptr<Graph3DData> spectrogram, st
         temp->samples[j] = w * temp->samples[j];
     }
 
-    auto dpf = TransformToFourierSpectrum::transform(temp, 0, SpectrumModes::AMPLITUDE_SPECTRUM, FourierModes::ZERO_FIRST_VAL, krat * N);
+    auto dpf = TransformToFourierSpectrum::transform(temp, 0, SpectrumModes::AMPLITUDE_SPECTRUM, FourierModes::EQUALIZE_WITH_ADJ, krat * N);
+
+//    for (size_t i = 0; i < dpf->samples.size() - 1; ++i)
+//        if (dpf->samples[i+1] / dpf->maxVal < 1e-2) {
+//            auto j = i + 1;
+//            while (dpf->samples[j] / dpf->maxVal < 1e-2 && j < dpf->samples.size() - 1)
+//                ++j;
+//            for (auto p = 1; p < j - i + 1; ++p) {
+//                dpf->samples[i + p] = Utility::LinearScale(p, j-i, dpf->samples[i], dpf->samples[j]);
+//            }
+//            i = j;
+//        }
 
     if (krat == 1) {
         for (qint64 k = 0; k < dpf->samples.size(); ++k)
@@ -68,8 +80,6 @@ std::shared_ptr<Graph3DData> TransformToSpectrogram::transform(std::shared_ptr<G
     if (krat * N != section_n) {
         ++krat;
     }
-
-    qDebug() << section_n << krat * N;
 
     std::vector<std::unique_ptr<std::thread>> threads;
 

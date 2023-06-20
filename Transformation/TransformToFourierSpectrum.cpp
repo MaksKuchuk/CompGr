@@ -1,23 +1,5 @@
 #include "TransformToFourierSpectrum.hpp"
-
-void TransformToFourierSpectrum::smoothing(QList<double>& data, long long L, size_t size) {
-    QList<double> smoothed(size);
-    double sum = 0;
-    for (size_t i = 0; i < L; ++i) {
-        sum += data[i];
-    }
-    for (size_t i = 0; i < size; ++i) {
-        long long l, r;
-        l = (i - L >= 0) ? (i - l ) : 0;
-        r = (i + L <= size-1) ? (i + L) : size - 1;
-        if (i >=L)
-            sum -= data[i - L];
-        if (i + L < size)
-            sum += data[i + L];
-        smoothed[i] = sum / (r - l);
-    }
-    data = smoothed;
-}
+#include "../Utility/SGSmooth.hpp"
 
 void TransformToFourierSpectrum::amplitudeSpectrum(CArray& FTvl, QList<double>& new_data, long long size, double T) {
     for (size_t i = 0; i < size; ++i) {
@@ -72,7 +54,7 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
 
     QList<double> vals(data->samples);
 
-    vals.sliced(data->lcur, new_size);
+    vals = vals.sliced(data->lcur, new_size);
     if (fill_zeros_to > new_size)
         new_size = fill_zeros_to;
     vals.resize(new_size);
@@ -96,8 +78,11 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
     else if (mode == SpectrumModes::PSD)
         PSDSpectrum(FTvl, new_data, new_size, 1 / data->Hz);
 
-    if (L)
-        smoothing(new_data, L, new_size);
+    if (L) {
+        auto smoothed = std::move( sg_smooth(std::vector<double>(new_data.begin(), new_data.end()), L, 2) );
+        new_data = std::move(QList<double>(smoothed.begin(), smoothed.end()));
+//        smoothing(new_data, L, new_size);
+    }
 
     new_size = new_size / 2;
     if (new_size == 0) new_size = 1;
