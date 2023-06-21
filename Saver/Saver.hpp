@@ -1,7 +1,7 @@
 #ifndef ASDASD_SAVER_H
 #define ASDASD_SAVER_H
 
-#include "../Parser/ParseData.hpp"
+#include "../GraphGlData/generaldata.h"
 #include <QString>
 #include <QList>
 #include <vector>

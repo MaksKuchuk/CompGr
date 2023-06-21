@@ -1,8 +1,7 @@
 #ifndef TRANSFORMTOWAVELETOGRAM_H
 #define TRANSFORMTOWAVELETOGRAM_H
 
-#include "../Parser/ParseData.hpp"
-#include "../GraphGlData/Graph3DData.hpp"
+#include "../GraphGlData/Graph2DData.hpp"
 #include <QList>
 
 class TransformToWaveletogram {

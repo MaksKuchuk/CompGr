@@ -138,6 +138,11 @@ void AnalyzeWidget::analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTem
             if (sizes[0] == "__REJECTED_INPUT__" || sizes[0].toULongLong() == 0 || sizes[1].toULongLong() == 0)
                 return;
 
+            if (sizes[0].toULongLong() > data->amountOfSamples / 2) {
+                GeneralDialog::InfoDialog("Width is too big!");
+                return;
+            }
+
             auto spect = new glTemplateSpectrogram(nullptr,
                                                    TransformToSpectrogram::transform(data, sizes[0].toULongLong(),
                                                    sizes[1].toULongLong(), sizes[2].toDouble()));

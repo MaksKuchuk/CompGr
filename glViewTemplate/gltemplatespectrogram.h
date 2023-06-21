@@ -4,10 +4,12 @@
 #include <QObject>
 #include <QWidget>
 #include <QSlider>
+#include <QPointer>
+#include <QScrollBar>
+#include <QLabel>
+
 #include "../GraphGlData/Graph3DData.hpp"
 #include "../glViewType/glspectrogram.h"
-#include "../glViewType/glType.hpp"
-#include "../glViewTemplate/gltemplateoscillogram.h"
 
 namespace Ui {
 class glTemplateOscillogram;

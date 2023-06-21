@@ -1,8 +1,6 @@
 #ifndef PARSEDATA_H
 #define PARSEDATA_H
 
-#include <tuple>
-#include <QString>
 #include <filesystem>
 #include "../GraphGlData/generaldata.h"
 

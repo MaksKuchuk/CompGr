@@ -3,7 +3,6 @@
 #include <cmath>
 #include <thread>
 #include <QDebug>
-#include "../Utility/utility.h"
 
 void TransformToSpectrogram::column(std::shared_ptr<Graph3DData> spectrogram, std::shared_ptr<Graph2DData> data,
                    qint64 i, qint64 height, qint64 N, qint64 krat,

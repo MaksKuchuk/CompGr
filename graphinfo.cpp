@@ -38,15 +38,11 @@ GraphInfo::GraphInfo(QWidget *parent, std::shared_ptr<GeneralData> pData) :
     );
 
     for (int i = 0; i < pData->getAmountOfChannels(); i++) {
-        QLabel *cName = new QLabel(this);
         setText("    " +
                 pData->getChannelName(i) +
                 ": from " +
                 pData->getChannelSource(i));
     }
-
-//    layout->addSpacing(5);
-    //layout->addStretch();
 
 
     this->setLayout(layout);

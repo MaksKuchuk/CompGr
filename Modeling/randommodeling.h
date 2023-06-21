@@ -4,7 +4,6 @@
 #include <cmath>
 #include <memory>
 #include <random>
-#include <cstring>
 
 #include "../GraphGlData/Graph2DData.hpp"
 

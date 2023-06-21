@@ -1,6 +1,13 @@
 #include "parsedatacsv.h"
 #include <QList>
 #include <QByteArray>
+#include <fstream>
+#include <cmath>
+#include <thread>
+#include <QFile>
+#include <QTextStream>
+#include <QByteArray>
+#include <QDateTime>
 
 ParseDataCsv::ParseDataCsv() {
     setDelimiters(';');
@@ -35,14 +42,7 @@ void ParseDataCsv::parseTime() {
     totalSeconds = channels[0].back();
     startTime = "01-01-2000 00:00:00.000";
 
-    size_t n = amountOfSamples < 10 ? amountOfSamples : 10;
-    QList<double> diffs;
-    for (size_t i = 0; i < n - 1; ++i) {
-        diffs.push_back(channels[0][i+1] - channels[0][i]);
-    }
-
-    std::nth_element(diffs.begin(), diffs.begin() + diffs.size()/2, diffs.end());
-    Hz = diffs[diffs.size()/2];
+    Hz = channels[0].back() / amountOfSamples;
 
     setDuration(totalSeconds);
     setStopTime();

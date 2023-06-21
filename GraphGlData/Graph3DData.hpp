@@ -3,7 +3,6 @@
 
 #include <QString>
 #include <QList>
-#include <QColor>
 
 class Graph3DData {
 public:

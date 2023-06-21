@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QWidget>
-#include "../GraphGlData/Graph2DData.hpp"
 #include "../GraphGlData/generaldata.h"
 
 class SuperpositionDialog : public QWidget

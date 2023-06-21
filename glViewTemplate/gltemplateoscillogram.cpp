@@ -5,9 +5,7 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include "../analyzewidget.h"
-#include "../Utility/config.h"
 #include "../Utility/utility.h"
-#include "../graphtemplate.h"
 
 
 #include <QMenu>

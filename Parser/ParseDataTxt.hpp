@@ -3,18 +3,8 @@
 
 #include "ParseData.hpp"
 #include <fstream>
-#include <string>
-#include <tuple>
-#include <cmath>
-#include <ctime>
-#include <iomanip>
-#include <thread>
-#include <QFile>
 #include <QTextStream>
 #include <QByteArray>
-#include <QDateTime>
-
-#include <QDebug>
 
 class ParseDataTxt : public ParseData {
 protected:

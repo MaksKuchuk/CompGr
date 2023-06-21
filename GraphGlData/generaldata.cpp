@@ -1,5 +1,4 @@
 #include "generaldata.h"
-#include "../mainwindow.h"
 #include "../Modeling/modeling.h"
 #include <QDateTime>
 

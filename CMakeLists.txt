@@ -3,14 +3,6 @@ if (WIN32)
     set(GLUT_INCLUDE_DIR ${GLUT_ROOT_PATH}/include)
 
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:\\Windows\\System32")
-
-    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "fftw")
-    set(FFTW_INCLUDE_DIRS "fftw")
-    set(FFTW_LIBRARIES "fftw")
-    set(FFTW_LIBRARY_DIRS "fftw")
-
-    include_directories(${FFTW_INCLUDE_DIRS})
-    link_directories(${FFTW_LIBRARY_DIRS})
 endif()
 
 project(untitled VERSION 0.1 LANGUAGES CXX)
@@ -117,8 +109,6 @@ set(PROJECT_SOURCES
 
         Transformation/TransformToFourierSpectrum.hpp
         Transformation/TransformToFourierSpectrum.cpp
-        Transformation/TransformToOscillogram.hpp
-        Transformation/TransformToOscillogram.cpp
         Transformation/TransformToSpectrogram.hpp
         Transformation/TransformToSpectrogram.cpp
         Transformation/TransformToWaveletogram.hpp

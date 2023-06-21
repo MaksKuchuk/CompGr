@@ -5,8 +5,6 @@
 #include <QPointer>
 #include <QList>
 
-static const QList<double> _ref{0};
-
 class glView : public QOpenGLWidget
 {
     Q_OBJECT
@@ -36,6 +34,9 @@ protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
+
+private:
+    static inline const QList<double> _ref{0};
 };
 
 #endif // GLVIEW_H

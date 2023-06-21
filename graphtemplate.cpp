@@ -2,11 +2,7 @@
 #include "ui_graphtemplate.h"
 #include "glview.h"
 #include "GraphGlData/generaldata.h"
-#include "GraphGlData/Graph3DData.hpp"
 #include "analyzewidget.h"
-#include "Transformation/TransformToOscillogram.hpp"
-#include "Transformation/TransformToFourierSpectrum.hpp"
-#include "Statistics/statistics.h"
 #include "Statistics/statisticswidget.h"
 
 #include <QVBoxLayout>

@@ -1,5 +1,4 @@
 #include "modellingwidget.h"
-#include "ui_graphwidget.h"
 #include "GraphGlData/Graph2DData.hpp"
 #include <QVBoxLayout>
 #include "mainwindow.h"
