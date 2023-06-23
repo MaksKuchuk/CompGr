@@ -42,7 +42,7 @@ void ParseDataCsv::parseTime() {
     totalSeconds = channels[0].back();
     startTime = "01-01-2000 00:00:00.000";
 
-    Hz = channels[0].back() / amountOfSamples;
+    Hz = amountOfSamples / channels[0].back(); // hz = amount / totalTime
 
     setDuration(totalSeconds);
     setStopTime();
