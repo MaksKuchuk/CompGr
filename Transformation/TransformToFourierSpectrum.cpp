@@ -98,7 +98,7 @@ std::shared_ptr<Graph2DData> TransformToFourierSpectrum::transform
 
     auto data2d = std::make_shared<Graph2DData>();
 
-    data2d->Hz = data->amountOfSamples/data->Hz; // for correct graph
+    data2d->Hz = new_size/data->Hz; // for correct graph
 
     data2d->totalSeconds = 1;
     data2d->amountOfSamples = new_size;

@@ -181,8 +181,8 @@ void AnalyzeWidget::multipleBiasStart(qint64 l, qint64 r) {
     }
 }
 
-void AnalyzeWidget::SetSingleScale() {
-    emit SetSingleScaleSignal();
+void AnalyzeWidget::SetSingleScale(double min, double max) {
+    emit setGlobalScaleSignal(min, max);
 }
 
 void AnalyzeWidget::SetGlobalScale() {
@@ -190,8 +190,8 @@ void AnalyzeWidget::SetGlobalScale() {
     double max = -std::numeric_limits<double>::max();
     for (qint64 i = 0; i < layout->count(); ++i) {
        auto osc = qobject_cast<glTemplateOscillogram*>( layout->itemAt(i)->widget());
-       min = std::min(min, osc->gView->data->minLoc);
-       max = std::max(max, osc->gView->data->maxLoc);
+       min = std::min(min, osc->gView->data->minVal);
+       max = std::max(max, osc->gView->data->maxVal);
     }
 
     emit setGlobalScaleSignal(min, max);

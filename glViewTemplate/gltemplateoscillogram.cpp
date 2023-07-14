@@ -137,11 +137,11 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
         menu->addAction(action1);
         menu->addSeparator();
     }
-    QAction* action2 = new QAction(QString::fromUtf8("Local scale"), this);
+    QAction* action2 = new QAction(QString::fromUtf8("This Local scale"), this);
     menu->addAction(action2);
-    QAction* action3 = new QAction(QString::fromUtf8("Global scale"), this);
+    QAction* action3 = new QAction(QString::fromUtf8("This Global scale"), this);
     menu->addAction(action3);
-    QAction* action4 = new QAction(QString::fromUtf8("Set scale"), this);
+    QAction* action4 = new QAction(QString::fromUtf8("This Set scale"), this);
     menu->addAction(action4);
     menu->addSeparator();
     QAction* action5 = new QAction(QString::fromUtf8("Global bias"), this);
@@ -151,9 +151,9 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     menu->addSeparator();
 
     if (type == glType::Oscillogram) {
-        QAction* action7 = new QAction(QString::fromUtf8("Single local scale"), this);
+        QAction* action7 = new QAction(QString::fromUtf8("This local scale for all"), this);
         menu->addAction(action7);
-        QAction* action8 = new QAction(QString::fromUtf8("Single global scale"), this);
+        QAction* action8 = new QAction(QString::fromUtf8("Full global scale for all"), this);
         menu->addAction(action8);
         menu->addSeparator();
         QAction* action9 = new QAction(QString::fromUtf8("Default scale for all"), this);
@@ -187,19 +187,19 @@ void glTemplateOscillogram::drawMenu(QPoint globalPos) {
     if (selectedItem == nullptr) return;
     if (selectedItem->text() == "Close") {
         close();
-    } else if (selectedItem->text() == "Local scale") {
+    } else if (selectedItem->text() == "This Local scale") {
         setLocalScale();
-    } else if (selectedItem->text() == "Global scale") {
+    } else if (selectedItem->text() == "This Global scale") {
         setGlobalScale();
-    } else if (selectedItem->text() == "Set scale") {
+    } else if (selectedItem->text() == "This Set scale") {
         selectScale();
     } else if (selectedItem->text() == "Global bias") {
         setGlobalBias();
     } else if (selectedItem->text() == "Set bias") {
         selectBias();
-    } else if (selectedItem->text() == "Single local scale") {
+    } else if (selectedItem->text() == "This local scale for all") {
         selectSingleLocalScale();
-    } else if (selectedItem->text() == "Single global scale") {
+    } else if (selectedItem->text() == "Full global scale for all") {
         selectSingleGlobalScale();
     } else if (selectedItem->text() == "Default scale for all") {
         setDefaultScale();
@@ -247,7 +247,7 @@ void glTemplateOscillogram::setDefaultBias() {
 }
 
 void glTemplateOscillogram::selectSingleLocalScale() {
-    AnalyzeWidget::getInstance()->SetSingleScale();
+    AnalyzeWidget::getInstance()->SetSingleScale(data->minLoc, data->maxLoc);
 }
 
 void glTemplateOscillogram::selectSingleGlobalScale() {

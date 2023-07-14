@@ -33,7 +33,7 @@ public:
 
     void analyze(std::shared_ptr<Graph2DData> data, QPointer<GraphTemplate> templ, glType t = glType::Oscillogram);
 
-    void SetSingleScale();
+    void SetSingleScale(double min, double max);
     void SetGlobalScale();
     void ResetBias();
     void ResetScale();
